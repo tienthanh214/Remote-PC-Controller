@@ -10,7 +10,8 @@ def accept_incoming_connections():
     while True:
         client, client_address = SERVER.accept()
         print("%s:%s has connected." % client_address)
-        client.send(bytes("Greetings from the cave! Now type your name and press enter!", "utf8"))
+        client.send(
+            bytes("Greetings from the cave! Now type your name and press enter!", "utf8"))
         addresses[client] = client_address
         Thread(target=handle_client, args=(client,)).start()
 
@@ -43,7 +44,7 @@ def broadcast(msg, prefix=""):  # prefix is for name identification.
     for sock in clients:
         sock.send(bytes(prefix, "utf8")+msg)
 
-        
+
 clients = {}
 addresses = {}
 
@@ -59,7 +60,7 @@ if __name__ == "__main__":
     SERVER.listen(5)
     print("Waiting for connection...")
     ACCEPT_THREAD = Thread(target=accept_incoming_connections)
-    
+
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
     SERVER.close()
