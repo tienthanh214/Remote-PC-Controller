@@ -1,6 +1,7 @@
 import tkinter as tk
 
 root = tk.Tk()
+root.title("Client")
 root.geometry("560x320+200+100")
 root.grid_columnconfigure(0, weight=1)
 root.grid_rowconfigure(0, weight=1)
@@ -28,7 +29,8 @@ class Application(tk.Frame):
     def create_widgets(self):
         # Display the entered IP address and connection state
         self.resultLabel = tk.Label(self, text="IP address", width=15)
-        self.resultLabel.grid(row=0, column=0, sticky="E", padx=10, pady=5, columnspan=1)
+        self.resultLabel.grid(row=0, column=0, sticky="E",
+                              padx=10, pady=5, columnspan=1)
 
         # Get user input of IP address
         self.myEntry = tk.Entry(self, width=40)

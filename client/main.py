@@ -1,4 +1,4 @@
-import ui as UI
+import view as UI
 
 app = UI.Application()
 app.mainloop()
