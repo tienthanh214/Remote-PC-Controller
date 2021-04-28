@@ -13,6 +13,7 @@ Cmd = {"connect": "connect",
        "registry": "registry",
        "exit": "exit"}
 
+
 def recvall(sock):
     data = bytearray()
     while True:
@@ -22,16 +23,43 @@ def recvall(sock):
         data.extend(packet)
     return data
 
+
+def recv_timeout(the_socket, buff, timeout=2):
+    # Accumulate all chunks of data sent by the server
+    the_socket.setblocking(0)
+    total_data = []
+    data = ""
+    begin = time.time()
+    while True:
+        # if you got some data, then break after wait sec
+        if total_data and time.time() - begin > timeout:
+            break
+        # if you got no data at all, wait a little longer
+        elif time.time() - begin > timeout * 2:
+            break
+        try:
+            data = the_socket.recv(buff).decode("utf8")
+            if data:
+                total_data.append(data)
+                begin = time.time()
+            else:
+                time.sleep(0.01)
+        except:
+            pass
+    return "".join(total_data)
+
+
 def receive():
-    # Handle data from the server
+    # Handle response from the server
     try:
-        response = client_socket.recv(BUFF_SIZE).decode("utf8")
+        response = recv_timeout(client_socket, BUFF_SIZE)
         print("> response: ", response)
     except OSError:
         exit
 
 
 def send(command="exit"):
+    # Send request to the server and the server return data
     client_socket.sendall(bytes(command, "utf8"))
     print("> request: " + str(command))
 
@@ -55,13 +83,11 @@ client_socket.connect(ADDR)
 print('> connected to port ' + str(PORT))
 
 
-for i in range(10):
+for i in range(5):
+    cmd = input("> choose a command: ")
     receive_thread = Thread(target=receive)
     receive_thread.start()
-    cmd = input("> choose a command: ")
     send(command=Cmd[cmd])
     receive_thread.join()
-    #print("> returned response ", response)
-    #response.pop()
 
 client_socket.close()
