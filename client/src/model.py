@@ -49,11 +49,25 @@ def recv_timeout(the_socket, buff, timeout=2):
     return "".join(total_data)
 
 
-def receive():
+def receive_txt():
     # Handle response from the server
     try:
         response = recv_timeout(client_socket, BUFF_SIZE)
         print("> response: ", response)
+    except OSError:
+        exit
+
+
+def receive_img():
+    try:
+        file = open('./screenshot.png', 'wb')
+        chunk = client_socket.recv(1024)
+        while chunk:
+            print("> receiving...")
+            file.write(chunk)
+            chunk = client_socket.recv(1024)
+        print("> image downloaded")
+        file.close()
     except OSError:
         exit
 
@@ -85,8 +99,13 @@ print('> connected to port ' + str(PORT))
 
 for i in range(5):
     cmd = input("> choose a command: ")
-    receive_thread = Thread(target=receive)
+
+    targ = receive_txt
+    if cmd == "screenshot":
+        targ = receive_img
+    receive_thread = Thread(target=targ)
     receive_thread.start()
+
     send(command=Cmd[cmd])
     receive_thread.join()
 
