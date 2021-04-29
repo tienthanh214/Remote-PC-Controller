@@ -25,28 +25,31 @@ while True:
             data = conn.recv(1024)
             str_data = data.decode("utf8")
 
-            print("> client: " + str_data)
+            print("> request: " + str_data)
 
             if str_data == "exit":
                 # exit and close this connection 
                 break
             elif str_data == "screenshot":
                 # send a image data to the client
-                f = open('./_server_assets/screenshot.png','rb')
+                f = open('./_server_assets/ndtt.jpg','rb')
                 l = f.read(1024)
                 while l:
                     conn.send(l)
                     l = f.read(1024)
                 print("> image sent")
-                conn.shutdown(socket.SHUT_WR)
                 f.close()
             else:
                 # send a text to be displayed by the GUI
                 conn.sendall(bytes(my_data, "utf8"))
+            
+            conn.shutdown(socket.SHUT_WR)
+            print('! connection shutdown')
     finally:
         # Clean up the connection
         conn.close()
-        print('> connection closed')
+        print('! connection closed')
         # if count == 2:
         #     break
 s.close()
+print('! socket closed')

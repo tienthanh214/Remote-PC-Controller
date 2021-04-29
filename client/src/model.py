@@ -2,7 +2,7 @@ import socket as sk
 import time
 from enum import Enum
 from threading import Thread
-
+import sys
 
 Cmd = {"connect": "connect",
        "process": "process",
@@ -12,70 +12,6 @@ Cmd = {"connect": "connect",
        "keystroke": "keystroke",
        "registry": "registry",
        "exit": "exit"}
-
-
-def recvall(sock):
-    data = bytearray()
-    while True:
-        packet = sock.recv(BUFF_SIZE)
-        if not packet:  # Important!!
-            break
-        data.extend(packet)
-    return data
-
-
-def recv_timeout(the_socket, buff, timeout=2):
-    # Accumulate all chunks of data sent by the server
-    the_socket.setblocking(0)
-    total_data = []
-    data = ""
-    begin = time.time()
-    while True:
-        # if you got some data, then break after wait sec
-        if total_data and time.time() - begin > timeout:
-            break
-        # if you got no data at all, wait a little longer
-        elif time.time() - begin > timeout * 2:
-            break
-        try:
-            data = the_socket.recv(buff).decode("utf8")
-            if data:
-                total_data.append(data)
-                begin = time.time()
-            else:
-                time.sleep(0.01)
-        except:
-            pass
-    return "".join(total_data)
-
-
-def receive_txt():
-    # Handle response from the server
-    try:
-        response = recv_timeout(client_socket, BUFF_SIZE)
-        print("> response: ", response)
-    except OSError:
-        exit
-
-
-def receive_img():
-    try:
-        file = open('./screenshot.png', 'wb')
-        chunk = client_socket.recv(1024)
-        while chunk:
-            print("> receiving...")
-            file.write(chunk)
-            chunk = client_socket.recv(1024)
-        print("> image downloaded")
-        file.close()
-    except OSError:
-        exit
-
-
-def send(command="exit"):
-    # Send request to the server and the server return data
-    client_socket.sendall(bytes(command, "utf8"))
-    print("> request: " + str(command))
 
 
 # HOST = input('> Enter host: ')
@@ -92,21 +28,62 @@ else:
 BUFF_SIZE = 1024
 ADDR = (HOST, PORT)
 
-client_socket = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
-client_socket.connect(ADDR)
-print('> connected to port ' + str(PORT))
+
+class MySocket:
+    def __init__(self, sock=None):
+        super().__init__()
+        if sock is None:
+            self.sock = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
+        else:
+            self.sock = sock
+
+    def connect(self, address):
+        self.sock.connect(address)
+
+    def send(self, command="exit"):
+        # Send request to the server and the server return data
+        self.sock.sendall(bytes(command, "utf8"))
+        print("> request: " + str(command))
+
+    def receive(self):
+        try:
+            response = self.recv_timeout(self.sock, BUFF_SIZE)
+            print("> response received, data size:", sys.getsizeof(response))
+            return response
+        except OSError:
+            return OSError
+
+    def close(self):
+        self.sock.close()
+
+    def recv_timeout(self, the_socket, buff, timeout=2):
+        # Accumulate all chunks of data sent by the server
+        the_socket.setblocking(0)
+        total_data = []
+        data = ""
+        begin = time.time()
+        while True:
+            # if you got some data, then break after wait sec
+            if total_data and time.time() - begin > timeout:
+                break
+            # if you got no data at all, wait a little longer
+            elif time.time() - begin > timeout * 2:
+                break
+            try:
+                data = the_socket.recv(buff)
+                if data:
+                    total_data.append(data)
+                    begin = time.time()
+                else:
+                    time.sleep(0.01)
+            except:
+                pass
+        return b"".join(total_data)
 
 
-for i in range(5):
-    cmd = input("> choose a command: ")
-
-    targ = receive_txt
-    if cmd == "screenshot":
-        targ = receive_img
-    receive_thread = Thread(target=targ)
-    receive_thread.start()
-
-    send(command=Cmd[cmd])
-    receive_thread.join()
-
-client_socket.close()
+s = MySocket()
+s.connect(ADDR)
+cmd = input("> choose a command: ")
+s.send(Cmd[cmd])
+print(s.receive().decode("utf8"))
+s.close()
