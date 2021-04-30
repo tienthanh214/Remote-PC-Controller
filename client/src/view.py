@@ -1,28 +1,28 @@
 import tkinter as tk
+from tkinter import messagebox
+
+LARGE_FONT = ("Verdana", 12)
+NORM_FONT = ("Helvetica", 10)
+SMALL_FONT = ("Helvetica", 8)
+
+
+def popup_notif(msg="Done"):
+    root.geometry("0x0")
+    messagebox.showinfo("client", msg)
+    root.destroy()
+
 
 root = tk.Tk()
-root.title("Client")
-root.geometry("560x320+200+100")
-root.grid_columnconfigure(0, weight=1)
-root.grid_rowconfigure(0, weight=1)
-# Configure row and column setting so that widget will take up all space
-# tk.Grid.rowconfigure(root, 0, weight=1)
-# tk.Grid.columnconfigure(root, 0, weight=1)
-
-# # Create & Configure frame
-# frame = tk.Frame(root)
-# frame.grid(row=0, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
-
-# for row_index in range(5):
-#     tk.Grid.rowconfigure(frame, row_index, weight=1)
-#     for col_index in range(10):
-#         tk.Grid.columnconfigure(frame, col_index, weight=1)
 
 
 class Application(tk.Frame):
-    def __init__(self, master=None):
+    def __init__(self, master):
         super().__init__(master)
-        self.master = root
+        self.master = master
+        self.master.title("Client")
+        self.master.geometry("560x320+200+100")
+        self.master.grid_columnconfigure(0, weight=1)
+        self.master.grid_rowconfigure(0, weight=1)
         self.grid()
         self.create_widgets()
 
