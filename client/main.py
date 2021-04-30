@@ -1,4 +1,4 @@
-import src.view as ui
+import src.views.screenshot as ui
 import tkinter
 import time
 from PIL import Image, ImageTk
