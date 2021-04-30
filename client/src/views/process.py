@@ -1,8 +1,11 @@
 import tkinter as tk
 import sys
 import io
+import utilities as util
 from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk
+
+root_process = tk.Tk()
 
 
 class Screenshot(tk.Frame):
@@ -68,7 +71,7 @@ class Screenshot(tk.Frame):
         if img_data == None:
             img_data = self._image_bytes
             if img_data == None:
-                messagebox("Screenshot", "Image data corrupted", "error")
+                util.messagebox("Screenshot", "Image data corrupted", "error")
                 exit
         files = [('PNG', '*.png'),
                  ('JPEG', '*.jpg;*.jpeg'),

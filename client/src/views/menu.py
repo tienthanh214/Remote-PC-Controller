@@ -4,8 +4,6 @@ import io
 from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk
 
-root_menu = tk.Tk()
-
 
 class Menu(tk.Frame):
     def __init__(self, master):
