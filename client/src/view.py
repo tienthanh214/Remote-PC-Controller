@@ -1,21 +1,23 @@
 import tkinter as tk
-from tkinter import messagebox
+import sys
+from tkinter import messagebox, filedialog
+
 
 LARGE_FONT = ("Verdana", 12)
 NORM_FONT = ("Helvetica", 10)
 SMALL_FONT = ("Helvetica", 8)
 
-
-def popup_notif(msg="Done"):
-    root.geometry("0x0")
-    messagebox.showinfo("client", msg)
-    root.destroy()
-
-
 root = tk.Tk()
 
 
-class Application(tk.Frame):
+def messagebox(title="client", msg="Done"):
+    popup = tk.Tk()
+    popup.withdraw()
+    tk.messagebox.showinfo(title, msg)
+    popup.destroy()
+
+
+class Menu(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
@@ -91,3 +93,50 @@ class Application(tk.Frame):
         result = self.myEntry.get()
         self.resultLabel.config(text=result)
         self.myEntry.delete(0, tk.END)
+
+
+class Screenshot(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.master = master
+        self.master.title("Picture")
+        # self.master.geometry("640x560+250+150")
+        self.master.grid_columnconfigure(0, weight=1)
+        self.master.grid_rowconfigure(0, weight=1)
+        self.grid()
+        self.create_widgets()
+
+    def create_widgets(self):
+        # Display the image
+        self.canvas = tk.Canvas(self, width=560, height=480)
+        self.item_on_canvas = self.canvas.create_image(
+            5, 5, anchor=tk.NW, image=None)
+        self.canvas.grid(row=0, column=0, sticky=tk.W +
+                         tk.N, padx=10, pady=5, rowspan=2)
+
+        # Take another screenshot and update the picture
+        # When pressed, Screenshot will sent a request to the server via Controller
+        self.btn_connect = tk.Button(
+            self, text="Chụp", command=None, width=20, height=20)
+        self.btn_connect.grid(row=0, column=1, sticky=tk.E, padx=10, pady=5)
+
+        # Write the picture to a file as .png, .jpg and .bmp
+        self.btn_process = tk.Button(
+            self, text="Lưu", command=self.save_image, width=20, height=20)
+        self.btn_process.grid(row=1, column=1, sticky=tk.E, padx=10, pady=5)
+
+    def update_image(self, img_data):
+        # img_data: bytes
+        # Take image data in bytes from and update the image in the canvas
+        self.canvas.itemconfig(self.item_on_canvas, image=img_data)
+        self.update_idletasks()
+        self.update()
+
+    def save_image(self, img_data):
+        # img_data: bytes
+        # Save an image in bytes form
+        files = [('PNG', '*.png'),
+                 ('JPEG', '*.jpg;*.jpeg'),
+                 ('Bitmap', '*.bmp')]
+        file = filedialog.asksaveasfile(mode="wb", filetypes=files, defaultextension=files,title="Save image")
+        file.write(img_data)
