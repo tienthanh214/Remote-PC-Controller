@@ -11,9 +11,10 @@ import tkinter as tk
 class Application():
     def __init__(self, sock=None):
         super().__init__()
+        self._root = tk.Tk()
         self._socket = mysk.MySocket()
         # Bind event to the Menu window's buttons
-        self._menu = menu.Menu(tk.Tk())
+        self._menu = menu.Menu(self._root)
         self._menu.btn_connect.bind("<Button>", self.connect)
         self._menu.btn_process.bind("<Button>", self.running_prc)
         self._menu.btn_app.bind("<Button>", self.running_app)
@@ -30,7 +31,7 @@ class Application():
 
     # 1 no
     def running_prc(self, event):
-        self._running_prc = runng.Running(tk.Tk())
+        self._running_prc = runng.Running(tk.Toplevel(self._root))
         # bindings...
         self._running_prc.btn_kill.bind("<Button>", self.running_prc_kill)
         self._running_prc.btn_view.bind("<Button>", self.running_prc_view)
@@ -55,7 +56,8 @@ class Application():
 
     # 2 no
     def running_app(self, event):
-        self._running_app = runng.Running(tk.Tk(), "application")
+        self._running_app = runng.Running(
+            tk.Toplevel(self._root), "application")
         # bindings...
         self._running_app.btn_kill.bind("<Button>", self.running_app_kill)
         self._running_app.btn_view.bind("<Button>", self.running_app_view)
@@ -80,7 +82,7 @@ class Application():
 
     # 3 yes
     def keystroke(self, event):
-        self._keystroke = kystk.Keystroke(tk.Tk())
+        self._keystroke = kystk.Keystroke(tk.Toplevel(self._root))
         # bindings...
         self._keystroke.btn_hook.bind("<Button>", self.keystroke_hook)
         self._keystroke.btn_unhook.bind("<Button>", self.keystroke_unhook)
@@ -100,11 +102,11 @@ class Application():
     def keystroke_print(self, event):
         self._socket.send("keystroke")
         data = self._socket.receive()
-        self._keystroke.print_keystroke(data)
+        self._keystroke.print_keystroke(data.decode("utf8"))
 
     # 4 yes
     def screenshot(self, event):
-        self._screenshot = scrsh.Screenshot(tk.Tk())
+        self._screenshot = scrsh.Screenshot(tk.Toplevel(self._root))
         # bindings...
         self._screenshot.btn_snap.bind("<Button>", self.screenshot_snap)
         self._screenshot.btn_save.bind("<Button>", self.screenshot_save)
@@ -121,7 +123,7 @@ class Application():
 
     # 5 no
     def registry(self, event):
-        self._registry = regis.Registry(tk.Tk())
+        self._registry = regis.Registry(tk.Toplevel(self._root))
         # bindings...
         self._registry.btn_browse.bind("Button", self.registry_browse)
         self._registry.btn_sendcont.bind("Button", self.registry_sendcont)

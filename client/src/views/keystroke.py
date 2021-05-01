@@ -13,7 +13,6 @@ class Keystroke(tk.Frame):
         self.master.grid_columnconfigure(0, weight=1)
         self.master.grid_rowconfigure(0, weight=1)
         self.grid()
-        self._keybuff = "<Not connected>"
         self.create_widgets()
 
     def create_widgets(self):
@@ -43,10 +42,10 @@ class Keystroke(tk.Frame):
         self.text_field.grid(row=1, column=0, sticky=tk.N,
                              padx=10, pady=10, columnspan=4)
 
-    def print_keystroke(self, keystroke):
+    def print_keystroke(self, keystroke="<Not hooked>"):
         keystroke = keystroke + "\n"
         self.text_field.configure(state="normal")
-        self.text_field.insert("end", self._keybuff)
+        self.text_field.insert("end", keystroke)
         self.text_field.configure(state="disable")
 
     def clear_keystroke(self):

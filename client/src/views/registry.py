@@ -101,7 +101,8 @@ class Registry(tk.Frame):
                             padx=10, pady=5, columnspan=1)
 
         # Text field to display the result of commands
-        self.txt_result = tk.Text(self, width=88, height=10, bg="#E5E5E5", state="disable")
+        self.txt_result = tk.Text(
+            self, width=88, height=10, bg="#E5E5E5", state="disable")
         self.txt_result.grid(row=7, column=0, sticky=tk.N,
                              padx=10, pady=10, columnspan=4)
 
@@ -129,7 +130,7 @@ class Registry(tk.Frame):
             file = open(self._regpath, "r", encoding="utf-16")
             self._regcont = file.read()
             self.txt_regcont.insert("end", self._regcont)
-        except IOError: 
+        except IOError:
             print("> file does not appear to exist.")
 
     def update_result(self, result="Lỗi"):

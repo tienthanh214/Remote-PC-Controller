@@ -31,7 +31,8 @@ class inputbox(tk.Frame):
         self.master = master
         self.master.title(tl + " " + cmd)
 
-        self.input_field = tk.Entry(self.master, textvariable="Nhập ID", width=30)
+        self.input_field = tk.Entry(
+            self.master, textvariable="Nhập ID", width=30)
         self.input_field.pack(side=tk.LEFT, padx=10, pady=10)
 
         self.btn_get = tk.Button(self.master, text=btn, width=15)
