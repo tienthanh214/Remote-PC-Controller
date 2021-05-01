@@ -36,7 +36,7 @@ class MySocket:
 
     def receive(self, buff_size=2048):
         try:
-            response = self.recv_timeout(self.sock, buff_size)
+            response = self.recv_timeout(the_socket=self.sock, buff=buff_size)
             print("> response received, data size:", sys.getsizeof(response))
             return response
         except OSError:
@@ -52,7 +52,7 @@ class MySocket:
         # Further sends are disallowed
         self.sock.shutdown(sk.SHUT_WR)
 
-    def recv_timeout(self, the_socket, buff, timeout=2):
+    def recv_timeout(self, the_socket, buff, timeout=0.2):
         # Collect chunk of data from the server
         # We know that evrything has been received when THE CONNECTION IS CLOSED
         the_socket.setblocking(0)
@@ -70,21 +70,22 @@ class MySocket:
                     total_data.append(data)
                     begin = time.time()
                 else:
-                    time.sleep(0.01)
+                    time.sleep(0.02)
             except:
                 pass
         return b"".join(total_data)
 
 
+s = MySocket()
+s.connect(ip='localhost', port=54321)
+
 # test case
 for i in range(3):
-    s = MySocket()
-    s.connect(ip='localhost', port=54321)
     cmd = input("> choose a command: ")
-    if cmd != "exit":
+    if cmd == "exit":
         break
     s.send(Cmd[cmd])
-    s.receive()
-    s.shutdown()
+    img = s.receive()
+    print("> client has finish a message")
 
 s.close()

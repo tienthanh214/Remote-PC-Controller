@@ -18,12 +18,12 @@ my_data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sollicit
 
 while True:
     # count += 1
+    conn, addr = s.accept()
+    print('> connected by', addr)
+
     try:
         while True:
-            conn, addr = s.accept()
-            print('> connected by', addr)
-
-            data = conn.recv(1024)
+            data = conn.recv(2048)
             str_data = data.decode("utf8")
 
             print("> request: " + str_data)
@@ -34,19 +34,19 @@ while True:
             elif str_data == "screenshot":
                 # send a image data to the client
                 f = open('./_server_assets/ndtt.jpg','rb')
-                l = f.read(1024)
+                l = f.read(2048)
                 while l:
                     conn.send(l)
-                    l = f.read(1024)
+                    l = f.read(2048)
                 print("> image sent")
                 f.close()
             else:
                 # send a text to be displayed by the GUI
-                conn.sendall(bytes(my_data, "utf8"))
-                print("> image sent")
+                conn.send(bytes(my_data, "utf8"))
+                print("> string sent")
             
-            conn.shutdown(socket.SHUT_WR)
-            print('! connection shutdown')
+            #conn.shutdown(socket.SHUT_WR)
+            #print('! connection shutdown')
             
     finally:
         # Clean up the connection
