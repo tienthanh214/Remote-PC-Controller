@@ -10,7 +10,6 @@ class Menu(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title("Client")
-        self.master.geometry("560x320+200+100")
         self.master.grid_columnconfigure(0, weight=1)
         self.master.grid_rowconfigure(0, weight=1)
         self.grid()

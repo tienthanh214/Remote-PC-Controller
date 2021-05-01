@@ -18,28 +18,28 @@ class Running(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        # Take another screenshot and update the picture
-        # When pressed, Screenshot will sent a request to the server via Controller
+        # Prompt the inputbox
+        # User will input the application or process id they want to kill
         self.btn_kill = tk.Button(
-            self, text="Kill", command=lambda: self.manip(action="Kill"), width=10, height=2)
+            self, text="Kill", command=lambda: self.manip_runn(action="Kill"), width=10, height=2)
         self.btn_kill.grid(row=0, column=0, sticky=tk.N, padx=10, pady=10)
 
-        # Write the picture to a file as .png, .jpg and .bmp
+        # Refresh and show running process or application from the server
         self.btn_view = tk.Button(
             self, text="Xem", command=lambda: self.view_process(util.mock_data), width=10, height=2)
         self.btn_view.grid(row=0, column=1, sticky=tk.N, padx=10, pady=10)
 
-        # Write the picture to a file as .png, .jpg and .bmp
+        # Clear the running process or application table
         self.btn_clear = tk.Button(
             self, text="Xóa", command=self.clear_process, width=10, height=2)
         self.btn_clear.grid(row=0, column=2, sticky=tk.N, padx=10, pady=10)
 
-        # Write the picture to a file as .png, .jpg and .bmp
+        # Similar to btn_kill, but this will take the name of the application and start it instead
         self.btn_start = tk.Button(
             self, text="Start", command=lambda: self.manip(action="start"), width=10, height=2)
         self.btn_start.grid(row=0, column=3, sticky=tk.N, padx=10, pady=10)
 
-        # Display info of running process in the server machine
+        # Display info of running process or application from the server
         cols = ("Name " + self._cmd, "ID " + self._cmd, "Count thread")
         self.table = ttk.Treeview(self, columns=cols, show="headings")
         self.table.grid(row=1, column=0, sticky=tk.N,
@@ -61,5 +61,5 @@ class Running(tk.Frame):
         for rowid in self.table.get_children():
             self.table.delete(rowid)
 
-    def manip(self, action="start"):
+    def manip_runn(self, action="start"):
         util.inputbox(tk.Tk(), cmd=self._cmd, tl=action, btn=action)
