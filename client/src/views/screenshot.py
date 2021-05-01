@@ -26,13 +26,13 @@ class Screenshot(tk.Frame):
 
         # Take another screenshot and update the picture
         # When pressed, Screenshot will sent a request to the server via Controller
-        self.btn_connect = tk.Button(
-            self, text="Chụp", command=None, width=20, height=20)
+        self.btn_snap = tk.Button(
+            self, text="Chụp", command=None, width=20, height=5)
         self.btn_connect.grid(row=0, column=1, sticky=tk.E, padx=10, pady=10)
 
         # Write the picture to a file as .png, .jpg and .bmp
-        self.btn_process = tk.Button(
-            self, text="Lưu", command=lambda: self.save_image(self._image_bytes), width=20, height=20)
+        self.btn_save = tk.Button(
+            self, text="Lưu", command=lambda: self.save_image(self._image_bytes), width=20, height=5)
         self.btn_process.grid(row=1, column=1, sticky=tk.E, padx=10, pady=10)
 
     def _resize_image(self, IMG):
