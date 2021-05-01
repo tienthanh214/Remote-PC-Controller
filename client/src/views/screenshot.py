@@ -27,12 +27,12 @@ class Screenshot(tk.Frame):
         # Take another screenshot and update the picture
         # When pressed, Screenshot will sent a request to the server via Controller
         self.btn_snap = tk.Button(
-            self, text="Chụp", command=None, width=20, height=10)
+            self, text="Chụp", width=20, height=10)
         self.btn_snap.grid(row=0, column=1, sticky=tk.E, padx=10, pady=10)
 
         # Write the picture to a file as .png, .jpg and .bmp
         self.btn_save = tk.Button(
-            self, text="Lưu", command=lambda: self.save_image(self._image_bytes), width=20, height=10)
+            self, text="Lưu", width=20, height=10)
         self.btn_save.grid(row=1, column=1, sticky=tk.E, padx=10, pady=10)
 
     def _resize_image(self, IMG):
@@ -62,18 +62,16 @@ class Screenshot(tk.Frame):
         self.update_idletasks()
         self.update()
 
-    def save_image(self, img_data=None):
+    def save_image(self):
         # img_data: bytes
         # Save an image in bytes form
-        if img_data == None:
-            img_data = self._image_bytes
-            if img_data == None:
-                messagebox("Screenshot", "Image data corrupted", "error")
-                exit
+        if self._image_bytes == None:
+            messagebox("Screenshot", "Image data corrupted", "error")
+            exit
         files = [('PNG', '*.png'),
                  ('JPEG', '*.jpg;*.jpeg'),
                  ('Bitmap', '*.bmp')]
         file = filedialog.asksaveasfile(
             mode="wb", filetypes=files, defaultextension=files, title="Save image")
         if file != None:
-            file.write(img_data)
+            file.write(self._image_bytes)

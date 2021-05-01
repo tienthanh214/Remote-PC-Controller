@@ -34,8 +34,8 @@ class inputbox(tk.Frame):
         self.input_field = tk.Entry(self.master, textvariable="Nhập ID", width=30)
         self.input_field.pack(side=tk.LEFT, padx=10, pady=10)
 
-        self.btn_get = tk.Button(self.master, text=btn, command=None, width=15)
+        self.btn_get = tk.Button(self.master, text=btn, width=15)
         self.btn_get.pack(side=tk.LEFT, padx=10, pady=10)
 
     def getvalue(self):
-        return ""
+        return self.input_field.get()

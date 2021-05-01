@@ -19,17 +19,17 @@ class Keystroke(tk.Frame):
     def create_widgets(self):
         # Start collecting keystroke fro the server
         self.btn_hook = tk.Button(
-            self, text="Hook", command=None, width=10, height=2)
+            self, text="Hook", width=10, height=2)
         self.btn_hook.grid(row=0, column=0, sticky=tk.N, padx=10, pady=10)
 
         # Stop collecting keystroke from the server
         self.btn_unhook = tk.Button(
-            self, text="Unhook", command=None, width=10, height=2)
+            self, text="Unhook", width=10, height=2)
         self.btn_unhook.grid(row=0, column=1, sticky=tk.N, padx=10, pady=10)
 
         # Print the collected keystrokes
         self.btn_print = tk.Button(
-            self, text="In phím", command=self.print_keystroke, width=10, height=2)
+            self, text="In phím", width=10, height=2)
         self.btn_print.grid(row=0, column=2, sticky=tk.N, padx=10, pady=10)
 
         # Clear the screen
@@ -43,15 +43,8 @@ class Keystroke(tk.Frame):
         self.text_field.grid(row=1, column=0, sticky=tk.N,
                              padx=10, pady=10, columnspan=4)
 
-    def update_buff(self, keystroke):
-        self._keybuff = keystroke
-
-    def clear_buff(self):
-        self._keybuff = ""
-
-    def print_keystroke(self):
-        self._keybuff = self._keybuff.strip("\n")
-        self._keybuff += "\n"
+    def print_keystroke(self, keystroke):
+        keystroke = keystroke + "\n"
         self.text_field.configure(state="normal")
         self.text_field.insert("end", self._keybuff)
         self.text_field.configure(state="disable")

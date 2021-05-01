@@ -21,22 +21,22 @@ class MySocket:
     def __init__(self, sock=None):
         super().__init__()
         if sock is None:
-            self.sock = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
+            self._sock = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
         else:
-            self.sock = sock
+            self._sock = sock
 
     def connect(self, ip, port=54321):
         address = (ip, port)
-        self.sock.connect(address)
+        self._sock.connect(address)
 
     def send(self, command="exit"):
         # Send request to the server and the server return data
-        self.sock.sendall(bytes(command, "utf8"))
+        self._sock.sendall(bytes(command, "utf8"))
         print("> request: " + str(command))
 
     def receive(self, buff_size=2048):
         try:
-            response = self.recv_timeout(the_socket=self.sock, buff=buff_size)
+            response = self.recv_timeout(the_socket=self._sock, buff=buff_size)
             print("> response received, data size:", sys.getsizeof(response))
             return response
         except OSError:
@@ -45,12 +45,12 @@ class MySocket:
     def close(self):
         # Close the socket file descriptor
         # Both sends and receives are disallowed
-        self.sock.close()
+        self._sock.close()
 
     def shutdown(self):
         # Shutdown one halves of the connection
         # Further sends are disallowed
-        self.sock.shutdown(sk.SHUT_WR)
+        self._sock.shutdown(sk.SHUT_WR)
 
     def recv_timeout(self, the_socket, buff, timeout=0.2):
         # Collect chunk of data from the server
@@ -74,18 +74,3 @@ class MySocket:
             except:
                 pass
         return b"".join(total_data)
-
-
-s = MySocket()
-s.connect(ip='localhost', port=54321)
-
-# test case
-for i in range(3):
-    cmd = input("> choose a command: ")
-    if cmd == "exit":
-        break
-    s.send(Cmd[cmd])
-    img = s.receive()
-    print("> client has finish a message")
-
-s.close()
