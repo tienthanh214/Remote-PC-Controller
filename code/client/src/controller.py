@@ -155,7 +155,8 @@ class Controller():
     def screenshot_snap(self, event):
         # send
         self._socket.send("screenshot,snap")
-        data = self._socket.receive()
+        picture_len = int(self._socket._sock.recv(32).decode('utf8'))
+        data = self._socket.receive(picture_len)
         self._screenshot.update_image(data)
 
     def screenshot_save(self, event):

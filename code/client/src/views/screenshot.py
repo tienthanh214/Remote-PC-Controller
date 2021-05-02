@@ -57,7 +57,9 @@ class Screenshot(tk.Frame):
         # Take image data in bytes from and update the image in the canvas
         self._image_bytes = img_data
         stream = io.BytesIO(img_data)
-        self._img = ImageTk.PhotoImage(self._resize_image(Image.open(stream)))
+        image = Image.open(stream)
+        
+        self._img = ImageTk.PhotoImage(self._resize_image(image))
         self.canvas.itemconfig(self.item_on_canvas, image=self._img)
         self.update_idletasks()
         self.update()

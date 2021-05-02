@@ -28,7 +28,7 @@ class MySocket:
         self._sock.sendall(bytes(command, "utf8"))
         print("> request: " + str(command))
 
-    def receive(self, buff_size=2048):
+    def receive(self, buff_size = 2048):
         try:
             response = self.recv_timeout(the_socket=self._sock, buff=buff_size)
             print("> response received, data size:", sys.getsizeof(response))
