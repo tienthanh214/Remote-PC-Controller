@@ -64,7 +64,7 @@ class Registry(tk.Frame):
             self, height=1, text="Đường dẫn:", width=20, justify="left")
         self.lbl_path.grid(row=4, column=0, sticky=tk.E,
                            padx=10, pady=0, columnspan=1)
-        self.txt_path = tk.Entry(self, width=48, height=1, bg="#E5E5E5")
+        self.txt_path = tk.Text(self, width=48, height=1, bg="#E5E5E5")
         self.txt_path.grid(row=4, column=1, sticky=tk.W,
                            padx=10, pady=10, columnspan=3)
 
@@ -73,7 +73,7 @@ class Registry(tk.Frame):
             self, height=1, text="Name value", justify="center")
         self.lbl_name.grid(row=5, column=0, sticky=tk.N,
                            padx=10, pady=0, columnspan=1)
-        self.txt_name = tk.Entry(self, width=24, height=1, bg="#E5E5E5")
+        self.txt_name = tk.Text(self, width=24, height=1, bg="#E5E5E5")
         self.txt_name.grid(row=6, column=0, sticky=tk.N,
                            padx=10, pady=10, columnspan=1)
 
@@ -82,7 +82,7 @@ class Registry(tk.Frame):
             self, height=1, text="Value", justify="center")
         self.lbl_value.grid(row=5, column=1, sticky=tk.N,
                             padx=10, pady=0, columnspan=2)
-        self.txt_value = tk.Entry(self, width=24, height=1, bg="#E5E5E5")
+        self.txt_value = tk.Text(self, width=24, height=1, bg="#E5E5E5")
         self.txt_value.grid(row=6, column=1, sticky=tk.N,
                             padx=10, pady=10, columnspan=2)
 

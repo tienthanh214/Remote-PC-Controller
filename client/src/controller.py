@@ -22,6 +22,7 @@ class Application():
         self._menu.btn_screenshot.bind("<Button>", self.screenshot)
         self._menu.btn_registry.bind("<Button>", self.registry)
         self._menu.btn_shutdown.bind("<Button>", self.shutdown)
+        self._inputbox = [None] * 4
 
     def run(self):
         self._menu.mainloop()
@@ -40,18 +41,20 @@ class Application():
         self._running_prc.mainloop()
 
     def running_prc_kill(self, event):
-        self._inputbox = util.inputbox(tk.Toplevel(self._root))
+        self._inputbox[0] = util.inputbox(
+            tk.Toplevel(self._root), tl="process", cmd="kill")
         # binding...
-        self._inputbox.btn_get.bind("<Button>", lambda e: self.manip_runnin(
-            event=e, cmd="process", act="kill"))
-        self._inputbox.mainloop()
+        self._inputbox[0].btn_get.bind("<Button>", lambda e: self.manip_runnin(
+            event=e, boxid=0, cmd="process", act="kill"))
+        self._inputbox[0].mainloop()
 
     def running_prc_start(self, event):
-        self._inputbox = util.inputbox(tk.Toplevel(self._root))
+        self._inputbox[1] = util.inputbox(
+            tk.Toplevel(self._root), tl="process", cmd="start")
         # binding...
-        self._inputbox.btn_get.bind("<Button>", lambda e: self.manip_runnin(
-            event=e, cmd="process", act="start"))
-        self._inputbox.mainloop()
+        self._inputbox[1].btn_get.bind("<Button>", lambda e: self.manip_runnin(
+            event=e, boxid=1, cmd="process", act="start"))
+        self._inputbox[1].mainloop()
 
     def running_prc_view(self, event):
         self._socket.send("process")
@@ -70,26 +73,28 @@ class Application():
         self._running_app.mainloop()
 
     def running_app_kill(self, event):
-        self._inputbox = util.inputbox(tk.Toplevel(self._root))
+        self._inputbox[2] = util.inputbox(tk.Toplevel(
+            self._root), tl="application", cmd="kill")
         # binding...
-        self._inputbox.btn_get.bind("<Button>", lambda e: self.manip_runnin(
-            event=e, cmd="application", act="kill"))
-        self._inputbox.mainloop()
+        self._inputbox[2].btn_get.bind("<Button>", lambda e: self.manip_runnin(
+            event=e, boxid=2, cmd="application", act="kill"))
+        self._inputbox[2].mainloop()
 
     def running_app_start(self, event):
-        self._inputbox = util.inputbox(tk.Toplevel(self._root))
+        self._inputbox[3] = util.inputbox(tk.Toplevel(
+            self._root), tl="application", cmd="start")
         # binding...
-        self._inputbox.btn_get.bind("<Button>", lambda e: self.manip_runnin(
-            event=e, cmd="application", act="start"))
-        self._inputbox.mainloop()
+        self._inputbox[3].btn_get.bind("<Button>", lambda e: self.manip_runnin(
+            event=e, boxid=3, cmd="application", act="start"))
+        self._inputbox[3].mainloop()
 
     def running_app_view(self, event):
         self._socket.send("application")
         data = self._socket.receive()
         self._running_app.view(data)
 
-    def manip_runnin(self, event, cmd, act):
-        target = self._inputbox.getvalue()
+    def manip_runnin(self, event, boxid, cmd, act):
+        target = self._inputbox[boxid].getvalue()
         self._socket.send('/'.join([cmd, act, target]))
 
     # 3 yes
@@ -137,26 +142,26 @@ class Application():
     def registry(self, event):
         self._registry = regis.Registry(tk.Toplevel(self._root))
         # bindings...
-        self._registry.btn_browse.bind("Button", self.registry_browse)
-        self._registry.btn_sendcont.bind("Button", self.registry_sendcont)
-        self._registry.btn_send.bind("Button", self.registry_send)
+        self._registry.btn_browse.bind("<Button>", self.registry_browse)
+        self._registry.btn_sendcont.bind("<Button>", self.registry_sendcont)
+        self._registry.btn_send.bind("<Button>", self.registry_send)
         self._registry.mainloop()
 
-    def registry_browse(self):
+    def registry_browse(self, event):
         self._registry.browse_path()
 
-    def registry_sendcont(self):
+    def registry_sendcont(self, event):
         self._socket.send(
             '/'.join(["registry", "set", self._registry._regcont]))
 
-    def registry_send(self):
-        func = self._registry._df_func
-        path = self._registry.txt_path.get()
-        name = self._registry.txt_name.get()
-        value = self._registry.txt_value.get()
-        dttp = self._registry._df_dttype
+    def registry_send(self, event):
+        func = self._registry._df_func.get().strip("\n")
+        path = self._registry.txt_path.get("1.0", tk.END).strip("\n")
+        name = self._registry.txt_name.get("1.0", tk.END).strip("\n")
+        value = self._registry.txt_value.get("1.0", tk.END).strip("\n")
+        dttp = self._registry._df_dttype.get().strip("\n")
 
-        request = ""
+        request = None
         if func == "Get value":
             request = ["get", path, name]
         elif func == 'Set value':

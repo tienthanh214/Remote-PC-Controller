@@ -26,7 +26,7 @@ def messagebox(title="client", msg="Done", type="info"):
 
 class inputbox(tk.Frame):
     # Mainly used for killing and starting application or process
-    def __init__(self, master, cmd="?", tl="?", btn="?"):
+    def __init__(self, master, tl="?", cmd="?"):
         super().__init__(master)
         self.master = master
         self.master.title(tl + " " + cmd)
@@ -35,7 +35,7 @@ class inputbox(tk.Frame):
             self.master, textvariable="Nhập ID", width=30)
         self.input_field.pack(side=tk.LEFT, padx=10, pady=10)
 
-        self.btn_get = tk.Button(self.master, text=btn, width=15)
+        self.btn_get = tk.Button(self.master, text=cmd, width=15)
         self.btn_get.pack(side=tk.LEFT, padx=10, pady=10)
 
     def getvalue(self):
