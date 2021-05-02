@@ -1,7 +1,5 @@
 import socket as sk
 import time
-from enum import Enum
-from threading import Thread
 import sys
 
 # Text-based ommands are sent to the server

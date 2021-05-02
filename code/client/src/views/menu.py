@@ -24,7 +24,6 @@ class Menu(tk.Frame):
         # Get user input of IP address
         self.myEntry = tk.Entry(self, width=40)
         self.myEntry.focus()
-        self.myEntry.bind("<Return>", self.returnIP)
         self.myEntry.grid(row=0, column=1, padx=10, pady=5, columnspan=2)
 
         # Press to connect or disconnect
@@ -74,9 +73,3 @@ class Menu(tk.Frame):
                                   command=self.master.destroy)
         self.btn_quit.grid(row=4, column=1, sticky=tk.W +
                            tk.S+tk.E+tk.N, padx=10, pady=10, columnspan=2)
-
-    def returnIP(self, args=None):
-        print(args)
-        result = self.myEntry.get()
-        self.resultLabel.config(text=result)
-        self.myEntry.delete(0, tk.END)

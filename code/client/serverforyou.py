@@ -29,9 +29,9 @@ while True:
 
             print("> request: " + str_data)
 
-            # if str_data == "exit":
-            #     # exit and close this connection
-            #     raise Exception("! client has exited")
+            if str_data == "exit":
+                # exit and close this connection
+                raise Exception("! client has exited")
             # elif str_data == "screenshot":
             #     # send a image data to the client
             #     f = open('./_server_assets/ndtt.jpg', 'rb')

@@ -28,7 +28,9 @@ class Controller():
         self._menu.mainloop()
 
     def connect(self, event):
-        self._socket.connect(ip='127.0.0.1', port=54321)
+        ip = self._menu.myEntry.get().strip("\n")
+        self.resultLabel.config(text=ip)
+        self._socket.connect(ip=ip)
 
     # 1 yes
     def running_prc(self, event):
