@@ -29,56 +29,68 @@ class Application():
     def connect(self, event):
         self._socket.connect(ip='localhost', port=54321)
 
-    # 1 no
+    # 1 yes
     def running_prc(self, event):
         self._running_prc = runng.Running(tk.Toplevel(self._root))
         # bindings...
         self._running_prc.btn_kill.bind("<Button>", self.running_prc_kill)
         self._running_prc.btn_view.bind("<Button>", self.running_prc_view)
-        self._running_prc.btn_clear.bind("<Button>", self.running_prc_clear)
         self._running_prc.btn_start.bind("<Button>", self.running_prc_start)
         # run window
         self._running_prc.mainloop()
 
     def running_prc_kill(self, event):
-        self._running_prc.manip_runn(action="kill")
+        self._inputbox = util.inputbox(tk.Toplevel(self._root))
+        # binding...
+        self._inputbox.btn_get.bind("<Button>", lambda e: self.manip_runnin(
+            event=e, cmd="process", act="kill"))
+        self._inputbox.mainloop()
 
     def running_prc_start(self, event):
-        self._running_prc.manip_runn()
-
-    def running_prc_clear(self, event):
-        self._running_prc.clear()
+        self._inputbox = util.inputbox(tk.Toplevel(self._root))
+        # binding...
+        self._inputbox.btn_get.bind("<Button>", lambda e: self.manip_runnin(
+            event=e, cmd="process", act="start"))
+        self._inputbox.mainloop()
 
     def running_prc_view(self, event):
         self._socket.send("process")
         data = self._socket.receive()
         self._running_prc.view(data)
 
-    # 2 no
+    # 2 yes
     def running_app(self, event):
         self._running_app = runng.Running(
             tk.Toplevel(self._root), "application")
         # bindings...
         self._running_app.btn_kill.bind("<Button>", self.running_app_kill)
         self._running_app.btn_view.bind("<Button>", self.running_app_view)
-        self._running_app.btn_clear.bind("<Button>", self.running_app_clear)
         self._running_app.btn_start.bind("<Button>", self.running_app_start)
         # run window
         self._running_app.mainloop()
 
     def running_app_kill(self, event):
-        self._running_app.manip_runn(action="kill")
+        self._inputbox = util.inputbox(tk.Toplevel(self._root))
+        # binding...
+        self._inputbox.btn_get.bind("<Button>", lambda e: self.manip_runnin(
+            event=e, cmd="application", act="kill"))
+        self._inputbox.mainloop()
 
     def running_app_start(self, event):
-        self._running_app.manip_runn()
-
-    def running_app_clear(self, event):
-        self._running_app.clear()
+        self._inputbox = util.inputbox(tk.Toplevel(self._root))
+        # binding...
+        self._inputbox.btn_get.bind("<Button>", lambda e: self.manip_runnin(
+            event=e, cmd="application", act="start"))
+        self._inputbox.mainloop()
 
     def running_app_view(self, event):
         self._socket.send("application")
         data = self._socket.receive()
         self._running_app.view(data)
+
+    def manip_runnin(self, event, cmd, act):
+        target = self._inputbox.getvalue()
+        self._socket.send('/'.join([cmd, act, target]))
 
     # 3 yes
     def keystroke(self, event):
@@ -92,11 +104,11 @@ class Application():
         self._keystroke.mainloop()
 
     def keystroke_hook(self, event):
-        self._socket.send("keystroke hook")
+        self._socket.send("keystroke/hook")
         data = self._socket.receive()
 
     def keystroke_unhook(self, event):
-        self._socket.send("keystroke unhook")
+        self._socket.send("keystroke/unhook")
         data = self._socket.receive()
 
     def keystroke_print(self, event):

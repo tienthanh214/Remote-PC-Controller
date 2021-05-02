@@ -31,7 +31,7 @@ class Running(tk.Frame):
 
         # Clear the running process or application table
         self.btn_clear = tk.Button(
-            self, text="Xóa", width=10, height=2)
+            self, text="Xóa", command=self.clear, width=10, height=2)
         self.btn_clear.grid(row=0, column=2, sticky=tk.N, padx=10, pady=10)
 
         # Similar to btn_kill, but this will take the name of the application and start it instead
@@ -60,7 +60,3 @@ class Running(tk.Frame):
         # clear data in the tabel before updating
         for rowid in self.table.get_children():
             self.table.delete(rowid)
-
-    def manip_runn(self, action="start"):
-        inp = util.inputbox(tk.Tk(), cmd=self._cmd, tl=action, btn=action)
-        return inp.getvalue()

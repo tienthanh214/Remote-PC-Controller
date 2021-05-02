@@ -4,15 +4,6 @@ from enum import Enum
 from threading import Thread
 import sys
 
-Cmd = {"connect": "connect",
-       "process": "process",
-       "app": "app",
-       "shutdown": "shutdown",
-       "screenshot": "screenshot",
-       "keystroke": "keystroke",
-       "registry": "registry",
-       "exit": "exit"}
-
 # Text-based ommands are sent to the server
 # The server than perform operation with window API accordingly
 
