@@ -108,7 +108,7 @@ class Registry(tk.Frame):
 
         # Send these command to the server
         self.btn_send = tk.Button(
-            self, text="Gửi", command=None, width=10, height=2)
+            self, text="Gửi", width=10, height=2)
         self.btn_send.grid(row=8, column=0, sticky=tk.N,
                            padx=10, pady=10, columnspan=2)
 

