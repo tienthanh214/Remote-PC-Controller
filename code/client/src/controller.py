@@ -16,12 +16,13 @@ class Controller():
         # Bind event to the Menu window's buttons
         self._menu = mnu.Menu(self._root)
         self._menu.btn_connect.bind("<Button>", self.connect)
-        self._menu.btn_process.bind("<Button>", self.running_prc)
-        self._menu.btn_app.bind("<Button>", self.running_app)
+        self._menu.btn_process.bind("<Button>", self.manager_prc)
+        self._menu.btn_app.bind("<Button>", self.manager_app)
         self._menu.btn_keystroke.bind("<Button>", self.keystroke)
         self._menu.btn_screenshot.bind("<Button>", self.screenshot)
         self._menu.btn_registry.bind("<Button>", self.registry)
         self._menu.btn_shutdown.bind("<Button>", self.shutdown)
+        self._menu.btn_quit.bind("<Button>", self.exit_prog)
         self._inputbox = [None] * 4
 
     def run(self):
@@ -29,20 +30,20 @@ class Controller():
 
     def connect(self, event):
         ip = self._menu.myEntry.get().strip("\n")
-        self.resultLabel.config(text=ip)
+        self._menu.resultLabel.config(text=ip)
         self._socket.connect(ip=ip)
 
     # 1 yes
-    def running_prc(self, event):
-        self._running_prc = mng.Manager(tk.Toplevel(self._root))
+    def manager_prc(self, event):
+        self._manager_prc = mng.Manager(tk.Toplevel(self._root))
         # bindings...
-        self._running_prc.btn_kill.bind("<Button>", self.running_prc_kill)
-        self._running_prc.btn_view.bind("<Button>", self.running_prc_view)
-        self._running_prc.btn_start.bind("<Button>", self.running_prc_start)
+        self._manager_prc.btn_kill.bind("<Button>", self.manager_prc_kill)
+        self._manager_prc.btn_view.bind("<Button>", self.manager_prc_view)
+        self._manager_prc.btn_start.bind("<Button>", self.manager_prc_start)
         # run window
-        self._running_prc.mainloop()
+        self._manager_prc.mainloop()
 
-    def running_prc_kill(self, event):
+    def manager_prc_kill(self, event):
         self._inputbox[0] = utl.inputbox(
             tk.Toplevel(self._root), tl="process", cmd="kill")
         # binding...
@@ -50,7 +51,7 @@ class Controller():
             event=e, boxid=0, cmd="process", act="kill"))
         self._inputbox[0].mainloop()
 
-    def running_prc_start(self, event):
+    def manager_prc_start(self, event):
         self._inputbox[1] = utl.inputbox(
             tk.Toplevel(self._root), tl="process", cmd="start")
         # binding...
@@ -58,23 +59,23 @@ class Controller():
             event=e, boxid=1, cmd="process", act="start"))
         self._inputbox[1].mainloop()
 
-    def running_prc_view(self, event):
+    def manager_prc_view(self, event):
         self._socket.send("process")
         data = self._socket.receive()
-        self._running_prc.view(data)
+        self._manager_prc.view(data)
 
     # 2 yes
-    def running_app(self, event):
-        self._running_app = mng.Manager(
+    def manager_app(self, event):
+        self._manager_app = mng.Manager(
             tk.Toplevel(self._root), "application")
         # bindings...
-        self._running_app.btn_kill.bind("<Button>", self.running_app_kill)
-        self._running_app.btn_view.bind("<Button>", self.running_app_view)
-        self._running_app.btn_start.bind("<Button>", self.running_app_start)
+        self._manager_app.btn_kill.bind("<Button>", self.manager_app_kill)
+        self._manager_app.btn_view.bind("<Button>", self.manager_app_view)
+        self._manager_app.btn_start.bind("<Button>", self.manager_app_start)
         # run window
-        self._running_app.mainloop()
+        self._manager_app.mainloop()
 
-    def running_app_kill(self, event):
+    def manager_app_kill(self, event):
         self._inputbox[2] = utl.inputbox(tk.Toplevel(
             self._root), tl="application", cmd="kill")
         # binding...
@@ -82,7 +83,7 @@ class Controller():
             event=e, boxid=2, cmd="application", act="kill"))
         self._inputbox[2].mainloop()
 
-    def running_app_start(self, event):
+    def manager_app_start(self, event):
         self._inputbox[3] = utl.inputbox(tk.Toplevel(
             self._root), tl="application", cmd="start")
         # binding...
@@ -90,10 +91,10 @@ class Controller():
             event=e, boxid=3, cmd="application", act="start"))
         self._inputbox[3].mainloop()
 
-    def running_app_view(self, event):
+    def manager_app_view(self, event):
         self._socket.send("application")
         data = self._socket.receive()
-        self._running_app.view(data)
+        self._manager_app.view(data)
 
     def manip_runnin(self, event, boxid, cmd, act):
         target = self._inputbox[boxid].getvalue()
@@ -182,3 +183,7 @@ class Controller():
     def shutdown(self, event):
         self._socket.send("shutdown")
         self._socket.shutdown()
+
+    def exit_prog(self, event):
+        self._socket.shutdown()
+        self._root.destroy
