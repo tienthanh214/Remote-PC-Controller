@@ -1,5 +1,7 @@
-import tkinter as tk
+import io
 import socket
+import tkinter as tk
+from PIL import ImageGrab
 
 class Server:
     def __init__(self):
@@ -23,12 +25,58 @@ class Server:
         self.server.listen(1)
 
         self.client, addr = self.server.accept()
-        print("Connected by ", addr)
+        print("Connected by", addr)
+        
         while True:
-            msg = self.client.recv(1024)
-            print(msg)
-            if (msg == "QUIT"):
+            cmd = self.client.recv(1024).decode('utf8')
+            if cmd == 'keystroke':
+                self.keystroke()
+            elif cmd == 'shutdown':
+                self.shutdown()
+            elif cmd == 'registry':
+                self.registry()
+            elif cmd == 'screenshot':
+                self.screenshot()
+            elif cmd == 'process':
+                self.process()
+            elif cmd == 'application':
+                self.application()
+            elif cmd == 'quit':
                 break
+
+        self.client.shutdown(socket.SHUT_RDWR)
+        self.client.close()
+        self.server.close()
+
+
+    def keystroke(self):
+        pass
+
+    def shutdown(self):
+        pass
+
+    def registry(self):
+        pass
+
+    def screenshot(self):
+        while True:
+            cmd = self.client.recv(1024).decode('utf8')
+            if cmd == "screenshot,snap":
+                image = ImageGrab.grab()
+                byteIO = io.BytesIO()
+                image.save(byteIO, format = 'BMP')
+                byteArr = byteIO.getvalue()
+                print(len(byteArr))
+                self.client.send(bytes(str(len(byteArr)), "utf8"))
+                
+                self.client.sendall(byteArr)
+        pass
+
+    def process(self):
+        pass
+
+    def application(self):
+        pass
 
     pass
 
