@@ -1,20 +1,20 @@
-import src.views.menu as menu
-import src.views.screenshot as scrsh
-import src.views.running as runng
-import src.views.keystroke as kystk
-import src.views.registry as regis
-import src.views.utilities as util
-import src.model as mysk
+import src.views.menu as mnu
+import src.views.screenshot as ssh
+import src.views.manager as mng
+import src.views.keystroke as ksk
+import src.views.registry as rgs
+import src.views.utilities as utl
+import src.model as msk
 import tkinter as tk
 
 
-class Application():
+class Controller():
     def __init__(self, sock=None):
         super().__init__()
         self._root = tk.Tk()
-        self._socket = mysk.MySocket()
+        self._socket = msk.MySocket()
         # Bind event to the Menu window's buttons
-        self._menu = menu.Menu(self._root)
+        self._menu = mnu.Menu(self._root)
         self._menu.btn_connect.bind("<Button>", self.connect)
         self._menu.btn_process.bind("<Button>", self.running_prc)
         self._menu.btn_app.bind("<Button>", self.running_app)
@@ -28,11 +28,11 @@ class Application():
         self._menu.mainloop()
 
     def connect(self, event):
-        self._socket.connect(ip='localhost', port=54321)
+        self._socket.connect(ip='127.0.0.1', port=54321)
 
     # 1 yes
     def running_prc(self, event):
-        self._running_prc = runng.Running(tk.Toplevel(self._root))
+        self._running_prc = mng.Manager(tk.Toplevel(self._root))
         # bindings...
         self._running_prc.btn_kill.bind("<Button>", self.running_prc_kill)
         self._running_prc.btn_view.bind("<Button>", self.running_prc_view)
@@ -41,7 +41,7 @@ class Application():
         self._running_prc.mainloop()
 
     def running_prc_kill(self, event):
-        self._inputbox[0] = util.inputbox(
+        self._inputbox[0] = utl.inputbox(
             tk.Toplevel(self._root), tl="process", cmd="kill")
         # binding...
         self._inputbox[0].btn_get.bind("<Button>", lambda e: self.manip_runnin(
@@ -49,7 +49,7 @@ class Application():
         self._inputbox[0].mainloop()
 
     def running_prc_start(self, event):
-        self._inputbox[1] = util.inputbox(
+        self._inputbox[1] = utl.inputbox(
             tk.Toplevel(self._root), tl="process", cmd="start")
         # binding...
         self._inputbox[1].btn_get.bind("<Button>", lambda e: self.manip_runnin(
@@ -63,7 +63,7 @@ class Application():
 
     # 2 yes
     def running_app(self, event):
-        self._running_app = runng.Running(
+        self._running_app = mng.Manager(
             tk.Toplevel(self._root), "application")
         # bindings...
         self._running_app.btn_kill.bind("<Button>", self.running_app_kill)
@@ -73,7 +73,7 @@ class Application():
         self._running_app.mainloop()
 
     def running_app_kill(self, event):
-        self._inputbox[2] = util.inputbox(tk.Toplevel(
+        self._inputbox[2] = utl.inputbox(tk.Toplevel(
             self._root), tl="application", cmd="kill")
         # binding...
         self._inputbox[2].btn_get.bind("<Button>", lambda e: self.manip_runnin(
@@ -81,7 +81,7 @@ class Application():
         self._inputbox[2].mainloop()
 
     def running_app_start(self, event):
-        self._inputbox[3] = util.inputbox(tk.Toplevel(
+        self._inputbox[3] = utl.inputbox(tk.Toplevel(
             self._root), tl="application", cmd="start")
         # binding...
         self._inputbox[3].btn_get.bind("<Button>", lambda e: self.manip_runnin(
@@ -95,11 +95,11 @@ class Application():
 
     def manip_runnin(self, event, boxid, cmd, act):
         target = self._inputbox[boxid].getvalue()
-        self._socket.send('/'.join([cmd, act, target]))
+        self._socket.send(','.join([cmd, act, target]))
 
     # 3 yes
     def keystroke(self, event):
-        self._keystroke = kystk.Keystroke(tk.Toplevel(self._root))
+        self._keystroke = ksk.Keystroke(tk.Toplevel(self._root))
         # bindings...
         self._keystroke.btn_hook.bind("<Button>", self.keystroke_hook)
         self._keystroke.btn_unhook.bind("<Button>", self.keystroke_unhook)
@@ -109,11 +109,11 @@ class Application():
         self._keystroke.mainloop()
 
     def keystroke_hook(self, event):
-        self._socket.send("keystroke/hook")
+        self._socket.send(','.join(["keystroke", "hook"]))
         data = self._socket.receive()
 
     def keystroke_unhook(self, event):
-        self._socket.send("keystroke/unhook")
+        self._socket.send(','.join(["keystroke", "unhook"]))
         data = self._socket.receive()
 
     def keystroke_print(self, event):
@@ -123,7 +123,7 @@ class Application():
 
     # 4 yes
     def screenshot(self, event):
-        self._screenshot = scrsh.Screenshot(tk.Toplevel(self._root))
+        self._screenshot = ssh.Screenshot(tk.Toplevel(self._root))
         # bindings...
         self._screenshot.btn_snap.bind("<Button>", self.screenshot_snap)
         self._screenshot.btn_save.bind("<Button>", self.screenshot_save)
@@ -140,7 +140,7 @@ class Application():
 
     # 5 no
     def registry(self, event):
-        self._registry = regis.Registry(tk.Toplevel(self._root))
+        self._registry = rgs.Registry(tk.Toplevel(self._root))
         # bindings...
         self._registry.btn_browse.bind("<Button>", self.registry_browse)
         self._registry.btn_sendcont.bind("<Button>", self.registry_sendcont)
@@ -152,7 +152,7 @@ class Application():
 
     def registry_sendcont(self, event):
         self._socket.send(
-            '/'.join(["registry", "set", self._registry._regcont]))
+            ','.join(["registry", "set", self._registry._regcont]))
 
     def registry_send(self, event):
         func = self._registry._df_func.get().strip("\n")
@@ -174,7 +174,7 @@ class Application():
             request = ["delete", path]
 
         self._socket.send(
-            '/'.join(request))
+            ','.join(request))
 
     # 6 yes
     def shutdown(self, event):

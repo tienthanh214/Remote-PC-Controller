@@ -1,11 +1,11 @@
 import tkinter as tk
 import time
-import src.controller as app
+import src.controller as ctrl
 
 
 def main():
-    client = app.Application()
-    client.run()
+    app = ctrl.Controller()
+    app.run()
 
 
 if __name__ == "__main__":

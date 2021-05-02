@@ -6,7 +6,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 
 
-class Running(tk.Frame):
+class Manager(tk.Frame):
     def __init__(self, master, command="process"):
         super().__init__(master)
         self.master = master
