@@ -185,5 +185,6 @@ class Controller():
         self._socket.shutdown()
 
     def exit_prog(self, event):
+        self._socket.send("quit")
         self._socket.shutdown()
         self._root.destroy
