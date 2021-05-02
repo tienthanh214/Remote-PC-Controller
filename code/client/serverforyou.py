@@ -32,22 +32,23 @@ while True:
             if str_data == "exit":
                 # exit and close this connection
                 raise Exception("! client has exited")
-            # elif str_data == "screenshot":
-            #     # send a image data to the client
-            #     f = open('./_server_assets/ndtt.jpg', 'rb')
-            #     l = f.read(2048)
-            #     while l:
-            #         conn.send(l)
-            #         l = f.read(2048)
-            #     print("> image sent")
-            #     f.close()
-            # else:
-            #     # send a text to be displayed by the GUI
-            #     conn.send(bytes(my_data, "utf8"))
-            #     print("> string sent")
+            elif str_data == "screenshot":
+                # send a image data to the client
+                f = open('./_server_assets/ndtt.jpg', 'rb')
+                l = f.read(2048)
+                while l:
+                    conn.send(l)
+                    l = f.read(2048)
+                conn.send(bytes("{quit}", "utf8"))
+                print("> image sent")
+                f.close()
+            else:
+                # send a text to be displayed by the GUI
+                conn.send(bytes(my_data, "utf8"))
+                print("> string sent")
 
-            # conn.shutdown(socket.SHUT_WR)
-            #print('! connection shutdown')
+            conn.shutdown(socket.SHUT_WR)
+            print('! connection shutdown')
 
     finally:
         # Clean up the connection

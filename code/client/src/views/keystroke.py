@@ -38,7 +38,7 @@ class Keystroke(tk.Frame):
 
         # Display the text
         self.text_field = tk.Text(self, width=64, height=20, bg="#E5E5E5")
-        
+
         self.text_field.grid(row=1, column=0, sticky=tk.N,
                              padx=10, pady=10, columnspan=4)
 

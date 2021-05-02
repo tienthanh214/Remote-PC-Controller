@@ -9,14 +9,19 @@ import sys
 class MySocket:
     def __init__(self, sock=None):
         super().__init__()
+        self._isconnected = False
         if sock is None:
             self._sock = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
         else:
             self._sock = sock
 
     def connect(self, ip, port=54321):
-        address = (ip, port)
-        self._sock.connect(address)
+        self._isconnected = True
+        try:
+            address = (ip, port)
+            self._sock.connect(address)
+        except:
+            self._isconnected = False
 
     def send(self, command="exit"):
         # Send request to the server and the server return data
@@ -41,7 +46,7 @@ class MySocket:
         # Further sends are disallowed
         self._sock.shutdown(sk.SHUT_WR)
 
-    def recv_timeout(self, the_socket, buff, timeout=0.2):
+    def recv_timeout(self, the_socket, buff, timeout=0.5):
         # Collect chunk of data from the server
         # We know that evrything has been received when THE CONNECTION IS CLOSED
         the_socket.setblocking(0)

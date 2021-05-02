@@ -33,8 +33,11 @@ class Controller():
         self._menu.resultLabel.config(text=ip)
         self._socket.connect(ip=ip)
 
-    # Function 1 yes
+    # Function 1
     def manager_prc(self, event):
+        if not self._socket._isconnected:
+            utl.messagebox("Process", "Not connected to server", "warn")
+            return
         self._socket.send("process")
         self._manager_prc = mng.Manager(tk.Toplevel(self._root))
         # bindings...
@@ -66,8 +69,11 @@ class Controller():
         data = self._socket.receive()
         self._manager_prc.view(data)
 
-    # Function 2 yes
+    # Function 2
     def manager_app(self, event):
+        if not self._socket._isconnected:
+            utl.messagebox("Application", "Not connected to server", "warn")
+            return
         self._socket.send("application")
         self._manager_app = mng.Manager(
             tk.Toplevel(self._root), "application")
@@ -104,8 +110,11 @@ class Controller():
         target = self._inputbox[boxid].getvalue()
         self._socket.send(','.join([cmd, act, target]))
 
-    # Function 3 yes
+    # Function 3
     def keystroke(self, event):
+        if not self._socket._isconnected:
+            utl.messagebox("Keystroke", "Not connected to server", "warn")
+            return
         self._socket.send("keystroke")
         self._keystroke = ksk.Keystroke(tk.Toplevel(self._root))
         # bindings...
@@ -130,8 +139,11 @@ class Controller():
         data = self._socket.receive()
         self._keystroke.print_keystroke(data.decode("utf8"))
 
-    # Function 4 yes
+    # Function 4
     def screenshot(self, event):
+        if not self._socket._isconnected:
+            utl.messagebox("Screenshot", "Not connected to server", "warn")
+            return
         self._socket.send("screenshot")
         self._screenshot = ssh.Screenshot(tk.Toplevel(self._root))
         # bindings...
@@ -149,8 +161,11 @@ class Controller():
     def screenshot_save(self, event):
         self._screenshot.save_image()
 
-    # Function 5 yes
+    # Function 5
     def registry(self, event):
+        if not self._socket._isconnected:
+            utl.messagebox("Registry", "Not connected to server", "warn")
+            return
         self._socket.send("registry")
         self._registry = rgs.Registry(tk.Toplevel(self._root))
         # bindings...
@@ -189,14 +204,18 @@ class Controller():
         self._socket.send(
             ','.join(request))
 
-    # Function 6 yes
+    # Function 6
     def shutdown(self, event):
+        if not self._socket._isconnected:
+            utl.messagebox("Process", "Not connected to server", "warn")
+            return
         self._socket.send("shutdown")
         self._socket.shutdown()
 
     def exit_func(self, event):
         self._socket.send("exit")
 
+    # Exit program
     def exit_prog(self, event):
         try:
             self._socket.send("quit")

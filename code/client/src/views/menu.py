@@ -28,7 +28,7 @@ class Menu(tk.Frame):
 
         # Press to connect or disconnect
         self.btn_connect = tk.Button(self, text="CONNECT", fg="green",
-                                    )
+                                     )
         self.btn_connect.grid(row=0, column=3, sticky=tk.W +
                               tk.S+tk.E+tk.N, padx=10, pady=10, columnspan=1)
 
