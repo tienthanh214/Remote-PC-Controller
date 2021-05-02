@@ -140,8 +140,36 @@ class Application():
         self._registry.btn_browse.bind("Button", self.registry_browse)
         self._registry.btn_sendcont.bind("Button", self.registry_sendcont)
         self._registry.btn_send.bind("Button", self.registry_send)
-        self._registry.btn_clear.bind("Button", self.registry_clear)
         self._registry.mainloop()
+
+    def registry_browse(self):
+        self._registry.browse_path()
+
+    def registry_sendcont(self):
+        self._socket.send(
+            '/'.join(["registry", "set", self._registry._regcont]))
+
+    def registry_send(self):
+        func = self._registry._df_func
+        path = self._registry.txt_path.get()
+        name = self._registry.txt_name.get()
+        value = self._registry.txt_value.get()
+        dttp = self._registry._df_dttype
+
+        request = ""
+        if func == "Get value":
+            request = ["get", path, name]
+        elif func == 'Set value':
+            request = ["set", path, name, value, dttp]
+        elif func == 'Delete value':
+            request = ["delete", path, name]
+        elif func == 'Create key':
+            request = ["create", path]
+        elif func == 'Delete key':
+            request = ["delete", path]
+
+        self._socket.send(
+            '/'.join(request))
 
     # 6 yes
     def shutdown(self, event):
