@@ -33,6 +33,9 @@ class Controller():
         ip = "localhost" # for testing only
         self._menu.resultLabel.config(text=ip)
         self._socket.connect(ip=ip)
+        if not self._socket._isconnected:
+            utl.messagebox("Client", "Fail to connect to server", "error")
+            return
 
     # Function 1
     def manager_prc(self, event):
