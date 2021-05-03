@@ -23,6 +23,7 @@ class Controller():
         self._menu.btn_registry.bind("<Button>", self.registry)
         self._menu.btn_shutdown.bind("<Button>", self.shutdown)
         self._menu.btn_quit.bind("<Button>", self.exit_prog)
+        self._menu.bind("<Destroy>", self.exit_prog)
         self._inputbox = [None] * 4
 
     def run(self):
@@ -48,7 +49,7 @@ class Controller():
         self._manager_prc.btn_kill.bind("<Button>", self.manager_prc_kill)
         self._manager_prc.btn_view.bind("<Button>", self.manager_prc_view)
         self._manager_prc.btn_start.bind("<Button>", self.manager_prc_start)
-        self._manager_prc.btn_start.bind("<Destroy>", self.exit_func)
+        self._manager_prc.bind("<Destroy>", self.exit_func)
         # run window
         self._manager_prc.mainloop()
 
@@ -85,7 +86,7 @@ class Controller():
         self._manager_app.btn_kill.bind("<Button>", self.manager_app_kill)
         self._manager_app.btn_view.bind("<Button>", self.manager_app_view)
         self._manager_app.btn_start.bind("<Button>", self.manager_app_start)
-        self._manager_app.btn_start.bind("<Destroy>", self.exit_func)
+        self._manager_app.bind("<Destroy>", self.exit_func)
         # run window
         self._manager_app.mainloop()
 
@@ -125,7 +126,7 @@ class Controller():
         self._keystroke.btn_hook.bind("<Button>", self.keystroke_hook)
         self._keystroke.btn_unhook.bind("<Button>", self.keystroke_unhook)
         self._keystroke.btn_print.bind("<Button>", self.keystroke_print)
-        self._keystroke.btn_start.bind("<Destroy>", self.exit_func)
+        self._keystroke.bind("<Destroy>", self.exit_func)
         # self._keystroke.btn_clear.bind("<Button>", self.keystroke_clear)
         # run window
         self._keystroke.mainloop()
@@ -153,14 +154,14 @@ class Controller():
         # bindings...
         self._screenshot.btn_snap.bind("<Button>", self.screenshot_snap)
         self._screenshot.btn_save.bind("<Button>", self.screenshot_save)
-        self._screenshot.btn_start.bind("<Destroy>", self.exit_func)
+        self._screenshot.bind("<Destroy>", self.exit_func)
         self._screenshot.mainloop()
 
     def screenshot_snap(self, event):
         # send
         self._socket.send("screenshot,snap")
         picture_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(picture_len)
+        data = self._socket._sock.recv(picture_len)
         self._screenshot.update_image(data)
 
     def screenshot_save(self, event):
@@ -177,7 +178,7 @@ class Controller():
         self._registry.btn_browse.bind("<Button>", self.registry_browse)
         self._registry.btn_sendcont.bind("<Button>", self.registry_sendcont)
         self._registry.btn_send.bind("<Button>", self.registry_send)
-        self._registry.btn_start.bind("<Destroy>", self.exit_func)
+        self._registry.bind("<Destroy>", self.exit_func)
         self._registry.mainloop()
 
     def registry_browse(self, event):

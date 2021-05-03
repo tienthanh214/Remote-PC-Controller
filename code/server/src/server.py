@@ -1,7 +1,6 @@
-import io
 import socket
 import tkinter as tk
-from PIL import ImageGrab
+from src.screenshot import *
 
 class Server:
     def __init__(self):
@@ -59,17 +58,8 @@ class Server:
         pass
 
     def screenshot(self):
-        while True:
-            cmd = self.client.recv(1024).decode('utf8')
-            if cmd == "screenshot,snap":
-                image = ImageGrab.grab()
-                byteIO = io.BytesIO()
-                image.save(byteIO, format = 'BMP')
-                byteArr = byteIO.getvalue()
-                print(len(byteArr))
-                self.client.send(bytes(str(len(byteArr)), "utf8"))
-                
-                self.client.sendall(byteArr)
+        doit = Screenshot(self.client)
+        doit.run()
         pass
 
     def process(self):
@@ -79,6 +69,3 @@ class Server:
         pass
 
     pass
-
-app = Server()
-app.run()
