@@ -1,6 +1,7 @@
 import socket
 import tkinter as tk
-from src.screenshot import *
+from src.screenshot import Screenshot
+from src.process import Process
 
 class Server:
     def __init__(self):
@@ -63,6 +64,8 @@ class Server:
         pass
 
     def process(self):
+        doit = Process(self.client)
+        doit.run()
         pass
 
     def application(self):

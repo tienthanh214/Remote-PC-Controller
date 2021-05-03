@@ -15,7 +15,7 @@ class Screenshot:
                 image.save(byteIO, format = 'BMP')
                 byteArr = byteIO.getvalue()
                 # send image Size then read image
-                self.client.send(bytes(str(len(byteArr)), "utf8"))
-                self.client.send(byteArr)
+                self.client.sendall(bytes(str(len(byteArr)), "utf8"))
+                self.client.sendall(byteArr)
             elif cmd == "exit":
                 return

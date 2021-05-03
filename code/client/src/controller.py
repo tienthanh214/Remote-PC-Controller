@@ -71,7 +71,7 @@ class Controller():
 
     def manager_prc_view(self, event):
         self._socket.send("process,view")
-        data = self._socket.receive()
+        data = self._socket.receive().decode("utf8")
         self._manager_prc.view(data)
 
     # Function 2
