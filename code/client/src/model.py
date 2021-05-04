@@ -29,14 +29,15 @@ class MySocket:
         self._sock.sendall(bytes(command, "utf8"))
         print("> request: " + str(command))
 
-    def receive(self, length=2048, buff_size = 2048):
+    def receive(self, length=2048):
         try:
-            arr = bytearray(length)
-            pos = 0
-            while pos < length:
-                arr[pos:pos + length] = self._sock.recv(length)
-                pos += length
-            return arr
+            data = bytearray()
+            while len(data) < length:
+                packet = self._sock.recv(length - len(data))
+                if not packet:
+                    return None
+                data.extend(packet)
+            return data
         except OSError:
             utl.messagebox("Screenshot", "Failed to receive image", "Error")
             pass

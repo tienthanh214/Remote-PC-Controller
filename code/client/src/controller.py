@@ -72,7 +72,7 @@ class Controller():
     def manager_prc_view(self, event):
         self._socket.send("process,view")
         list_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(len=list_len).decode("utf8")
+        data = self._socket.receive(length=list_len).decode("utf8")
         self._manager_prc.view(data)
 
     # Function 2
@@ -109,13 +109,19 @@ class Controller():
 
     def manager_app_view(self, event):
         self._socket.send("application,view")
-        list_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(len=list_len).decode("utf8")
+        list_len = int(self._socket._sock.recv(32).decode("utf8"))
+        data = self._socket.receive(length=list_len).decode("utf8")
         self._manager_app.view(data)
 
     def manip_runnin(self, event, boxid, cmd, act):
         target = self._inputbox[boxid].getvalue()
         self._socket.send(','.join([cmd, act, target]))
+        response = self._socket.receive(length=1024).decode("utf8")
+        if response == "SUCCESS":
+            status = "info"
+        else:
+            status = "error"
+        utl.messagebox(title=cmd, msg=response, type=status)
 
     # Function 3
     def keystroke(self, event):
@@ -142,7 +148,7 @@ class Controller():
     def keystroke_print(self, event):
         self._socket.send("keystroke,print")
         log_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(len=log_len).decode("utf8")
+        data = self._socket.receive(length=log_len).decode("utf8")
         self._keystroke.print_keystroke(data.decode("utf8"))
 
     # Function 4
@@ -162,7 +168,7 @@ class Controller():
         # send
         self._socket.send("screenshot,snap")
         picture_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(picture_len)
+        data = self._socket.receive(length=picture_len)
         self._screenshot.update_image(data)
 
     def screenshot_save(self, event):
