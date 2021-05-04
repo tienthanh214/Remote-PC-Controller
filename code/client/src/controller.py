@@ -31,7 +31,6 @@ class Controller():
 
     def connect(self, event):
         ip = self._menu.myEntry.get().strip("\n")
-        ip = "localhost" # for testing only
         self._menu.resultLabel.config(text=ip)
         self._socket.connect(ip=ip)
         if not self._socket._isconnected:
