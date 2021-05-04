@@ -23,7 +23,8 @@ class Controller():
         self._menu.btn_registry.bind("<Button>", self.registry)
         self._menu.btn_shutdown.bind("<Button>", self.shutdown)
         self._menu.btn_quit.bind("<Button>", self.exit_prog)
-        self._menu.bind("<Destroy>", self.exit_prog)
+        self._menu.bind("<Destroy>", lambda e: self.exit_prog(
+            event=e, isKilled=True))
         self._inputbox = [None] * 4
 
     def run(self):
@@ -70,7 +71,8 @@ class Controller():
 
     def manager_prc_view(self, event):
         self._socket.send("process,view")
-        data = self._socket.receive().decode("utf8")
+        list_len = int(self._socket._sock.recv(32).decode('utf8'))
+        data = self._socket.receive(len=list_len).decode("utf8")
         self._manager_prc.view(data)
 
     # Function 2
@@ -107,7 +109,8 @@ class Controller():
 
     def manager_app_view(self, event):
         self._socket.send("application,view")
-        data = self._socket.receive()
+        list_len = int(self._socket._sock.recv(32).decode('utf8'))
+        data = self._socket.receive(len=list_len).decode("utf8")
         self._manager_app.view(data)
 
     def manip_runnin(self, event, boxid, cmd, act):
@@ -132,15 +135,14 @@ class Controller():
 
     def keystroke_hook(self, event):
         self._socket.send(','.join(["keystroke", "hook"]))
-        data = self._socket.receive()
 
     def keystroke_unhook(self, event):
         self._socket.send(','.join(["keystroke", "unhook"]))
-        data = self._socket.receive()
 
     def keystroke_print(self, event):
         self._socket.send("keystroke,print")
-        data = self._socket.receive()
+        log_len = int(self._socket._sock.recv(32).decode('utf8'))
+        data = self._socket.receive(len=log_len).decode("utf8")
         self._keystroke.print_keystroke(data.decode("utf8"))
 
     # Function 4
@@ -160,7 +162,7 @@ class Controller():
         # send
         self._socket.send("screenshot,snap")
         picture_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket._sock.recv(picture_len)
+        data = self._socket.receive(picture_len)
         self._screenshot.update_image(data)
 
     def screenshot_save(self, event):
@@ -221,11 +223,12 @@ class Controller():
         self._socket.send("exit")
 
     # Exit program
-    def exit_prog(self, event):
+    def exit_prog(self, event, isKilled=False):
         try:
             self._socket.send("quit")
-            self._socket.shutdown()
         except OSError:
             pass
         finally:
-            self._root.destroy()
+            self._socket.close()
+            if not isKilled:
+                self._root.destroy()

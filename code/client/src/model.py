@@ -1,6 +1,7 @@
 import socket as sk
 import time
 import sys
+import src.views.utilities as utl
 
 # Text-based ommands are sent to the server
 # The server than perform operation with window API accordingly
@@ -28,13 +29,17 @@ class MySocket:
         self._sock.sendall(bytes(command, "utf8"))
         print("> request: " + str(command))
 
-    def receive(self, buff_size = 2048):
+    def receive(self, length=2048, buff_size = 2048):
         try:
-            response = self.recv_timeout(the_socket=self._sock, buff=buff_size)
-            print("> response received, data size:", sys.getsizeof(response))
-            return response
+            arr = bytearray(length)
+            pos = 0
+            while pos < length:
+                arr[pos:pos + length] = self._sock.recv(length)
+                pos += length
+            return arr
         except OSError:
-            return OSError
+            utl.messagebox("Screenshot", "Failed to receive image", "Error")
+            pass
 
     def close(self):
         # Close the socket file descriptor
