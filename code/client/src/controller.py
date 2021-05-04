@@ -116,7 +116,7 @@ class Controller():
     def manip_runnin(self, event, boxid, cmd, act):
         target = self._inputbox[boxid].getvalue()
         self._socket.send(','.join([cmd, act, target]))
-        response = self._socket.receive(length=1024).decode("utf8")
+        response = self._socket.receive(length=32).decode("utf8")
         if response == "SUCCESS":
             status = "info"
         else:
