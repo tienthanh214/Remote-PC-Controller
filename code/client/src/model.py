@@ -24,18 +24,19 @@ class MySocket:
         except:
             self._isconnected = False
 
-    def send(self, command="exit"):
+    def send(self, command = "exit"):
         # Send request to the server and the server return data
         self._sock.sendall(bytes(command, "utf8"))
         print("> request: " + str(command))
 
-    def receive(self, length=2048):
+    def receive(self, length = 2048):
         try:
             data = bytearray()
             while len(data) < length:
                 packet = self._sock.recv(length - len(data))
                 if not packet:
                     return None
+                print(len(data))
                 data.extend(packet)
             return data
         except OSError:

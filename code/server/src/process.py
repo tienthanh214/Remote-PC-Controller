@@ -25,7 +25,8 @@ class Process:
 
     def process_view(self):
         output = os.popen('wmic process get name, processid, threadcount').read()
-        self.process_list = output.split('\n\n')[1:]
+        # self.process_list = output.split('\n\n')[1:]
+        self.client.sendall(bytes(str(len(output)), "utf8"))
         self.client.sendall(bytes(output, "utf8"))
         pass
 
@@ -33,11 +34,15 @@ class Process:
         pid = int(pid)
         try:
             os.kill(pid, 9) #9 = signal.SIGTERM
+            self.client.sendall(bytes("SUCCESS", "utf8"))
         except OSError:
-            print('send loi qua ben client nha nhe')
+            self.client.sendall(bytes("FAIL", "utf8"))
 
     def process_start(self, pname):
         pname += ".exe"
-        os.popen(pname)
-
+        try:
+            os.popen(pname)
+            self.client.sendall(bytes("SUCCESS", "utf8"))
+        except OSError:
+            self.client.sendall(bytes("FAIL", "utf8"))
 

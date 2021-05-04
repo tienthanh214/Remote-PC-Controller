@@ -116,7 +116,8 @@ class Controller():
     def manip_runnin(self, event, boxid, cmd, act):
         target = self._inputbox[boxid].getvalue()
         self._socket.send(','.join([cmd, act, target]))
-        response = self._socket.receive(length=32).decode("utf8")
+        response = self._socket._sock.recv(32).decode("utf8")
+        print(response)
         if response == "SUCCESS":
             status = "info"
         else:
@@ -168,7 +169,7 @@ class Controller():
         # send
         self._socket.send("screenshot,snap")
         picture_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(length=picture_len)
+        data = self._socket.receive(length = picture_len)
         self._screenshot.update_image(data)
 
     def screenshot_save(self, event):
