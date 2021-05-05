@@ -33,7 +33,7 @@ class Keystroke(tk.Frame):
 
         # Clear the screen
         self.btn_clear = tk.Button(
-            self, text="Xóa", width=10, height=2)
+            self, text="Xóa", command=self.clear_keystroke, width=10, height=2)
         self.btn_clear.grid(row=0, column=3, sticky=tk.N, padx=10, pady=10)
 
         # Display the text
@@ -46,4 +46,9 @@ class Keystroke(tk.Frame):
         keystroke = keystroke + "\n"
         self.text_field.configure(state="normal")
         self.text_field.insert("end", keystroke)
+        self.text_field.configure(state="disable")
+
+    def clear_keystroke(self):
+        self.text_field.configure(state="normal")
+        self.text_field.delete("1.0", tk.END)
         self.text_field.configure(state="disable")
