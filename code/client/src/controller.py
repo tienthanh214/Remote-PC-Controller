@@ -164,6 +164,7 @@ class Controller():
         self._function.btn_hook.bind("<Button>", self.keystroke_hook)
         self._function.btn_unhook.bind("<Button>", self.keystroke_unhook)
         self._function.btn_print.bind("<Button>", self.keystroke_print)
+        self._function.btn_clear.bind("<Button>", self.keystroke_clear)
         self._function.bind(
             "<Destroy>", self.exit_func)
         # self._function.btn_clear.bind("<Button>", self.keystroke_clear)
@@ -181,6 +182,11 @@ class Controller():
         log_len = int(self._socket._sock.recv(32).decode('utf8'))
         data = self._socket.receive(length=log_len).decode("utf8")
         self._function.print_keystroke(data.decode("utf8"))
+    
+    def keystroke_clear(self, event):
+        self._function.text_field.configure(state="normal")
+        self._function.text_field.delete("1.0", tk.END)
+        self._function.text_field.configure(state="disable")
 
     # Function 4
     def screenshot(self, event):
