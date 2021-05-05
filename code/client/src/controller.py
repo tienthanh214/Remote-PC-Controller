@@ -238,8 +238,10 @@ class Controller():
         self._function.browse_path()
 
     def registry_sendcont(self, event):
+        filecont = self._function._regcont
+        self._socket._sock.sendall(bytes(str(len(filecont)), "utf8"))
         self._socket.send(
-            ','.join(["registry", "set", self._function._regcont]))
+            ','.join(["registry", "file", filecont]))
 
     def registry_send(self, event):
         func = self._function._df_func.get().strip("\n")
@@ -249,19 +251,14 @@ class Controller():
         dttp = self._function._df_dttype.get().strip("\n")
 
         request = None
-        if func == "Get value":
-            request = ["get", path, name]
-        elif func == 'Set value':
-            request = ["set", path, name, value, dttp]
-        elif func == 'Delete value':
-            request = ["delete", path, name]
-        elif func == 'Create key':
-            request = ["create", path]
-        elif func == 'Delete key':
-            request = ["delete", path]
-
-        self._socket.send(
-            ','.join(request))
+        if func in ['Get value', 'Set value', 'Create key']:
+            func = func.split(" ", 1)[0].lower()
+        else:
+            func = func.replace(" ", "").lower()
+        request = ["registry", func, path, name, value, dttp]
+        value_str = ','.join(request)
+        self._socket._sock.sendall(bytes(str(len(value_str)), "utf8"))
+        self._socket.send(value_str)
 
     # Function 6
     def shutdown(self, event):
