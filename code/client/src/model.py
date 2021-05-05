@@ -35,12 +35,12 @@ class MySocket:
             while len(data) < length:
                 packet = self._sock.recv(length - len(data))
                 if not packet:
-                    return None
-                print(len(data))
-                data.extend(packet)
+                    break
+                if not packet == None:
+                    data.extend(packet)
             return data
         except OSError:
-            utl.messagebox("Screenshot", "Failed to receive image", "Error")
+            utl.messagebox("Screenshot", "Failed to receive data", "Error")
             pass
 
     def close(self):

@@ -52,9 +52,9 @@ class Manager(tk.Frame):
     def view(self, data):
         # for testing data will be in 2d list
         self.clear()
-        data = data.split('\n\n')[1:] # bo dongtitle, bo 2 dong \n\n cuoi  
-        while (len(data[-1]) == 0): data.pop(-1)
-        data.sort(key = lambda x : x[0].upper())# sort de tim theo ten thoi
+        if (data):
+            data = data.split('\n')[3:-3] # bo dongtitle, bo 2 dong \n\n cuoi  
+            data.sort(key = lambda x : x[0].upper())# sort de tim theo ten thoi
 
         for current_process in data:
             (name_process, id_process, count_thread) = current_process.rsplit(maxsplit = 2)

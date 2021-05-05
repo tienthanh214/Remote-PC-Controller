@@ -110,7 +110,7 @@ class Controller():
     def manager_app_view(self, event):
         self._socket.send("application,view")
         list_len = int(self._socket._sock.recv(32).decode("utf8"))
-        data = self._socket.receive(length=list_len).decode("utf8")
+        data = self._socket.receive(length = list_len).decode("utf8")
         self._manager_app.view(data)
 
     def manip_runnin(self, event, boxid, cmd, act):
