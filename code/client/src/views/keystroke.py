@@ -42,8 +42,8 @@ class Keystroke(tk.Frame):
         self.text_field.grid(row=1, column=0, sticky=tk.N,
                              padx=10, pady=10, columnspan=4)
 
-    def print_keystroke(self, keystroke="<Not hooked>"):
+    def print_keystroke(self, keystroke = "<Not hooked>"):
         keystroke = keystroke + "\n"
-        self.text_field.configure(state="normal")
+        self.text_field.configure(state = "normal")
         self.text_field.insert("end", keystroke)
-        self.text_field.configure(state="disable")
+        self.text_field.configure(state = "disable")

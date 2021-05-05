@@ -122,7 +122,7 @@ class Registry(tk.Frame):
         files = [('Registry Files', '*.reg'),
                  ('Text Documents', '*.txt'), ('All files', '*')]
         self._regpath = filedialog.askopenfilename(
-            filetypes=files, defaultextension=files, title="Open file")
+            filetypes = files, defaultextension=files, title="Open file")
         self.update_cont()
 
     def update_cont(self):

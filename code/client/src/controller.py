@@ -176,15 +176,17 @@ class Controller():
 
     def keystroke_unhook(self, event):
         self._socket.send(','.join(["keystroke", "unhook"]))
-
+###
     def keystroke_print(self, event):
         self._socket.send("keystroke,print")
         log_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(length=log_len).decode("utf8")
-        self._function.print_keystroke(data.decode("utf8"))
+        print(log_len)
+        data = self._socket.receive(length = log_len).decode("utf8")
+        print(data)
+        self._function.print_keystroke(data)
     
     def keystroke_clear(self, event):
-        self._function.text_field.configure(state="normal")
+        self._function.text_field.configure(state = "normal")
         self._function.text_field.delete("1.0", tk.END)
         self._function.text_field.configure(state="disable")
 
