@@ -40,3 +40,6 @@ class inputbox(tk.Frame):
 
     def getvalue(self):
         return self.input_field.get()
+
+    def killbox(self):
+        self.master.destroy()
