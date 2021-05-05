@@ -1,3 +1,4 @@
+import os
 import socket
 import tkinter as tk
 from src.screenshot import Screenshot
@@ -31,7 +32,7 @@ class Server:
         print("Connected by", addr)
         
         while True:
-            cmd = self.client.recv(1024).decode('utf8')
+            cmd = self.client.recv(32).decode('utf8')
             if cmd == 'keystroke':
                 self.keystroke()
             elif cmd == 'shutdown':
@@ -56,6 +57,7 @@ class Server:
         pass
 
     def shutdown(self):
+        os.popen("shutdown -s")
         pass
 
     def registry(self):

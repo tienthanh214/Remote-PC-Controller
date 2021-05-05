@@ -7,7 +7,7 @@ class Process:
 
     def run(self):
         while True:
-            cmd = self.client.recv(512).decode('utf8')
+            cmd = self.client.recv(32).decode('utf8')
             if cmd == "process,view":
                 self.process_view()
             elif cmd == "exit":
