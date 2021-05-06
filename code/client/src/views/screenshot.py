@@ -20,7 +20,7 @@ class Screenshot(tk.Frame):
         # Display the image
         self.canvas = tk.Canvas(self, bg="#E5E5E5", width=560, height=560)
         self.item_on_canvas = self.canvas.create_image(
-            5, 5, anchor=tk.NW, image=None)
+            280, 280, anchor=tk.CENTER, image=None)
         self.canvas.grid(row=0, column=0, sticky=tk.W +
                          tk.N, padx=10, pady=10, rowspan=2)
 
@@ -77,3 +77,4 @@ class Screenshot(tk.Frame):
             mode="wb", filetypes=files, defaultextension=files, title="Save image")
         if file != None:
             file.write(self._image_bytes)
+            file.close()

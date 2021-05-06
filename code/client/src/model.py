@@ -40,18 +40,20 @@ class MySocket:
                     data.extend(packet)
             return data
         except OSError:
-            utl.messagebox("Screenshot", "Failed to receive data", "Error")
+            utl.messagebox("Screenshot", "Failed to receive data", "warn")
             pass
 
     def close(self):
         # Close the socket file descriptor
         # Both sends and receives are disallowed
         self._sock.close()
+        self._isconnected = False
 
     def shutdown(self):
         # Shutdown one halves of the connection
         # Further sends are disallowed
         self._sock.shutdown(sk.SHUT_WR)
+        self._isconnected = False
 
     def recv_timeout(self, the_socket, buff, timeout=0.5):
         # Collect chunk of data from the server

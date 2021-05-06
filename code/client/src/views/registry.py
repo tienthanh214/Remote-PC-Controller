@@ -134,6 +134,7 @@ class Registry(tk.Frame):
             file = codecs.open(filename=self._regpath,
                                mode="r", encoding="utf-16")
             self._regcont = file.read()
+            self.txt_regcont.delete("1.0", tk.END)
             self.txt_regcont.insert("end", self._regcont)
         except IOError:
             print("> file does not appear to exist.")
