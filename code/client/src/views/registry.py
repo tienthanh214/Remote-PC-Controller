@@ -138,11 +138,8 @@ class Registry(tk.Frame):
         except IOError:
             print("> file does not appear to exist.")
 
-    def update_result(self, result="Lỗi"):
-        self._result = result
-
-    def insert_result(self):
-        self._response = self._keybuff.strip("\n")
+    def insert_result(self, result="Lỗi"):
+        self._response = result.strip("\n")
         self._response += "\n"
         self.txt_result.configure(state="normal")
         self.txt_result.insert("end", self._response)

@@ -260,6 +260,9 @@ class Controller():
         self._socket.send(
             ','.join(["registry", func, path, name, value, dttp]))
 
+        response = self._socket._sock.recv(1024).decode("utf8")
+        self._function.insert_result(response)
+
     # Function 6
     def shutdown(self, event):
         if not self._function == None:
