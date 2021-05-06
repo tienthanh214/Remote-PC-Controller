@@ -30,6 +30,7 @@ class inputbox(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title(tl + " " + cmd)
+        self.master.resizable(False, False)
 
         self.input_field = tk.Entry(
             self.master, textvariable="Nhập ID", width=30)

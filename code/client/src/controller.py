@@ -46,8 +46,7 @@ class Controller():
         if self._socket._isconnected:
             utl.messagebox("Client", "Reconnection not allowed", "warn")
             return
-        ip = self._menu.myEntry.get().strip("\n")
-        self._menu.resultLabel.config(text=ip)
+        ip = self._menu.etr_ip.get().strip("\n")
         self._socket.connect(ip=ip)
         if self._socket._isconnected:
             utl.messagebox("Client", "Connected to the server", "info")

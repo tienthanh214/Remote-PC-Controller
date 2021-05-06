@@ -10,6 +10,7 @@ class Menu(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title("Client")
+        self.master.resizable(False, False)
         self.master.grid_columnconfigure(0, weight=1)
         self.master.grid_rowconfigure(0, weight=1)
         self.grid()
@@ -17,14 +18,14 @@ class Menu(tk.Frame):
 
     def create_widgets(self):
         # Display the entered IP address and connection state
-        self.resultLabel = tk.Label(self, text="IP address", width=15)
-        self.resultLabel.grid(row=0, column=0, sticky="E",
+        self.lbl_ip = tk.Label(self, text="IP address:", width=15)
+        self.lbl_ip.grid(row=0, column=0, sticky="E",
                               padx=10, pady=10, columnspan=1)
 
         # Get user input of IP address
-        self.myEntry = tk.Entry(self, width=40)
-        self.myEntry.focus()
-        self.myEntry.grid(row=0, column=1, padx=10, pady=5, columnspan=2)
+        self.etr_ip = tk.Entry(self, width=40)
+        self.etr_ip.focus()
+        self.etr_ip.grid(row=0, column=1, padx=10, pady=5, columnspan=2)
 
         # Press to connect or disconnect
         self.btn_connect = tk.Button(self, text="CONNECT", fg="green",
