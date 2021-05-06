@@ -8,13 +8,10 @@ import src.views.utilities as utl
 
 
 class MySocket:
-    def __init__(self, sock=None):
+    def __init__(self):
         super().__init__()
         self._isconnected = False
-        if sock is None:
-            self._sock = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
-        else:
-            self._sock = sock
+        self._sock = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
 
     def connect(self, ip, port=54321):
         self._isconnected = True
@@ -23,6 +20,7 @@ class MySocket:
             self._sock.connect(address)
         except:
             self._isconnected = False
+            self._sock = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
 
     def send(self, command = "exit"):
         # Send request to the server and the server return data

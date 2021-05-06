@@ -44,7 +44,7 @@ class Controller():
 
     def connect(self, event):
         if self._socket._isconnected:
-            utl.messagebox("Client", "Already connected", "warn")
+            utl.messagebox("Client", "Reconnection not allowed", "warn")
             return
         ip = self._menu.myEntry.get().strip("\n")
         self._menu.resultLabel.config(text=ip)
