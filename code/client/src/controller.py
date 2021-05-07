@@ -48,9 +48,11 @@ class Controller():
             ans = tk.messagebox.askquestion(
                 "New IP address", "Do you want to disconnect to the current server\n and reconnect to this IP ({})?".format(ip), icon="warning")
             if ans == "yes":
-                self._socket.send("quit")
-                self._socket.close()
-                time.sleep(1)
+                try:
+                    self._socket.send("quit")
+                finally:
+                    self._socket.close()
+                    time.sleep(1)
             else:
                 utl.messagebox("Client", "New connection cancelled", "error")
                 return
