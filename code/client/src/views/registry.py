@@ -47,22 +47,6 @@ class Registry(tk.Frame):
                           padx=10, pady=0, columnspan=4)
 
         # ============================ Change from setting ============================
-        # Choose functionality
-        self.lbl_func = tk.Label(
-            self, height=1, text="Chức năng:", width=20, justify="left")
-        self.lbl_func.grid(row=3, column=0, sticky=tk.E,
-                           padx=10, pady=10, columnspan=1)
-        self._func = {'Get value', 'Set value',
-                      'Delete value', 'Create key', 'Delete key'}
-
-        self._df_func = tk.StringVar(self)
-        self._df_func.trace("w", lambda a, b, c: self.update_ui(a=a, b=b, c=c))
-        self._df_func.set('Chọn chức năng')  # set the default option
-
-        self.opmn_func = tk.OptionMenu(self, self._df_func, *self._func)
-        self.opmn_func.grid(row=3, column=1, sticky=tk.W,
-                            padx=10, pady=5, columnspan=3)
-
         # File path
         self.lbl_path = tk.Label(
             self, height=1, text="Đường dẫn:", width=20, justify="left")
@@ -122,6 +106,22 @@ class Registry(tk.Frame):
         self.btn_clear.grid(row=8, column=2, sticky=tk.N,
                             padx=10, pady=10, columnspan=2)
 
+        # Choose functionality
+        self.lbl_func = tk.Label(
+            self, height=1, text="Chức năng:", width=20, justify="left")
+        self.lbl_func.grid(row=3, column=0, sticky=tk.E,
+                           padx=10, pady=10, columnspan=1)
+        self._func = {'Get value', 'Set value',
+                      'Delete value', 'Create key', 'Delete key'}
+
+        self._df_func = tk.StringVar(self)
+        self._df_func.trace("w", lambda a, b, c: self.update_ui(a=a, b=b, c=c))
+        self._df_func.set('Chọn chức năng')  # set the default option
+
+        self.opmn_func = tk.OptionMenu(self, self._df_func, *self._func)
+        self.opmn_func.grid(row=3, column=1, sticky=tk.W,
+                            padx=10, pady=5, columnspan=3)
+
     def browse_path(self):
         files = [('Registry Files', '*.reg'),
                  ('Text Documents', '*.txt'), ('All files', '*')]
@@ -160,7 +160,7 @@ class Registry(tk.Frame):
             self.lbl_dttype.grid()
             self.opmn_dttype.grid()
         else:
-            self.lbl_value.grid_remove()
+            self.lbl_value.grid_forget()
             self.txt_value.grid_remove()
             self.lbl_dttype.grid_remove()
             self.opmn_dttype.grid_remove()
