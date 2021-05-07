@@ -42,9 +42,12 @@ class Server:
         self.ACCEPT_THREAD.join()
 
     def close_server(self, event):
-        self.client.shutdown(socket.SHUT_RDWR)
-        self.client.close()
-        self.server.close()
+        try:
+            self.client.shutdown(socket.SHUT_RDWR)
+            self.client.close()
+            self.server.close()
+        except:
+            pass
 
     def accept_connect(self):
         self.client, addr = self.server.accept()
