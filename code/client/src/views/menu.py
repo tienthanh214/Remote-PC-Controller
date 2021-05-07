@@ -20,7 +20,7 @@ class Menu(tk.Frame):
         # Display the entered IP address and connection state
         self.lbl_ip = tk.Label(self, text="IP address:", width=15)
         self.lbl_ip.grid(row=0, column=0, sticky="E",
-                              padx=10, pady=10, columnspan=1)
+                         padx=10, pady=10, columnspan=1)
 
         # Get user input of IP address
         self.etr_ip = tk.Entry(self, width=40)
@@ -28,8 +28,7 @@ class Menu(tk.Frame):
         self.etr_ip.grid(row=0, column=1, padx=10, pady=5, columnspan=2)
 
         # Press to connect or disconnect
-        self.btn_connect = tk.Button(self, text="CONNECT", fg="green",
-                                     )
+        self.btn_connect = tk.Button(self, text="CONNECT", fg="green")
         self.btn_connect.grid(row=0, column=3, sticky=tk.W +
                               tk.S+tk.E+tk.N, padx=10, pady=10, columnspan=1)
 

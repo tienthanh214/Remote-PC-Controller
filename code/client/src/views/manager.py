@@ -47,14 +47,14 @@ class Manager(tk.Frame):
                         padx=10, pady=10, columnspan=4)
         for col in cols:
             self.table.heading(col, text=col)
-        for i in range(6):
+        for i in range(10):
             self.table.insert("", "end", values=("_", "_", "_"))
 
     def view(self, data):
         # for testing data will be in 2d list
         self.clear()
         if (data):
-            data = data.split('\n')[3:-3] # bo dongtitle, bo 2 dong \n\n cuoi  
+            data = data.split('\n')[3:-3] # bo dong title, bo 2 dong \n\n cuoi  
             data.sort(key = lambda x : x[0].upper())# sort de tim theo ten thoi
 
         for current_process in data:
