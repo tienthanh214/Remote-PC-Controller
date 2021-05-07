@@ -160,7 +160,7 @@ class Registry(tk.Frame):
             self.lbl_dttype.grid()
             self.opmn_dttype.grid()
         else:
-            self.lbl_value.grid_forget()
+            self.lbl_value.grid_remove()
             self.txt_value.grid_remove()
             self.lbl_dttype.grid_remove()
             self.opmn_dttype.grid_remove()
