@@ -43,11 +43,18 @@ class Controller():
                 self._root.destroy()
 
     def connect(self, event):
+        ip = self._menu.etr_ip.get().strip("\n")
         if self._socket._isconnected:
-            utl.messagebox("Client", "Reconnection not allowed", "warn")
-            return
-        ip = self._menu.myEntry.get().strip("\n")
-        self._menu.resultLabel.config(text=ip)
+            ans = tk.messagebox.askquestion(
+                "New IP address", "Do you want to disconnect to the current server\n and reconnect to this IP ({})?".format(ip), icon="warning")
+            if ans == "yes":
+                self._socket.send("quit")
+                self._socket.close()
+                time.sleep(1)
+            else:
+                utl.messagebox("Client", "New connection cancelled", "error")
+                return
+
         self._socket.connect(ip=ip)
         if self._socket._isconnected:
             utl.messagebox("Client", "Connected to the server", "info")
@@ -79,7 +86,7 @@ class Controller():
         if not self._inputbox[0] == None:
             return
         self._inputbox[0] = utl.inputbox(
-            tk.Toplevel(self._root), tl="process", cmd="kill")
+            tk.Toplevel(self._function), tl="process", cmd="kill")
         # binding...
         self._inputbox[0].btn_get.bind("<Button>", lambda e: self.manip_runnin(
             event=e, boxid=0, cmd="process", act="kill"))
@@ -91,7 +98,7 @@ class Controller():
         if not self._inputbox[1] == None:
             return
         self._inputbox[1] = utl.inputbox(
-            tk.Toplevel(self._root), tl="process", cmd="start")
+            tk.Toplevel(self._function), tl="process", cmd="start")
         # binding...
         self._inputbox[1].btn_get.bind("<Button>", lambda e: self.manip_runnin(
             event=e, boxid=1, cmd="process", act="start"))
@@ -131,7 +138,7 @@ class Controller():
         if not self._inputbox[0] == None:
             return
         self._inputbox[0] = utl.inputbox(tk.Toplevel(
-            self._root), tl="application", cmd="kill")
+            self._function), tl="application", cmd="kill")
         # binding...
         self._inputbox[0].btn_get.bind("<Button>", lambda e: self.manip_runnin(
             event=e, boxid=0, cmd="application", act="kill"))
@@ -143,7 +150,7 @@ class Controller():
         if not self._inputbox[1] == None:
             return
         self._inputbox[1] = utl.inputbox(tk.Toplevel(
-            self._root), tl="application", cmd="start")
+            self._function), tl="application", cmd="start")
         # binding...
         self._inputbox[1].btn_get.bind("<Button>", lambda e: self.manip_runnin(
             event=e, boxid=1, cmd="application", act="start"))

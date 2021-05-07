@@ -10,6 +10,7 @@ class Keystroke(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title("Keystroke")
+        self.master.resizable(False, False)
         self.master.grid_columnconfigure(0, weight=1)
         self.master.grid_rowconfigure(0, weight=1)
         self.grid()
