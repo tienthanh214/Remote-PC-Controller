@@ -20,32 +20,29 @@ class Server:
         self._root = tk.Tk()
         self._root.geometry('400x200')
         self._root.title("Server")
-        self._root.btn_open_server = tk.Button(self._root, text = "OPEN SERVER", bg = "#5DADE2", height = 2, width = 15, anchor = tk.CENTER,
-                                        font = ("Consolas 25 bold"), command = self.open_close_server)
+        self._root.btn_open_server = tk.Button(self._root, text = "OPEN SERVER", bg = "#5DADE2", 
+                                            height = 2, width = 15, anchor = tk.CENTER,
+                                            font = ("Consolas 25 bold"), command = self.open_close_server)
         self._root.btn_open_server.place(relx = 0.5, rely = 0.5, anchor = tk.CENTER)
         # self._root.bind("<Destroy>", self.on_exit)
-        self.server = None
-
-        self._root.btn_open_server.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-        self._root.btn_open_server.bind("<Button>", self.open_server)
-        self._root.bind("<Destroy>", self.close_server)
 
     def run(self):
         self._root.mainloop()
 
     def open_close_server(self):
         if (self._root.btn_open_server["text"] == "OPEN SERVER"):
-            IP = (socket.gethostbyname('localhost'), 54321)
+            IP = (socket.gethostbyname(socket.gethostname()), 54321)
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.bind(IP) # only one server socket for all connect
             self.server.listen(1)
+            print('SERVER address:', IP)
 
             self._root.btn_open_server.configure(text = "SERVER IS\nOPENING")
             self._root.btn_open_server.configure(bg = "#79fa00")
 
             Thread(target = self.accept_connect, daemon = True).start()
+        
             
-
     def accept_connect(self):
         while True:
             # self.client = None
@@ -53,6 +50,7 @@ class Server:
             print("Connected by", addr)
             handle_client_thread = Thread(target = self.handle_client, daemon = True)
             handle_client_thread.start()
+
 
     def handle_client(self): 
         while True:
