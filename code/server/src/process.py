@@ -51,4 +51,6 @@ class Process:
         except Exception:
             self.client.send(bytes("FAIL", "utf8"))
             return
+        self.client.send(bytes("SUCCESS", "utf8"))
+        
 
