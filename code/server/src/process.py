@@ -47,9 +47,8 @@ class Process:
         if len(pname) == 0: return
         pname += ".exe"
         try:
-            os.popen(pname)
-        except OSError:
+            result = os.popen(pname)
+        except Exception:
             self.client.send(bytes("FAIL", "utf8"))
             return
-        self.client.send(bytes("SUCCESS", "utf8"))
 

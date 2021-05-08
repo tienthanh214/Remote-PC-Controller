@@ -13,14 +13,28 @@ class Registry:
             if cmd == "registry,file":
                 self.update_file_reg()
             elif cmd == "exit":
+                os.remove("src\\fileReg.reg") # remove dump
                 return
             else:
                 if (len(cmd.split(',')) != 6): continue
                 cmd, path, name, value, datatype = cmd.rsplit(',', 4) 
-                HKEY, link = path.split('\\', 2)
+                # accept / or \ in path
+                if (len(path.split('\\', 1)) == 2): 
+                    HKEY, link = path.split('\\', 1)
+                else:
+                    if (len(path.split('/', 1)) == 2):
+                        HKEY, link = path.split('/', 1)
+                    else:
+                        HKEY, link = path, ''
+                # end of get link
                 print(HKEY, link)
                 HKEY = self.baseRegistryKey(HKEY)
                 datatype = self.baseDataType(datatype)
+
+                if not HKEY: # key not found
+                    self.client.send(bytes("FAIL: HKEY not found", "utf8"))
+                    continue
+
                 reg = winreg.ConnectRegistry(None, HKEY)
 
                 if (cmd == 'registry,get'):
@@ -45,16 +59,15 @@ class Registry:
 
         data = data.decode("utf8")
         print(data)
-        fi = open("fileReg.reg", "w")
+        fi = open("src\\fileReg.reg", "w")
         fi.write(data)
         fi.close()
         try:
             os.popen("regedit.exe /s src\\fileReg.reg")
         except Exception:
             self.client.send(bytes("FAIL", "utf8"))
-            os.remove("fileReg.reg")
+            os.remove("src\\fileReg.reg")
         self.client.send(bytes("SUCCESS", "utf8"))
-        os.remove("fileReg.reg")
 
 
     def get_registry(self, reg, link, name):
@@ -73,10 +86,9 @@ class Registry:
                     data = str(result[0])
             self.client.sendall(bytes(data, "utf8"))
             winreg.CloseKey(key) 
-        except OSError:
+        except Exception:
             self.client.sendall(bytes("Error", "utf8"))
             return
-        
 
 
     def create_registry(self, reg, link):
@@ -89,7 +101,9 @@ class Registry:
 
 
     def set_registry(self, reg, link, name, datatype, value):
-        try: # bug kieu du lieu chua ep
+        try: # bug kieu multi-string kieu binary
+            if datatype in [winreg.REG_DWORD, winreg.REG_QWORD]:
+                value = int(value)
             key =  winreg.OpenKey(reg, link, 0, winreg.KEY_SET_VALUE)
             winreg.SetValueEx(key, name, 0, datatype, value)
             winreg.CloseKey(key)
@@ -110,7 +124,7 @@ class Registry:
     def delete_key_registry(self, reg, link):
         try:
             winreg.DeleteKeyEx(reg, link)
-        except OSError:
+        except Exception:
             self.client.sendall(bytes("Error", "utf8"))
             return
         self.client.sendall(bytes("Delete key successfully", "utf8"))
