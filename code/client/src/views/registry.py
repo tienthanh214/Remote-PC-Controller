@@ -24,7 +24,7 @@ class Registry(tk.Frame):
     def create_widgets(self):
         # ============================ Change from file ============================
         # Display the registry file path
-        self.txt_path = tk.Text(self, width=64, height=2, bg="#E5E5E5")
+        self.txt_path = tk.Text(self, width=64, height=2, bg="#FFFFFF")
         self.txt_path.grid(row=0, column=0, sticky=tk.N,
                            padx=10, pady=10, columnspan=3)
         # Open the browse window to get the registry file
@@ -32,7 +32,7 @@ class Registry(tk.Frame):
             self, text="Browse...", command=self.browse_path, width=22, height=2)
         self.btn_browse.grid(row=0, column=3, sticky=tk.N, padx=10, pady=10)
         # Display the registry file's content
-        self.txt_regcont = tk.Text(self, width=64, height=10, bg="#E5E5E5")
+        self.txt_regcont = tk.Text(self, width=64, height=10, bg="#FFFFFF")
         self.txt_regcont.grid(row=1, column=0, sticky=tk.N,
                               padx=10, pady=10, columnspan=3)
         # Send the regis content to the server
@@ -53,7 +53,7 @@ class Registry(tk.Frame):
             self, height=1, text="Đường dẫn:", width=20, justify="left")
         self.lbl_path.grid(row=4, column=0, sticky=tk.E,
                            padx=10, pady=0, columnspan=1)
-        self.txt_path = tk.Text(self, width=48, height=1, bg="#E5E5E5")
+        self.txt_path = tk.Text(self, width=48, height=1, bg="#FFFFFF")
         self.txt_path.grid(row=4, column=1, sticky=tk.W,
                            padx=10, pady=10, columnspan=3)
 
@@ -62,7 +62,7 @@ class Registry(tk.Frame):
             self, height=1, text="Name value", justify="center")
         self.lbl_name.grid(row=5, column=0, sticky=tk.N,
                            padx=10, pady=0, columnspan=1)
-        self.txt_name = tk.Text(self, width=24, height=1, bg="#E5E5E5")
+        self.txt_name = tk.Text(self, width=24, height=1, bg="#FFFFFF")
         self.txt_name.grid(row=6, column=0, sticky=tk.N,
                            padx=10, pady=10, columnspan=1)
 
@@ -71,7 +71,7 @@ class Registry(tk.Frame):
             self, height=1, text="Value", justify="center")
         self.lbl_value.grid(row=5, column=1, sticky=tk.N,
                             padx=10, pady=0, columnspan=2)
-        self.txt_value = tk.Text(self, width=24, height=1, bg="#E5E5E5")
+        self.txt_value = tk.Text(self, width=24, height=1, bg="#FFFFFF")
         self.txt_value.grid(row=6, column=1, sticky=tk.N,
                             padx=10, pady=10, columnspan=2)
 
@@ -83,7 +83,7 @@ class Registry(tk.Frame):
         self._dttypes = {'String', 'Binary',
                          'DWORD', 'QWORD', 'Multi-String', 'Expandable string'}
         self._df_dttype = tk.StringVar(self)
-        self._df_dttype.set('Kiểu dữ liệu')  # set the default option
+        self._df_dttype.set('String')  # set the default option
         self.opmn_dttype = tk.OptionMenu(self, self._df_dttype, *self._dttypes)
         self.opmn_dttype.config(width=20)
         self.opmn_dttype.grid(row=6, column=3, sticky=tk.N,
@@ -91,7 +91,7 @@ class Registry(tk.Frame):
 
         # Text field to display the result of commands
         self.txt_result = tk.Text(
-            self, width=88, height=10, bg="#E5E5E5", state="disable")
+            self, width=88, height=10, bg="#FFFFFF", state="disable")
         self.txt_result.grid(row=7, column=0, sticky=tk.N,
                              padx=10, pady=10, columnspan=4)
 
@@ -117,7 +117,7 @@ class Registry(tk.Frame):
 
         self._df_func = tk.StringVar(self)
         self._df_func.trace("w", lambda a, b, c: self.update_ui(a=a, b=b, c=c))
-        self._df_func.set('Chọn chức năng')  # set the default option
+        self._df_func.set('Get value')
 
         self.opmn_func = tk.OptionMenu(self, self._df_func, *self._func)
         self.opmn_func.grid(row=3, column=1, sticky=tk.W,
@@ -128,6 +128,8 @@ class Registry(tk.Frame):
                  ('Text Documents', '*.txt'), ('All files', '*')]
         self._regpath = filedialog.askopenfilename(
             filetypes=files, defaultextension=files, title="Open file")
+        self.txt_path.delete("1.0", tk.END)
+        self.txt_path.insert("end", self._regpath)
         self.update_cont()
 
     def update_cont(self):
@@ -165,7 +167,7 @@ class Registry(tk.Frame):
             self.txt_value.grid_remove()
             self.lbl_dttype.grid_remove()
             self.opmn_dttype.grid_remove()
-            
+
             if self._df_func.get() == "Create key" or self._df_func.get() == "Delete key":
                 self.lbl_name.grid_remove()
                 self.txt_name.grid_remove()

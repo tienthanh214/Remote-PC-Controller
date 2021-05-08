@@ -19,7 +19,7 @@ class Screenshot(tk.Frame):
 
     def create_widgets(self):
         # Display the image
-        self.canvas = tk.Canvas(self, bg="#E5E5E5", width=560, height=560)
+        self.canvas = tk.Canvas(self, bg="#FFFFFF", width=560, height=560)
         self.item_on_canvas = self.canvas.create_image(
             280, 280, anchor=tk.CENTER, image=None)
         self.canvas.grid(row=0, column=0, sticky=tk.W +

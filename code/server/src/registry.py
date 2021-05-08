@@ -13,7 +13,10 @@ class Registry:
             if cmd == "registry,file":
                 self.update_file_reg()
             elif cmd == "exit":
-                os.remove("src\\fileReg.reg") # remove dump
+                try:
+                    os.remove("src\\fileReg.reg") # remove dump
+                except:
+                    pass
                 return
             else:
                 if (len(cmd.split(',')) != 6): continue

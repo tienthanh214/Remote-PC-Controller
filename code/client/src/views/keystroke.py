@@ -38,7 +38,7 @@ class Keystroke(tk.Frame):
         self.btn_clear.grid(row=0, column=3, sticky=tk.N, padx=10, pady=10)
 
         # Display the text
-        self.text_field = tk.Text(self, width=64, height=20, bg="#E5E5E5", state="disable")
+        self.text_field = tk.Text(self, width=64, height=20, bg="#FFFFFF", state="disable")
 
         self.text_field.grid(row=1, column=0, sticky=tk.N,
                              padx=10, pady=10, columnspan=4)
