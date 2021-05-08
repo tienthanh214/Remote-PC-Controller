@@ -26,10 +26,15 @@ class MySocket:
         except:
             self._reset()
 
-    def send(self, command="exit"):
-        # Send request to the server and the server return data
-        self._sock.sendall(bytes(command, "utf8"))
-        print("> request: " + str(command))
+    def send(self, command="exit", showerror=True):
+        try:
+            self._sock.sendall(bytes(command, "utf8"))
+            print("> request: " + str(command))
+            return True
+        except:
+            if showerror:
+                utl.messagebox("Socket", "Not connected to server", "error")
+            return False
 
     def receive(self, length=2048):
         try:
@@ -42,7 +47,7 @@ class MySocket:
                     data.extend(packet)
             return data
         except OSError:
-            utl.messagebox("Screenshot", "Failed to receive data", "warn")
+            utl.messagebox("Socket", "Failed to receive data", "error")
             pass
 
     def close(self):
@@ -56,26 +61,3 @@ class MySocket:
         # Further sends are disallowed
         self._sock.shutdown(sk.SHUT_WR)
         self._reset()
-
-    def recv_timeout(self, the_socket, buff, timeout=0.5):
-        # Collect chunk of data from the server
-        # We know that evrything has been received when THE CONNECTION IS CLOSED
-        the_socket.setblocking(0)
-        total_data = []
-        data = ""
-        begin = time.time()
-        while True:
-            if total_data and time.time() - begin > timeout:
-                break
-            elif time.time() - begin > timeout * 2:
-                break
-            try:
-                data = the_socket.recv(buff)
-                if data:
-                    total_data.append(data)
-                    begin = time.time()
-                else:
-                    time.sleep(0.02)
-            except:
-                pass
-        return b"".join(total_data)

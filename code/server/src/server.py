@@ -39,7 +39,6 @@ class Server:
 
         self.ACCEPT_THREAD = Thread(target=self.accept_connect)
         self.ACCEPT_THREAD.start()
-        self.ACCEPT_THREAD.join()
 
     def close_server(self, event):
         try:
