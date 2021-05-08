@@ -110,7 +110,7 @@ class Registry:
     def delete_key_registry(self, reg, link):
         try:
             winreg.DeleteKeyEx(reg, link)
-        except Exception:
+        except OSError:
             self.client.sendall(bytes("Error", "utf8"))
             return
         self.client.sendall(bytes("Delete key successfully", "utf8"))
