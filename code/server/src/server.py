@@ -1,8 +1,8 @@
 import os
+import sys
 import socket
 import tkinter as tk
-import time
-from threading import Thread
+from threading import Thread, Event
 from src.screenshot import Screenshot
 from src.process import Process
 from src.application import Application
@@ -18,11 +18,13 @@ class Server:
         self.client = None
         # Initialize UI
         self._root = tk.Tk()
+        self._root.geometry('400x200')
         self._root.title("Server")
-        self._root.geometry("400x210")
-        self._root.resizable(False, False)
-        self._root.btn_open_server = tk.Button(
-            self._root, bg="#5DADE2", text="OPEN SERVER", font=("Consolas 30 bold"), padx=20, pady=20)
+        self._root.btn_open_server = tk.Button(self._root, text = "OPEN SERVER", bg = "#5DADE2", height = 2, width = 15, anchor = tk.CENTER,
+                                        font = ("Consolas 25 bold"), command = self.open_close_server)
+        self._root.btn_open_server.place(relx = 0.5, rely = 0.5, anchor = tk.CENTER)
+        # self._root.bind("<Destroy>", self.on_exit)
+        self.server = None
 
         self._root.btn_open_server.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         self._root.btn_open_server.bind("<Button>", self.open_server)
@@ -31,27 +33,54 @@ class Server:
     def run(self):
         self._root.mainloop()
 
-    def open_server(self, event):
-        IP = (socket.gethostbyname('localhost'), 54321)
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind(IP)
-        self.server.listen(1)
+    def open_close_server(self):
+        if (self._root.btn_open_server["text"] == "OPEN SERVER"):
+            IP = (socket.gethostbyname('localhost'), 54321)
+            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server.bind(IP) # only one server socket for all connect
+            self.server.listen(1)
 
-        self.ACCEPT_THREAD = Thread(target=self.accept_connect)
-        self.ACCEPT_THREAD.start()
+            self._root.btn_open_server.configure(text = "SERVER IS\nOPENING")
+            self._root.btn_open_server.configure(bg = "#79fa00")
 
-    def close_server(self, event):
-        try:
-            self.client.shutdown(socket.SHUT_RDWR)
-            self.client.close()
-            self.server.close()
-        except:
-            pass
+            Thread(target = self.accept_connect, daemon = True).start()
+            
 
     def accept_connect(self):
-        self.client, addr = self.server.accept()
-        print("Connected by", addr)
-        Thread(target=self.handle_client).start()
+        while True:
+            # self.client = None
+            self.client, addr = self.server.accept()
+            print("Connected by", addr)
+            handle_client_thread = Thread(target = self.handle_client, daemon = True)
+            handle_client_thread.start()
+
+    def handle_client(self): 
+        while True:
+            cmd = self.client.recv(32).decode('utf8')
+            if cmd == 'keystroke':
+                self.keystroke()
+            elif cmd == 'shutdown':
+                self.shutdown()
+            elif cmd == 'registry':
+                self.registry()
+            elif cmd == 'screenshot':
+                self.screenshot()
+            elif cmd == 'process':
+                self.process()
+            elif cmd == 'application':
+                self.application()
+            elif cmd == 'quit':
+                break
+                
+        self.client.shutdown(socket.SHUT_RDWR)
+        self.client.close()
+
+    def on_exit(self, event = None):
+        if self.client:
+            self.client.shutdown(socket.SHUT_RDWR)
+            self.client.close()
+        if self.server:
+            self.server.close() 
 
     def handle_client(self):
         try:
