@@ -10,6 +10,7 @@ class Screenshot(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title("Screenshot")
+        self.master.resizable(False, False)
         self._image_bytes = None
         self.master.grid_columnconfigure(0, weight=1)
         self.master.grid_rowconfigure(0, weight=1)
