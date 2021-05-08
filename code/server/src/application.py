@@ -38,9 +38,10 @@ class Application:
         pid = int(pid)
         try:
             os.kill(pid, 9) #9 = signal.SIGTERM
-            self.client.send(bytes("SUCCESS", "utf8"))
         except OSError:
             self.client.send(bytes("FAIL", "utf8"))
+            return
+        self.client.send(bytes("SUCCESS", "utf8"))
 
 
     def application_start(self, pname):
@@ -48,7 +49,9 @@ class Application:
         pname += ".exe"
         try:
             os.popen(pname)
-            self.client.send(bytes("SUCCESS", "utf8"))
         except OSError:
             self.client.send(bytes("FAIL", "utf8"))
+            return
+        self.client.send(bytes("SUCCESS", "utf8"))
+        
 
