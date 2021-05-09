@@ -36,11 +36,11 @@ class MySocket:
                 utl.messagebox("Socket", "Not connected to server", "error")
             return False
 
-    def receive(self, length=2048):
+    def receive(self, length = 2048):
         try:
             data = bytearray()
             while len(data) < length:
-                packet = self._sock.recv(length - len(data))
+                packet = self._sock.recv(4096)
                 if not packet:
                     break
                 if not packet == None:

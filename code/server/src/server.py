@@ -16,14 +16,21 @@ class Server:
         # Private attributes
         self.server = None
         self.client = None
+        self.IP = (socket.gethostbyname(socket.gethostname()), 54321)
         # Initialize UI
         self._root = tk.Tk()
-        self._root.geometry('400x200')
+        self._root.geometry('450x200')
         self._root.title("Server")
+
         self._root.btn_open_server = tk.Button(self._root, text = "OPEN SERVER", bg = "#5DADE2", 
-                                            height = 2, width = 15, anchor = tk.CENTER,
+                                            height = 2, width = 15, anchor = tk.CENTER, 
                                             font = ("Consolas 25 bold"), command = self.open_close_server)
-        self._root.btn_open_server.place(relx = 0.5, rely = 0.5, anchor = tk.CENTER)
+        self._root.btn_open_server.place(relx = 0.5, rely = 0.55, anchor = tk.CENTER)
+
+        self._root.lbl_server_address = tk.Label(self._root, text = "IP: " + str(self.IP[0]), width = 25,
+                                            font = ("Consolas 20 bold"), fg = "#ff0000")
+        self._root.lbl_server_address.place(relx = 0.5, rely = 0.15, anchor = tk.CENTER)
+
         # self._root.bind("<Destroy>", self.on_exit)
 
     def run(self):
@@ -31,14 +38,13 @@ class Server:
 
     def open_close_server(self):
         if (self._root.btn_open_server["text"] == "OPEN SERVER"):
-            IP = (socket.gethostbyname(socket.gethostname()), 54321)
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.server.bind(IP) # only one server socket for all connect
+            self.server.bind(self.IP) # only one server socket for all connect
             self.server.listen(1)
-            print('SERVER address:', IP)
+            print('SERVER address:', self.IP)
 
             self._root.btn_open_server.configure(text = "SERVER IS\nOPENING")
-            self._root.btn_open_server.configure(bg = "#79fa00")
+            self._root.btn_open_server.configure(bg = "#00ff00")
 
             Thread(target = self.accept_connect, daemon = True).start()
         

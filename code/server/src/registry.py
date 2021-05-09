@@ -9,7 +9,7 @@ class Registry:
     def run(self):
         while True:
             cmd = self.client.recv(512).decode('utf8')
-            print(cmd)
+            # print(cmd)
             if cmd == "registry,file":
                 self.update_file_reg()
             elif cmd == "exit":
@@ -22,15 +22,13 @@ class Registry:
                 if (len(cmd.split(',')) != 6): continue
                 cmd, path, name, value, datatype = cmd.rsplit(',', 4) 
                 # accept / or \ in path
-                if (len(path.split('\\', 1)) == 2): 
+                path = path.replace('/', '\\')
+                if len(path.split('\\', 1)) == 2:
                     HKEY, link = path.split('\\', 1)
                 else:
-                    if (len(path.split('/', 1)) == 2):
-                        HKEY, link = path.split('/', 1)
-                    else:
-                        HKEY, link = path, ''
+                    HKEY, link = path, ''
                 # end of get link
-                print(HKEY, link)
+                # print(HKEY, link)
                 HKEY = self.baseRegistryKey(HKEY)
                 datatype = self.baseDataType(datatype)
 
@@ -61,7 +59,7 @@ class Registry:
             data.extend(packet)
 
         data = data.decode("utf8")
-        print(data)
+        # print(data)
         fi = open("src\\fileReg.reg", "w")
         fi.write(data)
         fi.close()
@@ -77,14 +75,15 @@ class Registry:
         try:
             key =  winreg.OpenKey(reg, link, 0, winreg.KEY_QUERY_VALUE)
             result = winreg.QueryValueEx(key, name) 
-            # print(result)
+            
             if not result[0]:
                 data = "Error"
             else:
-                print(result[0])
                 if (result[1] == winreg.REG_MULTI_SZ):
                     data = ''
-                    for x in result: data += x + ' '
+                    for x in result[0]: data += x + '\n'
+                elif (result[1] == winreg.REG_BINARY):
+                    data = ' '.join('%02x' % x for x in result[0])
                 else:
                     data = str(result[0])
             self.client.sendall(bytes(data, "utf8"))
@@ -104,9 +103,14 @@ class Registry:
 
 
     def set_registry(self, reg, link, name, datatype, value):
-        try: # bug kieu multi-string kieu binary
+        try:
             if datatype in [winreg.REG_DWORD, winreg.REG_QWORD]:
                 value = int(value)
+            elif datatype == winreg.REG_MULTI_SZ:
+                value = value.split('\n')
+            elif datatype == winreg.REG_BINARY:
+                value = value.replace(' ', '')
+                value = bytearray.fromhex(value)
             key =  winreg.OpenKey(reg, link, 0, winreg.KEY_SET_VALUE)
             winreg.SetValueEx(key, name, 0, datatype, value)
             winreg.CloseKey(key)
@@ -124,6 +128,7 @@ class Registry:
             return
         self.client.sendall(bytes("Delete value successfully", "utf8"))
 
+
     def delete_key_registry(self, reg, link):
         try:
             winreg.DeleteKeyEx(reg, link)
@@ -132,7 +137,6 @@ class Registry:
             return
         self.client.sendall(bytes("Delete key successfully", "utf8"))
         
-
 
     def baseRegistryKey(self, name):
         if (len(name) == 0):

