@@ -6,4 +6,4 @@ Computer Network Project
 * Le Cong Binh (K19 - Honors Program - HCMUS)
 
 ##
-*Please run "pip install -r requirements.txt" to install all neccessary libraries before running*
+*Please run ```pip install -r requirements.txt``` to install all neccessary libraries before running*
