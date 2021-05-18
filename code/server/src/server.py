@@ -1,14 +1,12 @@
 import os
-import sys
 import socket
 import tkinter as tk
-from threading import Thread, Event
+from threading import Thread
 from src.screenshot import Screenshot
 from src.process import Process
 from src.application import Application
 from src.keystroke import KeyLogger
 from src.registry import Registry
-
 
 class Server:
     def __init__(self):
