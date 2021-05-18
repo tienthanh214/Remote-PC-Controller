@@ -1,9 +1,6 @@
 import tkinter as tk
-import sys
-import io
 import src.views.utilities as util
 from tkinter import ttk
-from PIL import Image, ImageTk
 
 
 class Manager(tk.Frame):

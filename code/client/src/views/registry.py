@@ -1,9 +1,6 @@
 import tkinter as tk
-import sys
-import io
 import codecs
 from tkinter import ttk, filedialog
-from PIL import Image, ImageTk
 
 
 class Registry(tk.Frame):
@@ -24,8 +21,8 @@ class Registry(tk.Frame):
     def create_widgets(self):
         # ============================ Change from file ============================
         # Display the registry file path
-        self.txt_path = tk.Text(self, width=64, height=2, bg="#FFFFFF")
-        self.txt_path.grid(row=0, column=0, sticky=tk.N,
+        self.txt_browse = tk.Text(self, width=64, height=2, bg="#FFFFFF")
+        self.txt_browse.grid(row=0, column=0, sticky=tk.N,
                            padx=10, pady=10, columnspan=3)
         # Open the browse window to get the registry file
         self.btn_browse = tk.Button(
@@ -128,8 +125,8 @@ class Registry(tk.Frame):
                  ('Text Documents', '*.txt'), ('All files', '*')]
         self._regpath = filedialog.askopenfilename(
             filetypes=files, defaultextension=files, title="Open file")
-        self.txt_path.delete("1.0", tk.END)
-        self.txt_path.insert("end", self._regpath)
+        self.txt_browse.delete("1.0", tk.END)
+        self.txt_browse.insert("end", self._regpath)
         self.update_cont()
 
     def update_cont(self):

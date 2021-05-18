@@ -1,8 +1,5 @@
 import tkinter as tk
-import sys
-import io
 from tkinter import messagebox, filedialog
-from PIL import Image, ImageTk
 
 
 class Menu(tk.Frame):

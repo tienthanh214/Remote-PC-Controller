@@ -1,8 +1,5 @@
 import tkinter as tk
-import sys
-import io
 from tkinter import ttk
-from PIL import Image, ImageTk
 
 
 class Keystroke(tk.Frame):

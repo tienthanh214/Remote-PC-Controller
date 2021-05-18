@@ -1,8 +1,5 @@
 import tkinter as tk
-import sys
-import io
 from tkinter import messagebox, filedialog
-from PIL import Image, ImageTk
 
 
 LARGE_FONT = ("Verdana", 12)
@@ -45,6 +42,9 @@ class inputbox(tk.Frame):
 
     def getvalue(self):
         return self.input_field.get()
+    
+    def clear(self):
+        self.input_field.delete(0, tk.END)
 
     def killbox(self):
         self.master.destroy()

@@ -1,6 +1,5 @@
 import socket as sk
 import time
-import sys
 import src.views.utilities as utl
 
 # Text-based ommands are sent to the server
