@@ -4,7 +4,7 @@ import src.views.manager as mng
 import src.views.keystroke as ksk
 import src.views.registry as rgs
 import src.views.utilities as utl
-import src.model as msk
+import src.mysocket as msk
 import tkinter as tk
 import time
 
@@ -165,7 +165,6 @@ class Controller():
         if not self._socket._isconnected:
             return
         response = self._socket._sock.recv(32).decode("utf8")
-        print(response)
         utl.messagebox(title=cmd, msg=response,
                        type="info" if response == "SUCCESS" else "error")
 
@@ -194,9 +193,7 @@ class Controller():
     def keystroke_print(self):
         self._socket.send("keystroke,print")
         log_len = int(self._socket._sock.recv(32).decode('utf8'))
-        print(log_len)
         data = self._socket.receive(length=log_len).decode("utf8")
-        print(data)
         self._function.print_keystroke(data)
 
     def keystroke_clear(self):

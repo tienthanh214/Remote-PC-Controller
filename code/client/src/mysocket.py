@@ -28,7 +28,6 @@ class MySocket:
     def send(self, command="exit", showerror=True):
         try:
             self._sock.sendall(bytes(command, "utf8"))
-            print("> request: " + str(command))
             return True
         except:
             if showerror:

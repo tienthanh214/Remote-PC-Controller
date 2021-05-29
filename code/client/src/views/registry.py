@@ -1,7 +1,7 @@
 import tkinter as tk
 import codecs
 from tkinter import ttk, filedialog
-
+import src.views.utilities as utl
 
 class Registry(tk.Frame):
     def __init__(self, master):
@@ -137,7 +137,8 @@ class Registry(tk.Frame):
             self.txt_regcont.delete("1.0", tk.END)
             self.txt_regcont.insert("end", self._regcont)
         except IOError:
-            print("> file does not appear to exist.")
+            utl.messagebox("Registry", "Cannot load file", "error")
+
 
     def insert_result(self, result="Lỗi"):
         self._response = result.strip("\n")
