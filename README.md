@@ -15,7 +15,8 @@ Computer Network Project
 👶 **Lê Công Bình**
 - Github: [@binhlecong](https://github.com/binhlecong)
 
-alo alo Bao Thi dien thong vao neu thich
+👧 **Nguyễn Lê Bảo Thi**
+- Github: [@baothi250501](https://github.com/baothi250501)
 
 ## Installation
 ``` git clone git@github.com:tienthanh214/Socket-Programming.git ```
