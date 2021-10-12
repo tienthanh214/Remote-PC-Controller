@@ -1,4 +1,3 @@
-from socket import AF_INET, SOCK_STREAM
 from tkinter import constants
 from src.mysocket import MySocket
 import tkinter as tk
@@ -19,9 +18,6 @@ DEFAULT_FRAME = 'Menu'
 class RootView(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-
-        # Socket object
-        self._socket = MySocket(AF_INET, SOCK_STREAM)
 
         # Config window shape
         self.geometry("1280x840+50+50")

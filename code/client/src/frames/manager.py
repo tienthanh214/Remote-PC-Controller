@@ -57,3 +57,5 @@ class Manager(tk.Frame):
         # clear data in the tabel before updating
         for rowid in self.table.get_children():
             self.table.delete(rowid)
+
+    
