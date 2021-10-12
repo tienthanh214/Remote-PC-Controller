@@ -1,10 +1,10 @@
 import tkinter as tk
 import time
-import src.controller as ctrl
+import src.rootview as rv
 
 
 def main():
-    app = ctrl.Controller()
+    app = rv.RootView()
     app.run()
 
 
