@@ -6,12 +6,12 @@ import src.themecolors as THEMECOLOR
 
 
 class Manager(tk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, type):
         tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg)
         self.create_widgets()
-
+        self._type = type
         self._socket = MySocket.getInstance()
-        self._inputbox = [None] * 2
+        self._inputbox = None
 
     def create_widgets(self):
         # Prompt the inputbox
@@ -45,7 +45,7 @@ class Manager(tk.Frame):
         for i in range(10):
             self.table.insert("", "end", values=("_", "_", "_"))
 
-    def view(self, data):
+    def populate_data(self, data):
         # for testing data will be in 2d list
         self.clear()
         if (data):
@@ -63,50 +63,51 @@ class Manager(tk.Frame):
             self.table.delete(rowid)
 
     def kill(self):
-        if not self._inputbox[0] == None:
+        if self._inputbox != None:
+            self.reset_inputbox()
             return
-        self._inputbox[0] = util.inputbox(
-            tk.Toplevel(self._function), tl="process", cmd="kill")
+        self._inputbox = util.inputbox(
+            tk.Toplevel(self), tl=self._type, cmd="kill")
         # binding...
-        self._inputbox[0].btn_get["command"] = lambda: self.manip_runnin(
-            boxid=0, cmd="process", act="kill")
-        self._inputbox[0].bind(
-            "<Destroy>", lambda e: self.reset_inputbox(boxid=0))
-        self._inputbox[0].mainloop()
+        self._inputbox.btn_get["command"] = lambda: self.exec_command(cmd=self._type, act="kill")
+        self._inputbox.bind(
+            "<Destroy>", lambda e: self.reset_inputbox())
+        self._inputbox.mainloop()
         exit
 
     def view(self):
-        self._socket._isconnected = self._socket.send("process,view")
-
+        self._socket._isconnected = self._socket.send(self._type + ',view')
         if not self._socket._isconnected:
             return
-
         list_len = int(self._socket._sock.recv(32).decode('utf8'))
         data = self._socket.receive(length=list_len).decode("utf8")
-        self._function.view(data)
-        exit
+        self.populate_data(data)
 
     def start(self):
-        if not self._inputbox[1] == None:
+        if self._inputbox != None:
+            self.reset_inputbox()
             return
-        self._inputbox[1] = util.inputbox(
-            tk.Toplevel(self._function), tl="process", cmd="start")
+        self._inputbox = util.inputbox(
+            tk.Toplevel(self), tl=self._type, cmd="start")
         # binding...
-        self._inputbox[1].btn_get["command"] = lambda: self.manip_runnin(
-            boxid=1, cmd="process", act="start")
-        self._inputbox[1].bind(
-            "<Destroy>", lambda e: self.reset_inputbox(boxid=1))
-        self._inputbox[1].mainloop()
+        self._inputbox.btn_get["command"] = lambda: self.exec_command(cmd=self._type, act="start")
+        self._inputbox.bind(
+            "<Destroy>", lambda e: self.reset_inputbox())
+        self._inputbox.mainloop()
         exit
 
-    def manip_runnin(self, boxid, cmd, act):
-        target = self._inputbox[boxid].getvalue()
+    def exec_command(self, cmd, act):
+        target = self._inputbox.getvalue()
         self._socket._isconncted = self._socket.send(
             ','.join([cmd, act, target]))
 
-        self._inputbox[boxid].clear()
+        self._inputbox.clear()
         if not self._socket._isconnected:
             return
         response = self._socket._sock.recv(32).decode("utf8")
         util.messagebox(title=cmd, msg=response,
                         type="info" if response == "SUCCESS" else "error")
+
+    def reset_inputbox(self):
+        self._inputbox.killbox()
+        self._inputbox = None

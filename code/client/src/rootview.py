@@ -14,7 +14,13 @@ import src.utils as utils
 import time
 
 
-DEFAULT_FRAME = 'Menu'
+ACT_PROCESS = 'process'
+ACT_APPLICATION = 'application'
+ACT_KEYSTROKE = 'keystroke'
+ACT_SHUTDOWN = 'process'
+ACT_REGISTRY = 'registry'
+ACT_SCREENSHOT = 'screenshot'
+ACT_QUIT = 'quit'
 
 
 class RootView(tk.Tk):
@@ -27,17 +33,17 @@ class RootView(tk.Tk):
         self.grid()
         # Header
         self.head = tk.Frame(self, bg=themecolor.header_bg)
-        self.head.pack(side="top", fill="both", expand=True)
+        self.head.pack(side="top", fill="both", expand=False)
         self.head.grid_rowconfigure(0, weight=1)
         self.head.grid_columnconfigure(1, weight=1)
         # Body
         self.body = tk.Frame(self, bg=themecolor.body_bg)
         self.body.pack(side="top", fill="both", expand=True)
         # Create widgets
-        self.frame = None
-        self.frames = {}
+        self.menu = None
+        self.activity = None
         self.create_header()
-        self.create_frames()
+        self.create_menu()
         self.bind_actions()
         # Hold connecting IP address
         self.ip_addr = tk.StringVar()
@@ -45,36 +51,43 @@ class RootView(tk.Tk):
 
     def run(self):
         '''Run the UI loop and show the connect page'''
-        self.show_frame(DEFAULT_FRAME)
+        self.menu.tkraise()
         self.mainloop()
 
-    def create_frames(self):
+    def create_menu(self):
         '''Init instances of frames and store in a map'''
-        for frame in (Keystroke, Manager, Menu, Registry, Screenshot):
-            page_name = frame.__name__
-            instance = frame(parent=self.body)
-            instance.grid(row=0, column=0, sticky="nsew")
-            self.frames[page_name] = instance
+        instance = Menu(parent=self.body)
+        instance.grid(row=0, column=0, sticky="nsew")
+        self.menu = instance
+        self.btn_back.grid_remove()
 
-    def show_frame(self, page_name):
+    def create_activity(self, page_name):
         '''Show a frame for the given page name'''
         socket = MySocket.getInstance()
         if socket._isconnected:
             socket._isconnected = socket.send(page_name.lower())
 
-        if page_name == DEFAULT_FRAME:
-            self.btn_back.grid_remove()
-        else:
-            self.btn_back.grid()
+        self.btn_back.grid()
 
         self.title(page_name)
-        self.frame = self.frames[page_name]
-        self.frame.tkraise()
+        if page_name == ACT_KEYSTROKE:
+            self.activity = Keystroke(parent=self.body)
+        elif page_name == ACT_PROCESS:
+            self.activity = Manager(parent=self.body, type='process')
+        elif page_name == ACT_APPLICATION:
+            self.activity = Manager(parent=self.body, type='application')
+        elif page_name == ACT_SCREENSHOT:
+            self.activity = Screenshot(parent=self.body)
+        elif page_name == ACT_REGISTRY:
+            self.activity = Registry(parent=self.body)
+
+        self.activity.grid(row=0, column=0, sticky="nsew")
+        self.activity.tkraise()
 
     def create_header(self):
         '''Init header element'''
         self.btn_back = tk.Button(
-            self.head, text="<-", width=2, height=2, bg='#97c1a9', fg='#000000')
+            self.head, text="Back", width=2, height=2, bg='#97c1a9', fg='#000000')
         self.btn_back.grid(row=0, column=0, sticky=tk.W,
                            pady=10, padx=10, columnspan=1, rowspan=2)
 
@@ -106,19 +119,19 @@ class RootView(tk.Tk):
         # self.bind("<Tab>", self.focus_next_widget)
         # self.bind("<Return>", lambda e: self.enterkey(e))
         self.btn_connect["command"] = self.connect
-        self.btn_back["command"] = self.back
-        self.frames[DEFAULT_FRAME].btn_process["command"] = lambda: self.show_frame(
-            "Manager")
-        self.frames[DEFAULT_FRAME].btn_app["command"] = lambda: self.show_frame(
-            "Manager")
-        self.frames[DEFAULT_FRAME].btn_shutdown["command"] = self.shutdown
-        self.frames[DEFAULT_FRAME].btn_screenshot["command"] = lambda: self.show_frame(
-            "Screenshot")
-        self.frames[DEFAULT_FRAME].btn_keystroke["command"] = lambda: self.show_frame(
-            "Keystroke")
-        self.frames[DEFAULT_FRAME].btn_registry["command"] = lambda: self.show_frame(
-            "Registry")
-        self.frames[DEFAULT_FRAME].btn_quit["command"] = lambda: self.exit_prog(
+        self.btn_back["command"] = self.back_to_menu
+        self.menu.btn_process["command"] = lambda: self.create_activity(
+            "process")
+        self.menu.btn_app["command"] = lambda: self.create_activity(
+            "application")
+        self.menu.btn_shutdown["command"] = self.shutdown
+        self.menu.btn_screenshot["command"] = lambda: self.create_activity(
+            "screenshot")
+        self.menu.btn_keystroke["command"] = lambda: self.create_activity(
+            "keystroke")
+        self.menu.btn_registry["command"] = lambda: self.create_activity(
+            "registry")
+        self.menu.btn_quit["command"] = lambda: self.exit_prog(
             isKilled=False)
 
     def connect(self):
@@ -144,10 +157,12 @@ class RootView(tk.Tk):
         else:
             utils.messagebox("Client", "Fail to connect to server", "error")
 
-    def back(self):
+    def back_to_menu(self):
         # Command to quit function
         self.exit_func(None)
-        self.show_frame("Menu")
+        self.menu.tkraise()
+        self.title('Computer Network Project')
+        self.btn_back.grid_remove()
         exit
 
     def exit_prog(self, isKilled=True):
@@ -164,8 +179,9 @@ class RootView(tk.Tk):
     def exit_func(self, event):
         socket = MySocket.getInstance()
         socket.send("exit", showerror=False)
+        self.activity.destroy()
 
     def shutdown(self):
         socket = MySocket.getInstance()
-        socket._isconnected = self._socket.send("shutdown")
+        socket._isconnected = socket.send("shutdown")
         socket.shutdown()
