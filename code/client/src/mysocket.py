@@ -15,7 +15,6 @@ class MySocket:
     def getInstance():
         if MySocket.__instance == None:
             MySocket()
-        print(">>>> check mysocket instance", MySocket.__instance)
         return MySocket.__instance
 
     def __init__(self):
@@ -38,10 +37,8 @@ class MySocket:
             self._reset()
 
     def send(self, command="exit", showerror=True):
-        print("> client sent :", command)
         try:
             self._sock.sendall(bytes(command, "utf8"))
-            print("> client sent success:", command)
             return True
         except:
             if showerror:
