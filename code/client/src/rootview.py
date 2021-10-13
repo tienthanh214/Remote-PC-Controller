@@ -1,15 +1,17 @@
+from src.frames.keystroke import Keystroke
+from src.frames.manager import Manager
+from src.frames.menu import Menu
+from src.frames.registry import Registry
+from src.frames.screenshot import Screenshot
+
 from tkinter import constants
 from src.mysocket import MySocket
 import tkinter as tk
 import pickle
 import src.textstyles as textstyle
 import src.themecolors as themecolor
-
-from src.frames.keystroke import Keystroke
-from src.frames.manager import Manager
-from src.frames.menu import Menu
-from src.frames.registry import Registry
-from src.frames.screenshot import Screenshot
+import src.utils as utils
+import time
 
 
 DEFAULT_FRAME = 'Menu'
@@ -18,32 +20,25 @@ DEFAULT_FRAME = 'Menu'
 class RootView(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-
         # Config window shape
         self.geometry("1280x840+50+50")
         self.title('Computer Network Project')
         self.resizable(False, False)
         self.grid()
-
         # Header
         self.head = tk.Frame(self, bg=themecolor.header_bg)
         self.head.pack(side="top", fill="both", expand=True)
         self.head.grid_rowconfigure(0, weight=1)
         self.head.grid_columnconfigure(1, weight=1)
-
         # Body
         self.body = tk.Frame(self, bg=themecolor.body_bg)
         self.body.pack(side="top", fill="both", expand=True)
-        # self.body.grid_rowconfigure(0, weight=1)
-        # self.body.grid_columnconfigure(0, weight=1)
-
         # Create widgets
         self.frame = None
         self.frames = {}
         self.create_header()
         self.create_frames()
         self.bind_actions()
-
         # Hold connecting IP address
         self.ip_addr = tk.StringVar()
         self.ip_addr.set('')
@@ -63,6 +58,10 @@ class RootView(tk.Tk):
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''
+        socket = MySocket.getInstance()
+        if socket._isconnected:
+            socket._isconnected = socket.send(page_name.lower())
+
         if page_name == DEFAULT_FRAME:
             self.btn_back.grid_remove()
         else:
@@ -103,7 +102,7 @@ class RootView(tk.Tk):
                               pady=10, padx=10)
 
     def bind_actions(self):
-        self.bind("<Destroy>", self.exit_prog)
+        self.bind("<Destroy>", lambda: self.exit_prog(isKilled=True))
         # self.bind("<Tab>", self.focus_next_widget)
         # self.bind("<Return>", lambda e: self.enterkey(e))
         self.btn_connect["command"] = self.connect
@@ -120,25 +119,53 @@ class RootView(tk.Tk):
         self.frames[DEFAULT_FRAME].btn_registry["command"] = lambda: self.show_frame(
             "Registry")
         self.frames[DEFAULT_FRAME].btn_quit["command"] = lambda: self.exit_prog(
-            False)
+            isKilled=False)
 
     def connect(self):
-        exit
+        ip = self.etr_ip.get().strip("\n")
+        socket = MySocket.getInstance()
+
+        if socket._isconnected:
+            ans = tk.messagebox.askquestion(
+                "New IP address", "Do you want to disconnect to the current server\n and reconnect to this IP ({})?".format(ip), icon="warning")
+            if ans == "yes":
+                try:
+                    socket.send("quit")
+                finally:
+                    socket.close()
+                    time.sleep(1)
+            else:
+                utils.messagebox("Client", "New connection cancelled", "error")
+                return
+
+        socket.connect(ip=ip)
+        if socket._isconnected:
+            utils.messagebox("Client", "Connected to the server", "info")
+        else:
+            utils.messagebox("Client", "Fail to connect to server", "error")
 
     def back(self):
         # Command to quit function
+        self.exit_func(None)
         self.show_frame("Menu")
         exit
 
     def exit_prog(self, isKilled=True):
-        # try:
-        #     self._socket.send("quit")
-        # except OSError:
-        #     pass
-        # finally:
-        self._socket.close()
-        if not isKilled:
-            self.destroy()
+        socket = MySocket.getInstance()
+        try:
+            socket.send("quit", showerror=False)
+        except OSError:
+            pass
+        finally:
+            socket.close()
+            if not isKilled:
+                self.destroy()
+
+    def exit_func(self, event):
+        socket = MySocket.getInstance()
+        socket.send("exit", showerror=False)
 
     def shutdown(self):
-        exit
+        socket = MySocket.getInstance()
+        socket._isconnected = self._socket.send("shutdown")
+        socket.shutdown()

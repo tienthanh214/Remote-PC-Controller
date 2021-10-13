@@ -1,8 +1,10 @@
 import tkinter as tk
 import codecs
 from tkinter import ttk, filedialog
+from src.mysocket import MySocket
 import src.utils as utl
 import src.themecolors as THEMECOLOR
+import time
 
 
 class Registry(tk.Frame):
@@ -13,6 +15,7 @@ class Registry(tk.Frame):
         self._regcont.set("")
         self._result = ""
         self.create_widgets()
+        self._socket = MySocket.getInstance()
 
     def create_widgets(self):
         # ============================ Change from file ============================
@@ -167,3 +170,36 @@ class Registry(tk.Frame):
             else:
                 self.lbl_name.grid()
                 self.txt_name.grid()
+
+    def registry_sendcont(self):
+        filecont = self.txt_regcont.get("1.0", tk.END)
+        self._socket._isconnected = self._socket.send(
+            ','.join(["registry", "file"]))
+        if not self._socket._isconnected:
+            return
+        self._socket.sendall(bytes(str(len(filecont)), "utf8"))
+        time.sleep(0.1)
+        self._socket.send(filecont)
+
+        response = self._socket.recv(1024).decode("utf8")
+        utl.messagebox("Send regsitry file", response,
+                       "info" if response == "SUCCESS" else "error")
+
+    def registry_send(self):
+        func = self._df_func.get().strip("\n")
+        path = self.txt_path.get("1.0", tk.END).strip("\n")
+        name = self.txt_name.get("1.0", tk.END).strip("\n")
+        value = self.txt_value.get("1.0", tk.END).strip("\n")
+        dttp = self._df_dttype.get().strip("\n")
+
+        request = None
+        if func in ['Get value', 'Set value', 'Create key']:
+            func = func.split(" ", 1)[0].lower()
+        else:
+            func = func.replace(" ", "").lower()
+        self._socket._isconnected = self._socket.send(
+            ','.join(["registry", func, path, name, value, dttp]))
+        if not self._socket._isconnected:
+            return
+        response = self._socket.recv(1024).decode("utf8")
+        self.insert_result(response)
