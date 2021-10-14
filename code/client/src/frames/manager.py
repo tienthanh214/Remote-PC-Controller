@@ -1,24 +1,28 @@
+from src.mysocket import MySocket
+from tkinter import ttk
 import tkinter as tk
 import src.utils as util
-from tkinter import ttk
 import src.themecolors as THEMECOLOR
 
 
 class Manager(tk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, type):
         tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg)
         self.create_widgets()
+        self._type = type
+        self._socket = MySocket.getInstance()
+        self._inputbox = None
 
     def create_widgets(self):
         # Prompt the inputbox
         # User will input the application or process id they want to kill
         self.btn_kill = tk.Button(
-            self, text="Kill", width=10, height=2)
+            self, text="Kill", command=self.kill, width=10, height=2)
         self.btn_kill.grid(row=0, column=0, sticky=tk.N, padx=10, pady=10)
 
         # Refresh and show running process or application from the server
         self.btn_view = tk.Button(
-            self, text="Xem", width=10, height=2)
+            self, text="Xem", command=self.view, width=10, height=2)
         self.btn_view.grid(row=0, column=1, sticky=tk.N, padx=10, pady=10)
 
         # Clear the running process or application table
@@ -28,7 +32,7 @@ class Manager(tk.Frame):
 
         # Similar to btn_kill, but this will take the name of the application and start it instead
         self.btn_start = tk.Button(
-            self, text="Start", width=10, height=2)
+            self, text="Start", command=self.start, width=10, height=2)
         self.btn_start.grid(row=0, column=3, sticky=tk.N, padx=10, pady=10)
 
         # Display info of running process or application from the server
@@ -41,7 +45,7 @@ class Manager(tk.Frame):
         for i in range(10):
             self.table.insert("", "end", values=("_", "_", "_"))
 
-    def view(self, data):
+    def populate_data(self, data):
         # for testing data will be in 2d list
         self.clear()
         if (data):
@@ -58,4 +62,52 @@ class Manager(tk.Frame):
         for rowid in self.table.get_children():
             self.table.delete(rowid)
 
-    
+    def kill(self):
+        if self._inputbox != None:
+            self.reset_inputbox()
+            return
+        self._inputbox = util.inputbox(
+            tk.Toplevel(self), tl=self._type, cmd="kill")
+        # binding...
+        self._inputbox.btn_get["command"] = lambda: self.exec_command(cmd=self._type, act="kill")
+        self._inputbox.bind(
+            "<Destroy>", lambda e: self.reset_inputbox())
+        self._inputbox.mainloop()
+        exit
+
+    def view(self):
+        self._socket._isconnected = self._socket.send(self._type + ',view')
+        if not self._socket._isconnected:
+            return
+        list_len = int(self._socket._sock.recv(32).decode('utf8'))
+        data = self._socket.receive(length=list_len).decode("utf8")
+        self.populate_data(data)
+
+    def start(self):
+        if self._inputbox != None:
+            self.reset_inputbox()
+            return
+        self._inputbox = util.inputbox(
+            tk.Toplevel(self), tl=self._type, cmd="start")
+        # binding...
+        self._inputbox.btn_get["command"] = lambda: self.exec_command(cmd=self._type, act="start")
+        self._inputbox.bind(
+            "<Destroy>", lambda e: self.reset_inputbox())
+        self._inputbox.mainloop()
+        exit
+
+    def exec_command(self, cmd, act):
+        target = self._inputbox.getvalue()
+        self._socket._isconncted = self._socket.send(
+            ','.join([cmd, act, target]))
+
+        self._inputbox.clear()
+        if not self._socket._isconnected:
+            return
+        response = self._socket._sock.recv(32).decode("utf8")
+        util.messagebox(title=cmd, msg=response,
+                        type="info" if response == "SUCCESS" else "error")
+
+    def reset_inputbox(self):
+        self._inputbox.killbox()
+        self._inputbox = None

@@ -3,6 +3,7 @@ import io
 from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk
 import src.themecolors as THEMECOLOR
+from src.mysocket import MySocket
 
 
 class Screenshot(tk.Frame):
@@ -10,6 +11,7 @@ class Screenshot(tk.Frame):
         tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg)
         self._image_bytes = None
         self.grid()
+        self._socket = MySocket.getInstance()
         self.create_widgets()
 
     def create_widgets(self):
@@ -23,21 +25,19 @@ class Screenshot(tk.Frame):
         # Take another screenshot and update the picture
         # When pressed, Screenshot will sent a request to the server via Controller
         self.btn_snap = tk.Button(
-            self, text="Chụp", width=20, height=10)
+            self, text="Chụp", command=self.snap_screenshot, width=20, height=10)
         self.btn_snap.grid(row=0, column=1, sticky=tk.E, padx=10, pady=10)
 
         # Write the picture to a file as .png, .jpg and .bmp
         self.btn_save = tk.Button(
-            self, text="Lưu", width=20, height=10)
+            self, text="Lưu", command=self.save_image, width=20, height=10)
         self.btn_save.grid(row=1, column=1, sticky=tk.E, padx=10, pady=10)
 
     def _resize_image(self, IMG):
         h = w = 0
-
         basewidth = 560
         wpercent = basewidth / float(IMG.size[0])
         hsize = int((float(IMG.size[1]) * float(wpercent)))
-
         if (hsize > 560):
             h = 560
             hpercent = h / float(hsize)
@@ -74,3 +74,10 @@ class Screenshot(tk.Frame):
         if file != None:
             file.write(self._image_bytes)
             file.close()
+
+    def snap_screenshot(self):
+        # send
+        self._socket.send("screenshot,snap")
+        picture_len = int(self._socket._sock.recv(32).decode('utf8'))
+        data = self._socket.receive(length=picture_len)
+        self.update_image(data)
