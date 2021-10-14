@@ -40,12 +40,14 @@ class RootView(tk.Tk):
         # Body
         self.body = tk.Frame(self, bg=themecolor.body_bg)
         self.body.pack(side="top", fill="both", expand=True)
-        # Create widgets
+        # Object holders
         self.menu = None
         self.activity = None
+        # Create widgets
         self.create_header()
         self.create_menu()
         self.bind_actions()
+        
 
     def run(self):
         '''Run the UI loop and show the connect page'''

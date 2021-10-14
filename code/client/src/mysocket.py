@@ -1,6 +1,6 @@
 from socket import AF_INET, SOCK_STREAM
 import socket as sk
-import time
+import struct as stc
 import src.utils as utl
 
 
@@ -36,20 +36,28 @@ class MySocket:
         except:
             self._reset()
 
-    def send(self, command="exit", showerror=True):
+    def send(self, msg="exit", showerror=True):
+        """Prefix each message with a 4-byte length (network byte order)"""
         try:
-            self._sock.sendall(bytes(command, "utf8"))
-            print('>> client:', command)
+            byte_msg = bytes(msg, "utf8")
+            byte_msg = stc.pack('>I', len(byte_msg)) + byte_msg
+            self._sock.sendall(byte_msg)
+            print('>> client:', msg)
             return True
         except:
             if showerror:
                 utl.messagebox("Socket", "Not connected to server", "error")
             return False
 
-    def receive(self, length=2048):
+    def receive(self):
+        """Read message length and unpack it into an integer"""
         try:
+            raw_msglen = self._sock.recv(4)
+            if not raw_msglen:
+                return None
+            msglen = stc.unpack('>I', raw_msglen)[0]
             data = bytearray()
-            while len(data) < length:
+            while len(data) < msglen:
                 packet = self._sock.recv(4096)
                 if not packet:
                     break

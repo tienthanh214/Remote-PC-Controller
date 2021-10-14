@@ -35,14 +35,12 @@ class Registry(tk.Frame):
         self.btn_sendcont = tk.Button(
             self, text="Gửi\nnội dung", command=None, width=22, height=10)
         self.btn_sendcont.grid(row=1, column=3, sticky=tk.N, padx=10, pady=10)
-
         # ============================ Break line ============================
         # A line to seperate 2 sending method
         self.lbl_brk = tk.Label(
             self, height=1, text=("-" * 40 + " Sửa giá trị trực tiếp " + "-" * 40), justify="center")
         self.lbl_brk.grid(row=2, column=0, sticky=tk.N,
                           padx=10, pady=0, columnspan=4)
-
         # ============================ Change from setting ============================
         # File path
         self.lbl_path = tk.Label(
@@ -52,7 +50,6 @@ class Registry(tk.Frame):
         self.txt_path = tk.Text(self, width=48, height=1, bg="#FFFFFF")
         self.txt_path.grid(row=4, column=1, sticky=tk.W,
                            padx=10, pady=10, columnspan=3)
-
         # Name of the value
         self.lbl_name = tk.Label(
             self, height=1, text="Name value", justify="center")
@@ -61,7 +58,6 @@ class Registry(tk.Frame):
         self.txt_name = tk.Text(self, width=24, height=1, bg="#FFFFFF")
         self.txt_name.grid(row=6, column=0, sticky=tk.N,
                            padx=10, pady=10, columnspan=1)
-
         # Set the value
         self.lbl_value = tk.Label(
             self, height=1, text="Value", justify="center")
@@ -70,8 +66,7 @@ class Registry(tk.Frame):
         self.txt_value = tk.Text(self, width=24, height=1, bg="#FFFFFF")
         self.txt_value.grid(row=6, column=1, sticky=tk.N,
                             padx=10, pady=10, columnspan=2)
-
-        # Choose data type :)))))))))))
+        # Choose data type
         self.lbl_dttype = tk.Label(
             self, height=1, text="Data type", justify="center")
         self.lbl_dttype.grid(row=5, column=3, sticky=tk.N,
@@ -84,25 +79,21 @@ class Registry(tk.Frame):
         self.opmn_dttype.config(width=20)
         self.opmn_dttype.grid(row=6, column=3, sticky=tk.N,
                               padx=10, pady=5, columnspan=1)
-
         # Text field to display the result of commands
         self.txt_result = tk.Text(
             self, width=88, height=10, bg="#FFFFFF", state="disable")
         self.txt_result.grid(row=7, column=0, sticky=tk.N,
                              padx=10, pady=10, columnspan=4)
-
         # Send these command to the server
         self.btn_send = tk.Button(
             self, text="Gửi", width=10, height=2)
         self.btn_send.grid(row=8, column=0, sticky=tk.N,
                            padx=10, pady=10, columnspan=2)
-
         # Clear the result text field
         self.btn_clear = tk.Button(
             self, text="Xóa", command=self.clear_result, width=10, height=2)
         self.btn_clear.grid(row=8, column=2, sticky=tk.N,
                             padx=10, pady=10, columnspan=2)
-
         # Choose functionality
         self.lbl_func = tk.Label(
             self, height=1, text="Chức năng:", width=20, justify="left")
@@ -110,11 +101,9 @@ class Registry(tk.Frame):
                            padx=10, pady=10, columnspan=1)
         self._func = {'Get value', 'Set value',
                       'Delete value', 'Create key', 'Delete key'}
-
         self._df_func = tk.StringVar(self)
         self._df_func.trace("w", lambda a, b, c: self.update_ui(a=a, b=b, c=c))
         self._df_func.set('Get value')
-
         self.opmn_func = tk.OptionMenu(self, self._df_func, *self._func)
         self.opmn_func.grid(row=3, column=1, sticky=tk.W,
                             padx=10, pady=5, columnspan=3)
@@ -177,8 +166,6 @@ class Registry(tk.Frame):
             ','.join(["registry", "file"]))
         if not self._socket._isconnected:
             return
-        self._socket.sendall(bytes(str(len(filecont)), "utf8"))
-        time.sleep(0.1)
         self._socket.send(filecont)
 
         response = self._socket.recv(1024).decode("utf8")

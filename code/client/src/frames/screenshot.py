@@ -80,6 +80,5 @@ class Screenshot(tk.Frame):
     def snap_screenshot(self):
         # send
         self._socket.send("screenshot,snap")
-        picture_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(length=picture_len)
+        data = self._socket.receive()
         self.update_image(data)

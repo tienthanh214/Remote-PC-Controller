@@ -84,8 +84,7 @@ class Manager(tk.Frame):
         self._socket._isconnected = self._socket.send(self._type + ',view')
         if not self._socket._isconnected:
             return
-        list_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(length=list_len).decode("utf8")
+        data = self._socket.receive().decode("utf8")
         self.populate_data(data=data)
 
     def start(self):

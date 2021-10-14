@@ -51,8 +51,7 @@ class Keystroke(tk.Frame):
 
     def keystroke_print(self):
         self._socket.send("keystroke,print")
-        log_len = int(self._socket._sock.recv(32).decode('utf8'))
-        data = self._socket.receive(length=log_len).decode("utf8")
+        data = self._socket.receive().decode("utf8")
         self.print_keystroke(data)
 
     def keystroke_clear(self):
