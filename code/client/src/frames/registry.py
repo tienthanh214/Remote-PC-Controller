@@ -1,7 +1,7 @@
+from src.mysocket import MySocket
+from tkinter import ttk, filedialog
 import tkinter as tk
 import codecs
-from tkinter import ttk, filedialog
-from src.mysocket import MySocket
 import src.utils as utl
 import src.themecolors as THEMECOLOR
 import time
