@@ -3,8 +3,9 @@ from src.frames.manager import Manager
 from src.frames.menu import Menu
 from src.frames.registry import Registry
 from src.frames.screenshot import Screenshot
+from PIL import Image, ImageTk
 
-from tkinter import constants
+from tkinter import PhotoImage, constants
 from src.mysocket import MySocket
 import tkinter as tk
 import pickle
@@ -12,7 +13,6 @@ import src.textstyles as textstyle
 import src.themecolors as themecolor
 import src.utils as utils
 import time
-
 
 ACT_PROCESS = 'process'
 ACT_APPLICATION = 'application'
@@ -30,12 +30,12 @@ class RootView(tk.Tk):
         # Config window shape
         self.geometry("1280x840+50+50")
         self.title('Computer Network Project')
-        self.resizable(False, False)
+        self.config(bg=themecolor.root_bg_red)
         self.grid()
         # Header
         self.head = tk.Frame(self, bg=themecolor.header_bg)
-        self.head.pack(side="top", fill="both", expand=False)
-        self.head.grid_rowconfigure(0, weight=1)
+        self.head.pack(side="top", fill="both", expand=False, padx=10, pady=10)
+        #self.head.grid_rowconfigure(0, weight=1)
         self.head.grid_columnconfigure(1, weight=1)
         # Body
         self.body = tk.Frame(self, bg=themecolor.body_bg)
@@ -63,7 +63,7 @@ class RootView(tk.Tk):
         if self.socket._isconnected:
             self.socket._isconnected = self.socket.send(activity_name.lower())
         else:
-            utils.messagebox("Client", "Not connected to a PC", "error")
+            utils.messagebox("Client", "Please connect to a PC", "warn")
             return
         # Show return button only in activity
         self.btn_back.grid()
@@ -90,25 +90,33 @@ class RootView(tk.Tk):
         self.btn_back.grid(row=0, column=0, sticky=tk.W,
                            pady=10, padx=10, columnspan=1, rowspan=2)
         # Application logo
-        self.lbl_app = tk.Label(
-            self.head, text='PC Controller', height=1, font=textstyle.logo_font, bg="#f9cdad", fg="#ec2049")
+        self.image = Image.open('assets/outline_cast_connected_white_48dp.png')
+        self.image.mode = 'RGBA'
+        self.photo = ImageTk.PhotoImage(self.image)
+        self.lbl_app = tk.Canvas(
+            self.head, width=80, height=80, bg=themecolor.header_bg, highlightthickness=0)
         self.lbl_app.grid(row=0, column=1, sticky=tk.W, padx=10, pady=10,
                           ipadx=10, ipady=10, columnspan=1, rowspan=2)
+        self.lbl_app.create_image(50, 50, image=self.photo)
         # IP address label
         self.lbl_app = tk.Label(
-            self.head, text='Enter IP address', height=1, font=textstyle.title_font, bg=themecolor.header_bg)
+            self.head, text='Enter IP address', height=1, font=textstyle.btn_font, bg=themecolor.header_bg)
         self.lbl_app.grid(row=0, column=3, sticky=tk.S,
                           columnspan=1, rowspan=1)
         # Input text for target ip address
         self.etr_ip = tk.Entry(self.head, width=30)
         self.etr_ip.focus()
-        self.etr_ip.grid(row=1, column=3, padx=10, pady=10,
-                         ipady=4, sticky=tk.S, columnspan=1)
+        self.etr_ip.grid(row=1, column=3, padx=0, pady=10,
+                         ipady=4, sticky=tk.N, columnspan=1)
         # Connect button
         self.btn_connect = tk.Button(
             self.head, text="Connect", width=6, height=1, bg='#97c1a9', fg='#000000')
         self.btn_connect.grid(row=1, column=4, sticky=tk.N,
-                              pady=10, padx=10)
+                              pady=10, padx=0)
+        # # Padding right
+        self.spacer = tk.Label(self.head, height=2, width=2,
+                               anchor=tk.E, bg=themecolor.header_bg)
+        self.spacer.grid(row=0, column=5)
 
     def bind_actions(self):
         self.bind("<Destroy>", lambda e: self.exit_prog(isKilled=True))
@@ -147,8 +155,10 @@ class RootView(tk.Tk):
         self.socket.connect(ip=ip)
         if self.socket._isconnected:
             utils.messagebox("Client", "Connected to the server", "info")
+            self.config(bg=themecolor.root_bg_lime)
         else:
             utils.messagebox("Client", "Fail to connect to server", "error")
+            self.config(bg=themecolor.root_bg_red)
 
     def back_to_menu(self):
         # Command to quit function
