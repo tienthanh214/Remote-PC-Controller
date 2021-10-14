@@ -1,7 +1,7 @@
+from socket import AF_INET, SOCK_STREAM
 import socket as sk
 import time
 import src.utils as utl
-from socket import AF_INET, SOCK_STREAM
 
 
 # Text-based ommands are sent to the server
@@ -39,6 +39,7 @@ class MySocket:
     def send(self, command="exit", showerror=True):
         try:
             self._sock.sendall(bytes(command, "utf8"))
+            print('>> client:', command)
             return True
         except:
             if showerror:

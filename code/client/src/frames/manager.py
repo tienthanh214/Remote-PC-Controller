@@ -1,8 +1,10 @@
 from src.mysocket import MySocket
 from tkinter import ttk
+from threading import Thread
 import tkinter as tk
 import src.utils as util
 import src.themecolors as THEMECOLOR
+import multiprocessing as mp
 
 
 class Manager(tk.Frame):
@@ -19,22 +21,18 @@ class Manager(tk.Frame):
         self.btn_kill = tk.Button(
             self, text="Kill", command=self.kill, width=10, height=2)
         self.btn_kill.grid(row=0, column=0, sticky=tk.N, padx=10, pady=10)
-
         # Refresh and show running process or application from the server
         self.btn_view = tk.Button(
-            self, text="Xem", command=self.view, width=10, height=2)
+            self, text="Xem", command=self.view_async, width=10, height=2)
         self.btn_view.grid(row=0, column=1, sticky=tk.N, padx=10, pady=10)
-
         # Clear the running process or application table
         self.btn_clear = tk.Button(
             self, text="Xóa", command=self.clear, width=10, height=2)
         self.btn_clear.grid(row=0, column=2, sticky=tk.N, padx=10, pady=10)
-
         # Similar to btn_kill, but this will take the name of the application and start it instead
         self.btn_start = tk.Button(
             self, text="Start", command=self.start, width=10, height=2)
         self.btn_start.grid(row=0, column=3, sticky=tk.N, padx=10, pady=10)
-
         # Display info of running process or application from the server
         cols = ("Name", "ID", "Count thread")
         self.table = ttk.Treeview(self, columns=cols, show="headings")
@@ -44,6 +42,12 @@ class Manager(tk.Frame):
             self.table.heading(col, text=col)
         for i in range(10):
             self.table.insert("", "end", values=("_", "_", "_"))
+
+    def view_async(self):
+        Thread(target=self.view, args=()).start()
+
+    def exec_command_async(self, cmd, act):
+        Thread(target=self.exec_command, args=(cmd, act)).start()
 
     def populate_data(self, data):
         # for testing data will be in 2d list
@@ -69,7 +73,8 @@ class Manager(tk.Frame):
         self._inputbox = util.inputbox(
             tk.Toplevel(self), tl=self._type, cmd="kill")
         # binding...
-        self._inputbox.btn_get["command"] = lambda: self.exec_command(cmd=self._type, act="kill")
+        self._inputbox.btn_get["command"] = lambda: self.exec_command_async(
+            cmd=self._type, act="kill")
         self._inputbox.bind(
             "<Destroy>", lambda e: self.reset_inputbox())
         self._inputbox.mainloop()
@@ -81,7 +86,7 @@ class Manager(tk.Frame):
             return
         list_len = int(self._socket._sock.recv(32).decode('utf8'))
         data = self._socket.receive(length=list_len).decode("utf8")
-        self.populate_data(data)
+        self.populate_data(data=data)
 
     def start(self):
         if self._inputbox != None:
@@ -90,7 +95,8 @@ class Manager(tk.Frame):
         self._inputbox = util.inputbox(
             tk.Toplevel(self), tl=self._type, cmd="start")
         # binding...
-        self._inputbox.btn_get["command"] = lambda: self.exec_command(cmd=self._type, act="start")
+        self._inputbox.btn_get["command"] = lambda: self.exec_command_async(
+            cmd=self._type, act="start")
         self._inputbox.bind(
             "<Destroy>", lambda e: self.reset_inputbox())
         self._inputbox.mainloop()
@@ -98,12 +104,13 @@ class Manager(tk.Frame):
 
     def exec_command(self, cmd, act):
         target = self._inputbox.getvalue()
+        # Send command to the server
         self._socket._isconncted = self._socket.send(
             ','.join([cmd, act, target]))
-
         self._inputbox.clear()
         if not self._socket._isconnected:
             return
+        # Get response from server
         response = self._socket._sock.recv(32).decode("utf8")
         util.messagebox(title=cmd, msg=response,
                         type="info" if response == "SUCCESS" else "error")

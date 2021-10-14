@@ -1,9 +1,10 @@
+from PIL import Image, ImageTk
+from tkinter import messagebox, filedialog
+from threading import Thread
+from src.mysocket import MySocket
 import tkinter as tk
 import io
-from tkinter import messagebox, filedialog
-from PIL import Image, ImageTk
 import src.themecolors as THEMECOLOR
-from src.mysocket import MySocket
 
 
 class Screenshot(tk.Frame):
@@ -16,18 +17,17 @@ class Screenshot(tk.Frame):
 
     def create_widgets(self):
         # Display the image
-        self.canvas = tk.Canvas(self, bg="#FFFFFF", width=560, height=560)
+        self.canvas = tk.Canvas(
+            self, bg="#000000", highlightthickness=0, width=560, height=560)
         self.item_on_canvas = self.canvas.create_image(
             280, 280, anchor=tk.CENTER, image=None)
         self.canvas.grid(row=0, column=0, sticky=tk.W +
                          tk.N, padx=10, pady=10, rowspan=2)
-
         # Take another screenshot and update the picture
         # When pressed, Screenshot will sent a request to the server via Controller
         self.btn_snap = tk.Button(
-            self, text="Chụp", command=self.snap_screenshot, width=20, height=10)
+            self, text="Chụp", command=self.snap_screenshot_async, width=20, height=10)
         self.btn_snap.grid(row=0, column=1, sticky=tk.E, padx=10, pady=10)
-
         # Write the picture to a file as .png, .jpg and .bmp
         self.btn_save = tk.Button(
             self, text="Lưu", command=self.save_image, width=20, height=10)
@@ -45,7 +45,6 @@ class Screenshot(tk.Frame):
         else:
             h = hsize
             w = basewidth
-
         return IMG.resize((int(w), int(h)), Image.ANTIALIAS)
 
     def update_image(self, img_data):
@@ -54,7 +53,7 @@ class Screenshot(tk.Frame):
         self._image_bytes = img_data
         stream = io.BytesIO(img_data)
         image = Image.open(stream)
-
+        # Save image data to object
         self._img = ImageTk.PhotoImage(self._resize_image(image))
         self.canvas.itemconfig(self.item_on_canvas, image=self._img)
         self.update_idletasks()
@@ -74,6 +73,9 @@ class Screenshot(tk.Frame):
         if file != None:
             file.write(self._image_bytes)
             file.close()
+
+    def snap_screenshot_async(self):
+        Thread(target=self.snap_screenshot, args=()).start()
 
     def snap_screenshot(self):
         # send

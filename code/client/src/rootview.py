@@ -3,9 +3,9 @@ from src.frames.manager import Manager
 from src.frames.menu import Menu
 from src.frames.registry import Registry
 from src.frames.screenshot import Screenshot
-from PIL import Image, ImageTk
 
 from tkinter import PhotoImage, constants
+from PIL import Image, ImageTk
 from src.mysocket import MySocket
 import tkinter as tk
 import pickle
@@ -119,7 +119,7 @@ class RootView(tk.Tk):
         self.spacer.grid(row=0, column=5)
 
     def bind_actions(self):
-        self.bind("<Destroy>", lambda e: self.exit_prog(isKilled=True))
+        # self.bind("<Destroy>", lambda e: self.exit_prog(isKilled=True))
         # self.bind("<Tab>", self.focus_next_widget)
         # self.bind("<Return>", lambda e: self.enterkey(e))
         self.btn_connect["command"] = self.connect

@@ -1,7 +1,7 @@
-import tkinter as tk
 from tkinter import ttk
-import src.themecolors as THEMECOLOR
 from src.mysocket import MySocket
+import tkinter as tk
+import src.themecolors as THEMECOLOR
 
 
 class Keystroke(tk.Frame):
