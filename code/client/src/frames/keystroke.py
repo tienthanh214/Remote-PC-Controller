@@ -32,9 +32,9 @@ class Keystroke(tk.Frame):
         self.btn_clear.grid(row=0, column=3, sticky=tk.N, padx=10, pady=10)
 
         # Lock the keyboard
-        self.btn_clear = tk.Button(
+        self.btn_lock = tk.Button(
             self, text="Khóa", command=self.keystroke_lock, width=10, height=2)
-        self.btn_clear.grid(row=0, column=4, sticky=tk.N, padx=10, pady=10)
+        self.btn_lock.grid(row=0, column=4, sticky=tk.N, padx=10, pady=10)
 
         # Display the text
         self.text_field = tk.Text(
