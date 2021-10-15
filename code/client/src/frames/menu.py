@@ -49,17 +49,17 @@ class Menu(tk.Frame):
         # --------------------- Group 2 ---------------------
         # Show running applications
         self.btn_app = tk.Button(
-            self, text="Appications", image=self.icons['app'], compound=tk.LEFT, width=40, height=4)
+            self, text="Appications", image=self.icons['app'], compound=tk.LEFT)
         self.btn_app.grid(row=0, column=3, sticky=tk.W+tk.S +
                           tk.E+tk.N, padx=10, pady=10, columnspan=3)
         # Show running processes
         self.btn_process = tk.Button(
-            self, text="Processes", image=self.icons['process'], compound=tk.LEFT, width=40, height=4)
+            self, text="Processes", image=self.icons['process'], compound=tk.LEFT)
         self.btn_process.grid(row=1, column=3, sticky=tk.W +
                               tk.S+tk.E+tk.N, padx=10, pady=10, columnspan=3)
         # Get keystroke
         self.btn_keyboard = tk.Button(
-            self, text="Keyboard", image=self.icons['keyboard'], compound=tk.LEFT, width=40, height=4)
+            self, text="Keyboard", image=self.icons['keyboard'], compound=tk.LEFT)
         self.btn_keyboard.grid(
             row=2, column=3, sticky=tk.W+tk.S+tk.E+tk.N, padx=10, pady=10, columnspan=3)
         # --------------------- Group 3 ---------------------
