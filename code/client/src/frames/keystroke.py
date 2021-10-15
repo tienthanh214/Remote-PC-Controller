@@ -44,13 +44,13 @@ class Keystroke(tk.Frame):
         self.text_field.configure(state="disable")
 
     def keystroke_hook(self):
-        self._socket.send(','.join(["keystroke", "hook"]))
+        self._socket.send_immediate('keystroke,hook')
 
     def keystroke_unhook(self):
-        self._socket.send(','.join(["keystroke", "unhook"]))
+        self._socket.send_immediate('keystroke,unhook')
 
     def keystroke_print(self):
-        self._socket.send("keystroke,print")
+        self._socket.send_immediate("keystroke,print")
         data = self._socket.receive().decode("utf8")
         self.print_keystroke(data)
 

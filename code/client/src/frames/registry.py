@@ -162,8 +162,7 @@ class Registry(tk.Frame):
 
     def registry_sendcont(self):
         filecont = self.txt_regcont.get("1.0", tk.END)
-        self._socket._isconnected = self._socket.send(
-            ','.join(["registry", "file"]))
+        self._socket._isconnected = self._socket.send_immediate("registry,file")
         if not self._socket._isconnected:
             return
         self._socket.send(filecont)
@@ -184,7 +183,7 @@ class Registry(tk.Frame):
             func = func.split(" ", 1)[0].lower()
         else:
             func = func.replace(" ", "").lower()
-        self._socket._isconnected = self._socket.send(
+        self._socket._isconnected = self._socket.send_immediate(
             ','.join(["registry", func, path, name, value, dttp]))
         if not self._socket._isconnected:
             return

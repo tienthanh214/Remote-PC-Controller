@@ -48,6 +48,17 @@ class MySocket:
             if showerror:
                 utl.messagebox("Socket", "Not connected to server", "error")
             return False
+    
+    def send_immediate(self, msg="exit", showerror=True):
+        """Send raw byte string without header, used for commands"""
+        try:
+            self._sock.sendall(bytes(msg, 'utf8'))
+            print('>> client:', msg)
+            return True
+        except:
+            if showerror:
+                utl.messagebox("Socket", "Not connected to server", "error")
+            return False
 
     def receive(self):
         """Read message length and unpack it into an integer"""

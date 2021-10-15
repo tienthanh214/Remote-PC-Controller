@@ -146,7 +146,7 @@ class RootView(tk.Tk):
                 "New IP address", "Do you want to disconnect to the current server\n and reconnect to this IP ({})?".format(ip), icon="warning")
             if ans == "yes":
                 try:
-                    self.socket.send("quit")
+                    self.socket.send_immediate("quit")
                 finally:
                     self.socket.close()
                     time.sleep(1)
@@ -172,7 +172,7 @@ class RootView(tk.Tk):
 
     def exit_prog(self, isKilled=True):
         try:
-            self.socket.send("quit", showerror=False)
+            self.socket.send_immediate("quit", showerror=False)
         except OSError:
             pass
         finally:
@@ -181,9 +181,9 @@ class RootView(tk.Tk):
                 self.destroy()
 
     def exit_func(self, event):
-        self.socket.send("exit", showerror=False)
+        self.socket.send_immediate("exit", showerror=False)
         self.activity.destroy()
 
     def shutdown(self):
-        self.socket._isconnected = self.socket.send("shutdown")
+        self.socket._isconnected = self.socket.send_immediate("shutdown")
         self.socket.shutdown()

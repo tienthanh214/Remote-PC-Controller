@@ -81,7 +81,7 @@ class Manager(tk.Frame):
         exit
 
     def view(self):
-        self._socket._isconnected = self._socket.send(self._type + ',view')
+        self._socket._isconnected = self._socket.send_immediate(self._type + ',view')
         if not self._socket._isconnected:
             return
         data = self._socket.receive().decode("utf8")
@@ -104,7 +104,7 @@ class Manager(tk.Frame):
     def exec_command(self, cmd, act):
         target = self._inputbox.getvalue()
         # Send command to the server
-        self._socket._isconncted = self._socket.send(
+        self._socket._isconncted = self._socket.send_immediate(
             ','.join([cmd, act, target]))
         self._inputbox.clear()
         if not self._socket._isconnected:
