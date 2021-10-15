@@ -47,7 +47,6 @@ class RootView(tk.Tk):
         self.create_header()
         self.create_menu()
         self.bind_actions()
-        
 
     def run(self):
         '''Run the UI loop and show the connect page'''
@@ -92,7 +91,7 @@ class RootView(tk.Tk):
         self.btn_back.grid(row=0, column=0, sticky=tk.W,
                            pady=10, padx=10, columnspan=1, rowspan=2)
         # Application logo
-        self.image = Image.open('assets/outline_cast_connected_white_48dp.png')
+        self.image = Image.open('assets/ic_app_icon.png')
         self.image.mode = 'RGBA'
         self.photo = ImageTk.PhotoImage(self.image)
         self.lbl_app = tk.Canvas(
@@ -131,9 +130,9 @@ class RootView(tk.Tk):
         self.menu.btn_app["command"] = lambda: self.create_activity(
             "application")
         self.menu.btn_shutdown["command"] = self.shutdown
-        self.menu.btn_screenshot["command"] = lambda: self.create_activity(
+        self.menu.btn_screen["command"] = lambda: self.create_activity(
             "screenshot")
-        self.menu.btn_keystroke["command"] = lambda: self.create_activity(
+        self.menu.btn_keyboard["command"] = lambda: self.create_activity(
             "keystroke")
         self.menu.btn_registry["command"] = lambda: self.create_activity(
             "registry")
