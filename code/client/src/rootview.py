@@ -89,7 +89,7 @@ class RootView(tk.Tk):
         self.btn_back = tk.Button(
             self.head, text="Back", width=2, height=2, bg='#97c1a9', fg='#000000')
         self.btn_back.grid(row=0, column=0, sticky=tk.W,
-                           pady=10, padx=10, columnspan=1, rowspan=2)
+                           pady=10, ipadx=10, padx=10, columnspan=1, rowspan=2)
         # Application logo
         self.image = Image.open('assets/ic_app_icon.png')
         self.image.mode = 'RGBA'

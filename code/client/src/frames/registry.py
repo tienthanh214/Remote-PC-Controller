@@ -33,7 +33,7 @@ class Registry(tk.Frame):
                               padx=10, pady=10, columnspan=3)
         # Send the regis content to the server
         self.btn_sendcont = tk.Button(
-            self, text="Gửi\nnội dung", command=self.registry_sendcont, command=None, width=22, height=10)
+            self, text="Gửi\nnội dung", command=self.registry_sendcont, width=22, height=10)
         self.btn_sendcont.grid(row=1, column=3, sticky=tk.N, padx=10, pady=10)
         # ============================ Break line ============================
         # A line to seperate 2 sending method
