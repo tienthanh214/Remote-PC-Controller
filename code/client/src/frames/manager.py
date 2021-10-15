@@ -81,7 +81,8 @@ class Manager(tk.Frame):
         exit
 
     def view(self):
-        self._socket._isconnected = self._socket.send_immediate(self._type + ',view')
+        self._socket._isconnected = self._socket.send_immediate(
+            self._type + ',view')
         if not self._socket._isconnected:
             return
         data = self._socket.receive().decode("utf8")

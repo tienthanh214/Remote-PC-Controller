@@ -33,7 +33,7 @@ class Registry(tk.Frame):
                               padx=10, pady=10, columnspan=3)
         # Send the regis content to the server
         self.btn_sendcont = tk.Button(
-            self, text="Gửi\nnội dung", command=None, width=22, height=10)
+            self, text="Gửi\nnội dung", command=self.registry_sendcont, command=None, width=22, height=10)
         self.btn_sendcont.grid(row=1, column=3, sticky=tk.N, padx=10, pady=10)
         # ============================ Break line ============================
         # A line to seperate 2 sending method
@@ -86,7 +86,7 @@ class Registry(tk.Frame):
                              padx=10, pady=10, columnspan=4)
         # Send these command to the server
         self.btn_send = tk.Button(
-            self, text="Gửi", width=10, height=2)
+            self, text="Gửi", command=self.registry_send, width=10, height=2)
         self.btn_send.grid(row=8, column=0, sticky=tk.N,
                            padx=10, pady=10, columnspan=2)
         # Clear the result text field
@@ -162,7 +162,8 @@ class Registry(tk.Frame):
 
     def registry_sendcont(self):
         filecont = self.txt_regcont.get("1.0", tk.END)
-        self._socket._isconnected = self._socket.send_immediate("registry,file")
+        self._socket._isconnected = self._socket.send_immediate(
+            "registry,file")
         if not self._socket._isconnected:
             return
         self._socket.send(filecont)
@@ -178,7 +179,6 @@ class Registry(tk.Frame):
         value = self.txt_value.get("1.0", tk.END).strip("\n")
         dttp = self._df_dttype.get().strip("\n")
 
-        request = None
         if func in ['Get value', 'Set value', 'Create key']:
             func = func.split(" ", 1)[0].lower()
         else:
