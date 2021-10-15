@@ -63,7 +63,7 @@ class RootView(tk.Tk):
     def create_activity(self, activity_name):
         '''Show a frame for the given page name'''
         if self.socket._isconnected:
-            self.socket._isconnected = self.socket.send(activity_name.lower())
+            self.socket._isconnected = self.socket.send_immediate(activity_name.lower())
         else:
             utils.messagebox("Client", "Please connect to a PC", "warn")
             return
