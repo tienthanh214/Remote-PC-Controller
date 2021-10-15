@@ -26,7 +26,8 @@ class Process:
     def process_view(self):
         output = os.popen('powershell "gps |  select name, id, {$_.Threads.Count}').read()
         # self.process_list = output.split('\n\n')[1:]
-        self.client.sendall(bytes(str(len(output)), "utf8"))
+        # self.client.sendall(bytes(str(len(output)), "utf8"))
+        # self.client.sendall(bytes(output, "utf8"))
         self.client.sendall(bytes(output, "utf8"))
         pass
 

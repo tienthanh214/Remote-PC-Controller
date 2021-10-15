@@ -3,6 +3,7 @@ import socket
 import tkinter as tk
 from uuid import getnode as get_mac
 from threading import Thread
+from src.serversocket import ServerSocket
 from src.screenshot import Screenshot
 from src.process import Process
 from src.application import Application
@@ -37,7 +38,7 @@ class Server:
 
     def open_close_server(self):
         if (self._root.btn_open_server["text"] == "OPEN SERVER"):
-            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server = ServerSocket.getInstance()
             self.server.bind(self.IP) # only one server socket for all connect
             self.server.listen(1)
             print('SERVER address:', self.IP)

