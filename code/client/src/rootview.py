@@ -151,12 +151,13 @@ class RootView(tk.Tk):
     def connect(self):
         ip = self.etr_ip.get().strip("\n")
         self.socket.connect(ip=ip)
-        utils.messagebox("Client", "Connected to the server", "info")
-        self.config(bg=themecolor.root_bg_lime)
-        self.btn_connect.config(bg=themecolor.disconnect_btn)
-        self.btn_connect.config(text='Disconnect')
-        self.btn_connect["command"] = self.disconnect
-        self.etr_ip.configure(state="disable")
+        if self.socket._isconnected:
+            utils.messagebox("Client", "Connected to the server", "info")
+            self.config(bg=themecolor.root_bg_lime)
+            self.btn_connect.config(bg=themecolor.disconnect_btn)
+            self.btn_connect.config(text='Disconnect')
+            self.btn_connect["command"] = self.disconnect
+            self.etr_ip.configure(state="disable")
 
     def disconnect(self):
         if self.socket._isconnected:

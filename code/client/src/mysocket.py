@@ -35,6 +35,7 @@ class MySocket:
             self._sock.connect(address)
         except:
             self._reset()
+            utl.messagebox("Socket", "Failed to connect", "error")
 
     def send(self, msg="exit", showerror=True):
         """Prefix each message with a 4-byte length (network byte order)"""
