@@ -99,7 +99,7 @@ class RootView(tk.Tk):
     def create_header(self):
         '''Init header element'''
         self.btn_back = tk.Button(
-            self.head, image=self.icons['back'], width=50, height=50, bg='#97c1a9')
+            self.head, image=self.icons['back'], width=50, height=50, bg=themecolor.back_btn)
         self.btn_back.grid(row=0, column=0, sticky=tk.W+tk.E,
                            pady=10, padx=10, columnspan=1, rowspan=2)
         # Application logo
@@ -120,7 +120,7 @@ class RootView(tk.Tk):
                          ipady=4, sticky=tk.N, columnspan=1)
         # Connect button
         self.btn_connect = tk.Button(
-            self.head, text="Connect", width=6, height=1, bg='#97c1a9', fg='#000000')
+            self.head, text="Connect", width=12, height=1, bg=themecolor.connect_btn, fg='#000000')
         self.btn_connect.grid(row=1, column=4, sticky=tk.N,
                               pady=10, padx=0)
         # # Padding right
@@ -150,26 +150,32 @@ class RootView(tk.Tk):
 
     def connect(self):
         ip = self.etr_ip.get().strip("\n")
+        self.socket.connect(ip=ip)
+        utils.messagebox("Client", "Connected to the server", "info")
+        self.config(bg=themecolor.root_bg_lime)
+        self.btn_connect.config(bg=themecolor.disconnect_btn)
+        self.btn_connect.config(text='Disconnect')
+        self.btn_connect["command"] = self.disconnect
+        self.etr_ip.configure(state="disable")
+
+    def disconnect(self):
         if self.socket._isconnected:
             ans = tk.messagebox.askquestion(
-                "New IP address", "Do you want to disconnect to the current server\n and reconnect to this IP ({})?".format(ip), icon="warning")
+                "Disconnect", "Do you want to disconnect to the current PC?", icon="warning")
             if ans == "yes":
                 try:
                     self.socket.send_immediate("quit")
                 finally:
                     self.socket.close()
                     time.sleep(1)
+                    self.config(bg=themecolor.root_bg_red)
+                    self.btn_connect.config(bg=themecolor.connect_btn)
+                    self.btn_connect.config(text='Connect')
+                    self.btn_connect["command"] = self.connect
+                    self.etr_ip.configure(state="normal")
+                    self.back_to_menu()
             else:
-                utils.messagebox("Client", "New connection cancelled", "error")
                 return
-
-        self.socket.connect(ip=ip)
-        if self.socket._isconnected:
-            utils.messagebox("Client", "Connected to the server", "info")
-            self.config(bg=themecolor.root_bg_lime)
-        else:
-            utils.messagebox("Client", "Fail to connect to server", "error")
-            self.config(bg=themecolor.root_bg_red)
 
     def back_to_menu(self):
         # Command to quit function
