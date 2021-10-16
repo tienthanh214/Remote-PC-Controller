@@ -26,11 +26,11 @@ class Screenshot(tk.Frame):
         # Take another screenshot and update the picture
         # When pressed, Screenshot will sent a request to the server via Controller
         self.btn_snap = tk.Button(
-            self, text="Chụp", command=self.snap_screenshot_async, width=20, height=10)
+            self, text="Theo dõi", command=self.stream_screen_async, width=20, height=10)
         self.btn_snap.grid(row=0, column=1, sticky=tk.E, padx=10, pady=10)
         # Write the picture to a file as .png, .jpg and .bmp
         self.btn_save = tk.Button(
-            self, text="Lưu", command=self.save_image, width=20, height=10)
+            self, text="Chụp",  width=20, height=10)
         self.btn_save.grid(row=1, column=1, sticky=tk.E, padx=10, pady=10)
 
     def _resize_image(self, IMG):
@@ -55,9 +55,12 @@ class Screenshot(tk.Frame):
         image = Image.open(stream)
         # Save image data to object
         self._img = ImageTk.PhotoImage(self._resize_image(image))
-        self.canvas.itemconfig(self.item_on_canvas, image=self._img)
-        self.update_idletasks()
-        self.update()
+        try:
+            self.canvas.itemconfig(self.item_on_canvas, image=self._img)
+            #self.update_idletasks()
+            self.update()
+        except:
+            pass
 
     def save_image(self):
         # img_data: bytes
@@ -78,7 +81,16 @@ class Screenshot(tk.Frame):
         Thread(target=self.snap_screenshot, args=()).start()
 
     def snap_screenshot(self):
-        # send
         self._socket.send_immediate("screenshot,snap")
         data = self._socket.receive()
         self.update_image(data)
+
+    def stream_screen_async(self):
+        Thread(target=self.stream_screen, args=()).start()
+
+    def stream_screen(self):
+        self._socket.send_immediate("screenshot,live")
+        while True:
+            data = self._socket.receive()
+            self._socket.send_immediate("ok")
+            self.update_image(data)

