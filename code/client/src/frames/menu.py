@@ -12,14 +12,14 @@ class Menu(tk.Frame):
 
     def create_icons(self):
         self.icons = {}
-        self.icons['screen'] = self.create_sprite('assets/ic_screen.png')
-        self.icons['filesys'] = self.create_sprite('assets/ic_filesystem.png')
-        self.icons['registry'] = self.create_sprite('assets/ic_registry.png')
-        self.icons['app'] = self.create_sprite('assets/ic_app.png')
-        self.icons['process'] = self.create_sprite('assets/ic_process.png')
-        self.icons['keyboard'] = self.create_sprite('assets/ic_keyboard.png')
-        self.icons['shutdown'] = self.create_sprite('assets/ic_shutdown.png')
-        self.icons['logout'] = self.create_sprite('assets/ic_logout.png')
+        self.icons['screen'] = self.create_sprite('assets/menu/ic_screen.png')
+        self.icons['filesys'] = self.create_sprite('assets/menu/ic_filesystem.png')
+        self.icons['registry'] = self.create_sprite('assets/menu/ic_registry.png')
+        self.icons['app'] = self.create_sprite('assets/menu/ic_app.png')
+        self.icons['process'] = self.create_sprite('assets/menu/ic_process.png')
+        self.icons['keyboard'] = self.create_sprite('assets/menu/ic_keyboard.png')
+        self.icons['shutdown'] = self.create_sprite('assets/menu/ic_shutdown.png')
+        self.icons['logout'] = self.create_sprite('assets/menu/ic_logout.png')
 
     def create_sprite(self, path):
         image = Image.open(path)

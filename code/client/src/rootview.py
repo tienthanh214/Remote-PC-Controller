@@ -44,6 +44,7 @@ class RootView(tk.Tk):
         self.menu = None
         self.activity = None
         # Create widgets
+        self.create_icons()
         self.create_header()
         self.create_menu()
         self.bind_actions()
@@ -52,6 +53,16 @@ class RootView(tk.Tk):
         '''Run the UI loop and show the connect page'''
         self.menu.tkraise()
         self.mainloop()
+
+    def create_icons(self):
+        self.icons = {}
+        self.icons['icon'] = self.create_sprite('assets/ic_app_icon.png')
+        self.icons['back'] = self.create_sprite('assets/ic_back.png')
+
+    def create_sprite(self, path):
+        image = Image.open(path)
+        image.mode = 'RGBA'
+        return ImageTk.PhotoImage(image)
 
     def create_menu(self):
         instance = Menu(parent=self.body)
@@ -62,7 +73,8 @@ class RootView(tk.Tk):
     def create_activity(self, activity_name):
         '''Show a frame for the given page name'''
         if self.socket._isconnected:
-            self.socket._isconnected = self.socket.send_immediate(activity_name.lower())
+            self.socket._isconnected = self.socket.send_immediate(
+                activity_name.lower())
         else:
             utils.messagebox("Client", "Please connect to a PC", "warn")
             return
@@ -87,18 +99,15 @@ class RootView(tk.Tk):
     def create_header(self):
         '''Init header element'''
         self.btn_back = tk.Button(
-            self.head, text="Back", width=2, height=2, bg='#97c1a9', fg='#000000')
-        self.btn_back.grid(row=0, column=0, sticky=tk.W,
-                           pady=10, ipadx=10, padx=10, columnspan=1, rowspan=2)
+            self.head, image=self.icons['back'], width=50, height=50, bg='#97c1a9')
+        self.btn_back.grid(row=0, column=0, sticky=tk.W+tk.E,
+                           pady=10, padx=10, columnspan=1, rowspan=2)
         # Application logo
-        self.image = Image.open('assets/ic_app_icon.png')
-        self.image.mode = 'RGBA'
-        self.photo = ImageTk.PhotoImage(self.image)
         self.lbl_app = tk.Canvas(
             self.head, width=80, height=80, bg=themecolor.header_bg, highlightthickness=0)
-        self.lbl_app.grid(row=0, column=1, sticky=tk.W, padx=10, pady=10,
-                          ipadx=10, ipady=10, columnspan=1, rowspan=2)
-        self.lbl_app.create_image(50, 50, image=self.photo)
+        self.lbl_app.grid(row=0, column=1, sticky=tk.W, padx=10,
+                          pady=10, ipadx=10, ipady=10, columnspan=1, rowspan=2)
+        self.lbl_app.create_image(50, 50, image=self.icons['icon'])
         # IP address label
         self.lbl_app = tk.Label(
             self.head, text='Enter IP address', height=1, font=textstyle.btn_font, bg=themecolor.header_bg)
@@ -130,6 +139,7 @@ class RootView(tk.Tk):
         self.menu.btn_app["command"] = lambda: self.create_activity(
             "application")
         self.menu.btn_shutdown["command"] = self.shutdown
+        self.menu.btn_logout["command"] = self.logout
         self.menu.btn_screen["command"] = lambda: self.create_activity(
             "screenshot")
         self.menu.btn_keyboard["command"] = lambda: self.create_activity(
@@ -185,4 +195,8 @@ class RootView(tk.Tk):
 
     def shutdown(self):
         self.socket._isconnected = self.socket.send_immediate("shutdown")
+        self.socket.shutdown()
+
+    def logout(self):
+        self.socket._isconnected = self.socket.send_immediate("logoff")
         self.socket.shutdown()

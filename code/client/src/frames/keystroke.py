@@ -21,25 +21,21 @@ class Keystroke(tk.Frame):
             self, text=Keystroke.HOOK_BTN_LABEL, command=self.keystroke_hook, width=10, height=2)
         self.btn_hook.grid(row=0, column=5, sticky=tk.N,
                            padx=10, pady=5, rowspan=2)
-
         # Print the collected keystrokes
         self.btn_print = tk.Button(
             self, text="In phím", command=self.keystroke_print, width=10, height=2)
         self.btn_print.grid(row=2, column=5, sticky=tk.N,
                             padx=10, pady=5, rowspan=2)
-
         # Clear the screen
         self.btn_clear = tk.Button(
             self, text="Xóa", command=self.keystroke_clear, width=10, height=2)
         self.btn_clear.grid(row=4, column=5, sticky=tk.N,
                             padx=10, pady=5, rowspan=2)
-
         # Lock the keyboard
         self.btn_lock = tk.Button(
             self, text=Keystroke.LOCK_BTN_LABEL, command=self.keystroke_lock, width=10, height=2)
         self.btn_lock.grid(row=6, column=5, sticky=tk.N,
                            padx=10, pady=5, rowspan=2)
-
         # Display the text
         self.text_field = tk.Text(
             self, width=64, height=20, bg="#FFFFFF", state="disable")
