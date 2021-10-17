@@ -15,6 +15,9 @@ class Manager(tk.Frame):
         self._socket = MySocket.getInstance()
         self._inputbox = None
 
+    def clean_activity(self):
+        pass
+
     def create_widgets(self):
         # Prompt the inputbox
         # User will input the application or process id they want to kill

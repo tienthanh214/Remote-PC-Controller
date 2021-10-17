@@ -197,8 +197,9 @@ class RootView(tk.Tk):
                 self.destroy()
 
     def exit_func(self):
-        self.socket.send_immediate("exit", showerror=False)
+        self.activity.clean_activity()
         self.activity.destroy()
+        self.socket.send_immediate("exit", showerror=False)
 
     def shutdown(self):
         self.socket._isconnected = self.socket.send_immediate("shutdown")

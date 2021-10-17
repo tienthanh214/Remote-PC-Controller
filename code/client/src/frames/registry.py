@@ -17,6 +17,9 @@ class Registry(tk.Frame):
         self.create_widgets()
         self._socket = MySocket.getInstance()
 
+    def clean_activity(self):
+        pass
+
     def create_widgets(self):
         # ============================ Change from file ============================
         # Display the registry file path
