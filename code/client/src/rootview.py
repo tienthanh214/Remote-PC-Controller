@@ -180,7 +180,7 @@ class RootView(tk.Tk):
 
     def back_to_menu(self):
         # Command to quit function
-        self.exit_func(None)
+        self.exit_func()
         self.menu.tkraise()
         self.title('Computer Network Project')
         self.btn_back.grid_remove()
@@ -196,7 +196,7 @@ class RootView(tk.Tk):
             if not isKilled:
                 self.destroy()
 
-    def exit_func(self, event):
+    def exit_func(self):
         self.socket.send_immediate("exit", showerror=False)
         self.activity.destroy()
 
