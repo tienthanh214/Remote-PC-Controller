@@ -28,15 +28,16 @@ class RootView(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         self.socket = MySocket.getInstance()
         # Config window shape
-        self.geometry("1280x840+50+50")
+        self.geometry("800x600")
+        self.resizable(0, 0)
         self.title('Computer Network Project')
         self.config(bg=themecolor.root_bg_red)
         self.grid()
         # Header
-        self.head = tk.Frame(self, bg=themecolor.header_bg)
+        self.head = tk.Frame(self, bg=themecolor.header_bg, height=100)
         self.head.pack(side="top", fill="both", expand=False, padx=10, pady=10)
         #self.head.grid_rowconfigure(0, weight=1)
-        self.head.grid_columnconfigure(1, weight=1)
+        #self.head.grid_columnconfigure(1, weight=1)
         # Body
         self.body = tk.Frame(self, bg=themecolor.body_bg)
         self.body.pack(side="top", fill="both", expand=True)
@@ -99,34 +100,32 @@ class RootView(tk.Tk):
     def create_header(self):
         '''Init header element'''
         self.btn_back = tk.Button(
-            self.head, image=self.icons['back'], width=50, height=50, bg=themecolor.back_btn)
-        self.btn_back.grid(row=0, column=0, sticky=tk.W+tk.E,
-                           pady=10, padx=10, columnspan=1, rowspan=2)
+            self.head, image=self.icons['back'], width=40, height=40, bg=themecolor.header_bg)
+        self.btn_back.pack(side=constants.LEFT, padx = 5)
         # Application logo
         self.lbl_app = tk.Canvas(
-            self.head, width=80, height=80, bg=themecolor.header_bg, highlightthickness=0)
-        self.lbl_app.grid(row=0, column=1, sticky=tk.W, padx=10,
-                          pady=10, ipadx=10, ipady=10, columnspan=1, rowspan=2)
-        self.lbl_app.create_image(50, 50, image=self.icons['icon'])
+            self.head, width=300, height=80, bg=themecolor.header_bg, highlightthickness=0)
+        self.lbl_app.pack(side=constants.LEFT, padx = 3)
+        self.lbl_app.create_image(130, 40, image=self.icons['icon'])
+
+        self.connect_frame = tk.Frame(self.head, bg=themecolor.header_bg)
+        self.connect_frame.pack(side=constants.RIGHT, padx = 10)
         # IP address label
         self.lbl_app = tk.Label(
-            self.head, text='Enter IP address', height=1, font=textstyle.btn_font, bg=themecolor.header_bg)
-        self.lbl_app.grid(row=0, column=3, sticky=tk.S,
-                          columnspan=1, rowspan=1)
+            self.connect_frame, text='Enter IP address', height=1, font=textstyle.btn_font, bg=themecolor.header_bg)
+        self.lbl_app.pack(side=constants.TOP, pady = 2)
         # Input text for target ip address
-        self.etr_ip = tk.Entry(self.head, width=30)
+        self.etr_ip = tk.Entry(self.connect_frame, width=30)
         self.etr_ip.focus()
-        self.etr_ip.grid(row=1, column=3, padx=0, pady=10,
-                         ipady=4, sticky=tk.N, columnspan=1)
+        self.etr_ip.pack(side=constants.TOP, pady = 2)
         # Connect button
         self.btn_connect = tk.Button(
-            self.head, text="Connect", width=12, height=1, bg=themecolor.connect_btn, fg='#000000')
-        self.btn_connect.grid(row=1, column=4, sticky=tk.N,
-                              pady=10, padx=0)
+            self.connect_frame, text="Connect", width=12, height=1, bg=themecolor.connect_btn, fg='#000000')
+        self.btn_connect.pack(side=constants.TOP, pady = 2)
         # # Padding right
-        self.spacer = tk.Label(self.head, height=2, width=2,
+        '''self.spacer = tk.Label(self.head, height=2, width=2,
                                anchor=tk.E, bg=themecolor.header_bg)
-        self.spacer.grid(row=0, column=5)
+        self.spacer.grid(row=0, column=5)'''
 
     def bind_actions(self):
         # self.bind("<Destroy>", lambda e: self.exit_prog(isKilled=True))
