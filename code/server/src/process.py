@@ -29,6 +29,7 @@ class Process:
         # self.client.sendall(bytes(str(len(output)), "utf8"))
         # self.client.sendall(bytes(output, "utf8"))
         self.client.sendall(bytes(output, "utf8"))
+        print('Send done')
         pass
 
     def process_kill(self, pid):

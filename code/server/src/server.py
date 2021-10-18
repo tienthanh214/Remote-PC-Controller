@@ -26,7 +26,7 @@ class Server:
                                             height = 2, width = 15, anchor = tk.CENTER, 
                                             font = ("Consolas 25 bold"), command = self.open_close_server)
         self._root.btn_open_server.place(relx = 0.5, rely = 0.55, anchor = tk.CENTER)
-
+        
         self._root.lbl_server_address = tk.Label(self._root, text = "IP: " + str(self.IP[0]), width = 25,
                                             font = ("Consolas 20 bold"), fg = "#ff0000")
         self._root.lbl_server_address.place(relx = 0.5, rely = 0.15, anchor = tk.CENTER)

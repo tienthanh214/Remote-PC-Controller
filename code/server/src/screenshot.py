@@ -31,7 +31,6 @@ class Screenshot:
     def capture(self):
         image = ImageGrab.grab()
         byteIO = io.BytesIO()
-
         image.save(byteIO, format='BMP')
         byteArr = byteIO.getvalue()
         # send image Size then read image
@@ -39,6 +38,4 @@ class Screenshot:
 
     def livestream(self):
         self.is_live = True
-        # open UDP connection
-
         pass
