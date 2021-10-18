@@ -15,6 +15,9 @@ class Keystroke(tk.Frame):
         self.create_widgets()
         self._socket = MySocket.getInstance()
 
+    def clean_activity(self):
+        pass
+    
     def create_widgets(self):
         # Start collecting keystroke fro the server
         self.btn_hook = tk.Button(

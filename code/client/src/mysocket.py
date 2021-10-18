@@ -43,22 +43,18 @@ class MySocket:
             byte_msg = bytes(msg, "utf8")
             byte_msg = stc.pack('>I', len(byte_msg)) + byte_msg
             self._sock.sendall(byte_msg)
-            print('>> client:', msg)
             return True
         except:
             if showerror:
                 utl.messagebox("Socket", "Not connected to server", "error")
             return False
-    
+
     def send_immediate(self, msg="exit", showerror=True):
         """Send raw byte string without header, used for commands"""
         try:
             self._sock.sendall(bytes(msg, 'utf8'))
-            print('>> client:', msg)
             return True
         except:
-            if showerror:
-                utl.messagebox("Socket", "Not connected to server", "error")
             return False
 
     def receive(self):
@@ -70,7 +66,7 @@ class MySocket:
             msglen = stc.unpack('>I', raw_msglen)[0]
             data = bytearray()
             while len(data) < msglen:
-                packet = self._sock.recv(4096)
+                packet = self._sock.recv(min(4096, msglen - len(data)))
                 if not packet:
                     break
                 if not packet == None:

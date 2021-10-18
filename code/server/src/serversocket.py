@@ -41,6 +41,9 @@ class ServerSocket(sk.socket):
         raw_msglen = self._sock.recv(4)
         if not raw_msglen:
             return None
+        if raw_msglen == b'exit':
+            return b'exit'
+            
         msglen = stc.unpack('>I', raw_msglen)[0]
         data = bytearray()
         while len(data) < msglen:
