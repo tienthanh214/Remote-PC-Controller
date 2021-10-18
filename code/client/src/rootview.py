@@ -1,10 +1,11 @@
+from os import access
 from src.frames.keystroke import Keystroke
 from src.frames.manager import Manager
 from src.frames.menu import Menu
 from src.frames.registry import Registry
 from src.frames.screenshot import Screenshot
+from src.frames.filesystem import Filesystem
 
-from tkinter import PhotoImage, constants
 from PIL import Image, ImageTk
 from src.mysocket import MySocket
 import tkinter as tk
@@ -20,6 +21,7 @@ ACT_KEYSTROKE = 'keystroke'
 ACT_SHUTDOWN = 'process'
 ACT_REGISTRY = 'registry'
 ACT_SCREENSHOT = 'screenshot'
+ACT_FILESYSTEM = 'filesystem'
 ACT_QUIT = 'quit'
 
 
@@ -93,6 +95,8 @@ class RootView(tk.Tk):
             self.activity = Screenshot(parent=self.body)
         elif activity_name == ACT_REGISTRY:
             self.activity = Registry(parent=self.body)
+        elif activity_name == ACT_FILESYSTEM:
+            self.activity = Filesystem(parent=self.body)
         # Display that activity
         self.activity.grid(row=0, column=0, sticky="nsew")
         self.activity.tkraise()
@@ -147,6 +151,8 @@ class RootView(tk.Tk):
             "keystroke")
         self.menu.btn_registry["command"] = lambda: self.create_activity(
             "registry")
+        self.menu.btn_filesys["command"] = lambda: self.create_activity(
+            "filesystem")
         self.menu.btn_quit["command"] = lambda: self.exit_prog(isKilled=False)
 
     def connect(self):
