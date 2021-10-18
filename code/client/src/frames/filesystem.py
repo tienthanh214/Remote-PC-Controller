@@ -1,10 +1,6 @@
-from PIL import Image, ImageTk
-from tkinter import messagebox, filedialog
-from threading import Thread
 from src.mysocket import MySocket
-import tkinter as tk
 from tkinter import ttk
-import io
+import tkinter as tk
 import src.textstyles as textstyle
 import src.themecolors as THEMECOLOR
 
@@ -16,7 +12,9 @@ class Filesystem(tk.Frame):
         tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg)
         self._image_bytes = None
         self.grid()
+        self._socket = MySocket.getInstance()
         self.create_widgets()
+        # self._socket.send_immediate('folder,')
 
     def clean_activity(self):
         pass
@@ -36,7 +34,21 @@ class Filesystem(tk.Frame):
             row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0)
         # Scrollbars config
         self.scb_vertical.config(command=self.tbl_container.yview)
-        # Table title
-        for col in Filesystem.cols:
-            self.tbl_container.heading(col, text=col)
-            self.tbl_container.column(col, width=400, stretch=True)
+        # Table config
+        self.tbl_container.heading('Name', text='Name')
+        self.tbl_container.column('Name', width=600, stretch=True)
+        self.tbl_container.heading('Type', text='Type')
+        self.tbl_container.column('Type', width=200, stretch=True)
+        self.tbl_container.insert("", "end", values=['..', ''])
+        self.show_result(
+            [['binh', 'folder'], ['Thanh', 'folder'], ['Thi.txt', 'file'], ])
+
+    def show_result(self, table):
+        if len(table) == 0:
+            table = [["N/A"] * 2]
+        for row in table:
+            self.tbl_container.insert("", "end", values=row)
+
+    def clear_result(self):
+        for rowid in self.tbl_container.get_children():
+            self.tbl_container.delete(rowid)

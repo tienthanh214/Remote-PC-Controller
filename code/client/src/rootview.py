@@ -9,7 +9,6 @@ from src.frames.filesystem import Filesystem
 from PIL import Image, ImageTk
 from src.mysocket import MySocket
 import tkinter as tk
-import pickle
 import src.textstyles as textstyle
 import src.themecolors as themecolor
 import src.utils as utils
