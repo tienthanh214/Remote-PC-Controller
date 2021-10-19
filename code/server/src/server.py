@@ -3,12 +3,15 @@ import socket
 import tkinter as tk
 from uuid import getnode as get_mac
 from threading import Thread
+from src.folder import Folder
 from src.serversocket import ServerSocket
 from src.screenshot import Screenshot
 from src.process import Process
 from src.application import Application
 from src.keystroke import KeyLogger
 from src.registry import Registry
+from PIL import Image, ImageTk
+from tkinter import PhotoImage
 
 class Server:
     def __init__(self):
@@ -19,19 +22,32 @@ class Server:
         self.IP = (socket.gethostbyname(socket.gethostname()), 54321)
         # Initialize UI
         self._root = tk.Tk()
-        self._root.geometry('450x200')
+        self._root.geometry('450x250')
         self._root.title("Server")
+        # self._root.config(bg = '#444e50')
+        self.load_icon()
 
         self._root.btn_open_server = tk.Button(self._root, text = "OPEN SERVER", bg = "#5DADE2", 
-                                            height = 2, width = 15, anchor = tk.CENTER, 
-                                            font = ("Consolas 25 bold"), command = self.open_close_server)
-        self._root.btn_open_server.place(relx = 0.5, rely = 0.55, anchor = tk.CENTER)
+                                            width = 200, anchor = tk.CENTER,
+                                            font = ("Consolas 20 bold"), command = self.open_close_server,
+                                            image = self.icons['open'], compound = tk.TOP)
+        self._root.btn_open_server.place(relx = 0.5, rely = 0.6, anchor = tk.CENTER)
         
         self._root.lbl_server_address = tk.Label(self._root, text = "IP: " + str(self.IP[0]), width = 25,
                                             font = ("Consolas 20 bold"), fg = "#ff0000")
-        self._root.lbl_server_address.place(relx = 0.5, rely = 0.15, anchor = tk.CENTER)
+        self._root.lbl_server_address.place(relx = 0.5, rely = 0.10, anchor = tk.CENTER)
 
         # self._root.bind("<Destroy>", self.on_exit)
+
+    def load_icon(self):
+        self.icons = {}
+        self.icons['open'] = self.create_sprite('assets\ic_open.png')
+        self.icons['opening'] = self.create_sprite('assets\ic_opening.png')
+
+    def create_sprite(self, path):
+        image = Image.open(path)
+        image.mode = 'RGBA'
+        return ImageTk.PhotoImage(image)
 
     def run(self):
         self._root.mainloop()
@@ -43,8 +59,9 @@ class Server:
             self.server.listen(1)
             print('SERVER address:', self.IP)
 
-            self._root.btn_open_server.configure(text = "SERVER IS\nOPENING")
-            self._root.btn_open_server.configure(bg = "#00ff00")
+            self._root.btn_open_server.configure(image = self.icons['opening'])
+            self._root.btn_open_server.configure(text = "OPENING")
+            self._root.btn_open_server.configure(bg = "#8eff4c")
 
             Thread(target = self.accept_connect, daemon = True).start()
         
@@ -75,6 +92,8 @@ class Server:
                 self.application()
             elif cmd == 'logoff':
                 self.logoff()
+            elif cmd == 'folder':
+                self.folder()
             elif cmd == 'quit':
                 break
                 
@@ -129,6 +148,11 @@ class Server:
             mac.append('{:02x}'.format((get_mac() >> bit) & 0xff))
         mac = ':'.join(mac[::-1])
         self.client.sendall(bytes(mac))
+        pass
+    
+    def folder(self):
+        doit = Folder(self.client)
+        doit.run()
         pass
 
     pass
