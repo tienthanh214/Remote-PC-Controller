@@ -20,7 +20,7 @@ ACT_KEYSTROKE = 'keystroke'
 ACT_SHUTDOWN = 'process'
 ACT_REGISTRY = 'registry'
 ACT_SCREENSHOT = 'screenshot'
-ACT_FILESYSTEM = 'filesystem'
+ACT_FILESYSTEM = 'folder'
 ACT_QUIT = 'quit'
 
 
@@ -151,7 +151,7 @@ class RootView(tk.Tk):
         self.menu.btn_registry["command"] = lambda: self.create_activity(
             "registry")
         self.menu.btn_filesys["command"] = lambda: self.create_activity(
-            "filesystem")
+            "folder")
         self.menu.btn_quit["command"] = lambda: self.exit_prog(isKilled=False)
 
     def connect(self):
