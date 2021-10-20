@@ -38,7 +38,7 @@ class ServerSocket(sk.socket):
 
     def receive(self):
         """Read message length and unpack it into an integer"""
-        raw_msglen = self._sock.recv(4)
+        raw_msglen = self.recv(4)
         if not raw_msglen:
             return None
         if raw_msglen == b'exit':
@@ -47,7 +47,7 @@ class ServerSocket(sk.socket):
         msglen = stc.unpack('>I', raw_msglen)[0]
         data = bytearray()
         while len(data) < msglen:
-            packet = self._sock.recv(4096)
+            packet = self.recv(4096)
             if not packet:
                 break
             if not packet == None:

@@ -4,6 +4,8 @@ import tkinter as tk
 import src.textstyles as textstyle
 import src.themecolors as THEMECOLOR
 import pickle
+import struct as stc
+import os
 
 
 class Filesystem(tk.Frame):
@@ -37,18 +39,9 @@ class Filesystem(tk.Frame):
         # Scrollbars config
         self.scb_vertical.config(command=self.tbl_container.yview)
         # Table config
-        # self.tbl_container.heading('Name', text='Name',  anchor='w')
-        # self.tbl_container.column('Name', width=400, stretch=True)
-        # self.tbl_container.heading('Type', text='Type',  anchor='w')
-        # self.tbl_container.column('Type', width=200, stretch=True)
         self.tbl_container.heading('#0', text='Folder', anchor='w')
         self.tbl_container.column('#0', width=800, stretch=True)
-
-    def show_result(self, table):
-        if len(table) == 0:
-            table = [["N/A"] * 2]
-        for row in table:
-            self.tbl_container.insert("", "end", values=row)
+        self.tbl_container.bind("<Double-1>", lambda e: self.onDoubleClick(e))
 
     def clear_result(self):
         for rowid in self.tbl_container.get_children():
@@ -66,8 +59,60 @@ class Filesystem(tk.Frame):
         self.expand_dir('\\', pickle.loads(result))
 
     def expand_dir(self, parent, subtree):
-        id = 0
+        local_id = 0
         for item in subtree:
             self.tbl_container.insert(
-                parent=parent, index=id, iid=item[0], text=item[0], open=False)
-            id = id + 1
+                parent=parent, index=local_id, iid=item[0], text=item[0], open=False)
+            local_id = local_id + 1
+
+    def onDoubleClick(self, event):
+        item = self.tbl_container.identify('item', event.x, event.y)
+        target = self.tbl_container.item(item, "text")
+        # Get full path to the target
+        fullpath = [target]
+        res = target
+        while res != '':
+            res = self.tbl_container.parent(res)
+            if res != '\\':
+                fullpath.insert(0, res)
+        # Fetch sub directory from the server
+        self._socket.send('folder,view,' + '\\'.join(fullpath))
+        result = self._socket.receive()
+        self.expand_dir(target, pickle.loads(result))
+
+    def receive(self, filename):
+        raw_msglen = self._socket.recv(4)
+        if not raw_msglen:
+            return None
+        msglen = stc.unpack('>I', raw_msglen)[0]
+        print(msglen)
+        f = open(filename, "wb")
+        curlen = 0
+        while curlen < msglen:
+            packet = self._socket.recv(min(4096 * 2, msglen - curlen))
+            if not packet:
+                break
+            f.write(packet)
+            curlen += len(packet)
+            # use curlen/msglen to show progress bar
+        f.close()
+
+    def send_file(self, filename):
+        print(filename)
+        try:
+            f = open(filename, "rb")
+        except:
+            print("file not found")
+            return
+        filesize = os.path.getsize(filename)
+        self._socket.send(stc.pack('>I', filesize))
+        print(filesize)
+        prog = 0
+        while True:
+            bytes_read = f.read(4096 * 2)
+            if not bytes_read:
+                break
+            self._socket.sendall(bytes_read)
+            prog += len(bytes_read)
+            # use prog/filesize to show progress bar
+        f.close()
