@@ -1,3 +1,4 @@
+from threading import currentThread
 from src.mysocket import MySocket
 from tkinter import ttk
 import tkinter as tk
@@ -11,6 +12,7 @@ import os
 class Filesystem(tk.Frame):
     cols = ('Name', 'Type')
     id = 0
+    DOWNLOAD_FOLDER = '../downloads/'
 
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg)
@@ -30,22 +32,38 @@ class Filesystem(tk.Frame):
         self.spacer.grid(row=0, column=0)
         # Define these scrollbar before hand
         self.scb_vertical = tk.Scrollbar(self,)
-        self.scb_vertical.grid(row=1, column=2, sticky=tk.N+tk.S)
+        self.scb_vertical.grid(row=1, column=2, sticky=tk.N+tk.S, rowspan=2)
         # Display the file system tree
         self.tbl_container = ttk.Treeview(
             self, yscrollcommand=self.scb_vertical.set, show='tree headings', height=24)
         self.tbl_container.grid(
-            row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0)
+            row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=2)
         # Scrollbars config
         self.scb_vertical.config(command=self.tbl_container.yview)
         # Table config
         self.tbl_container.heading('#0', text='Folder', anchor='w')
-        self.tbl_container.column('#0', width=800, stretch=True)
+        self.tbl_container.column('#0', width=600, stretch=True)
         self.tbl_container.bind("<Double-1>", lambda e: self.onDoubleClick(e))
+        # Retrieve file from server
+        self.btn_retrieve = tk.Button(
+            self, text='Retrieve', command=self.retrieve_file, width=10, height=2)
+        self.btn_retrieve.grid(row=1, column=3, sticky=tk.E, padx=10, pady=10)
+        # Push file to server
+        self.btn_send = tk.Button(
+            self, text="Send", command=self.send_file, width=10, height=2)
+        self.btn_send.grid(row=2, column=3, sticky=tk.E, padx=10, pady=10)
 
-    def clear_result(self):
-        for rowid in self.tbl_container.get_children():
-            self.tbl_container.delete(rowid)
+    def retrieve_file(self):
+        # Get id of the source
+        cur_item = self.tbl_container.focus()
+        # Get file name
+        filename = cur_item.split('\\')[-1]
+        self._socket.send('folder,copy,{},?'.format(cur_item))
+        self.receive(filename=filename)
+        pass
+
+    def send_file(self):
+        pass
 
     def next_id(self):
         id = Filesystem.id + 1
@@ -76,14 +94,14 @@ class Filesystem(tk.Frame):
         self.expand_dir(target, pickle.loads(result))
 
     def receive(self, filename):
-        raw_msglen = self._socket.recv(4)
+        raw_msglen = self._socket._sock.recv(4)
         if not raw_msglen:
             return None
         msglen = stc.unpack('>I', raw_msglen)[0]
         f = open(filename, "wb")
         curlen = 0
         while curlen < msglen:
-            packet = self._socket.recv(min(4096 * 2, msglen - curlen))
+            packet = self._socket.receive()
             if not packet:
                 break
             f.write(packet)
@@ -91,7 +109,7 @@ class Filesystem(tk.Frame):
             # use curlen/msglen to show progress bar
         f.close()
 
-    def send_file(self, filename):
+    def send(self, filename):
         print(filename)
         try:
             f = open(filename, "rb")
