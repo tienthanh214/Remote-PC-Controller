@@ -1,6 +1,6 @@
 from threading import currentThread
 from src.mysocket import MySocket
-from tkinter import ttk
+from tkinter import ttk, filedialog
 import tkinter as tk
 import src.textstyles as textstyle
 import src.themecolors as THEMECOLOR
@@ -63,6 +63,20 @@ class Filesystem(tk.Frame):
         pass
 
     def send_file(self):
+        # Get the file from client
+        source = filedialog.askopenfilename(title="Select file", filetypes=(
+            ("jpeg files", "*.jpg"), ("all files", "*.*")))
+        # Send command to server
+        cur_item = self.tbl_container.focus()
+        dirs = cur_item.split('\\')
+        path = None
+        if '.' in cur_item[-1]:
+            path = '\\'.join(dirs[0:-1]) + '/' + source.split('/')[-1]
+        else:
+            path = cur_item + '/' + source.split('/')[-1]
+        self._socket.send('folder,copy,?,{}'.format(path))
+        # Client send file by chunks
+        self.send(filename=source)
         pass
 
     def next_id(self):
@@ -117,14 +131,14 @@ class Filesystem(tk.Frame):
             print("file not found")
             return
         filesize = os.path.getsize(filename)
-        self._socket.send(stc.pack('>I', filesize))
+        self._socket._sock.sendall(stc.pack('>I', filesize))
         print(filesize)
         prog = 0
         while True:
             bytes_read = f.read(4096 * 2)
             if not bytes_read:
                 break
-            self._socket.sendall(bytes_read)
+            self._socket._sock.sendall(bytes_read)
             prog += len(bytes_read)
             # use prog/filesize to show progress bar
         f.close()
