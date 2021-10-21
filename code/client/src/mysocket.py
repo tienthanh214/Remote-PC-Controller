@@ -43,13 +43,14 @@ class MySocket:
             byte_msg = bytes(msg, "utf8")
             byte_msg = stc.pack('>I', len(byte_msg)) + byte_msg
             self._sock.sendall(byte_msg)
+            print('client:', msg)
             return True
         except:
             if showerror:
                 utl.messagebox("Socket", "Not connected to server", "error")
             return False
 
-    def send_immediate(self, msg="exit", showerror=True):
+    def send_immediate(self, msg="exit"):
         """Send raw byte string without header, used for commands"""
         try:
             self._sock.sendall(bytes(msg, 'utf8'))

@@ -61,22 +61,17 @@ class Filesystem(tk.Frame):
     def expand_dir(self, parent, subtree):
         local_id = 0
         for item in subtree:
+            this_id = parent
+            if parent != '\\':
+                this_id += '\\'
+            this_id += item[0]
             self.tbl_container.insert(
-                parent=parent, index=local_id, iid=item[0], text=item[0], open=False)
+                parent=parent, index=local_id, iid=this_id, text=item[0], open=False)
             local_id = local_id + 1
 
     def onDoubleClick(self, event):
-        item = self.tbl_container.identify('item', event.x, event.y)
-        target = self.tbl_container.item(item, "text")
-        # Get full path to the target
-        fullpath = [target]
-        res = target
-        while res != '':
-            res = self.tbl_container.parent(res)
-            if res != '\\':
-                fullpath.insert(0, res)
-        # Fetch sub directory from the server
-        self._socket.send('folder,view,' + '\\'.join(fullpath))
+        target = self.tbl_container.identify('item', event.x, event.y)
+        self._socket.send('folder,view,' + target)
         result = self._socket.receive()
         self.expand_dir(target, pickle.loads(result))
 
@@ -85,7 +80,6 @@ class Filesystem(tk.Frame):
         if not raw_msglen:
             return None
         msglen = stc.unpack('>I', raw_msglen)[0]
-        print(msglen)
         f = open(filename, "wb")
         curlen = 0
         while curlen < msglen:
