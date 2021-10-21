@@ -21,6 +21,10 @@ class Filesystem(tk.Frame):
         self._socket = MySocket.getInstance()
         self.create_widgets()
         self.initial_fecth()
+        # Get path delim based on operating system
+        self.path_delim = '\\'      # for window
+        if os.name == 'posix':
+            self.path_delim = '/'   # for linux
 
     def clean_activity(self):
         pass
@@ -56,28 +60,30 @@ class Filesystem(tk.Frame):
     def retrieve_file(self):
         # Get id of the source
         cur_item = self.tbl_container.focus()
-        # Get file name
-        filename = cur_item.split('\\')[-1]
+        # Send command to server
         self._socket.send('folder,copy,{},?'.format(cur_item))
+        # Retrieve the file from server
+        filename = cur_item.split('\\')[-1]
         self.receive(filename=filename)
-        pass
 
     def send_file(self):
         # Get the file from client
-        source = filedialog.askopenfilename(title="Select file", filetypes=(
-            ("jpeg files", "*.jpg"), ("all files", "*.*")))
+        source = filedialog.askopenfilename(
+            title="Select file", filetypes=[("all files", "*.*")])
         # Send command to server
         cur_item = self.tbl_container.focus()
         dirs = cur_item.split('\\')
         path = None
+        filename = source.split(self.path_delim)[-1]
         if '.' in cur_item[-1]:
-            path = '\\'.join(dirs[0:-1]) + '/' + source.split('/')[-1]
+            # A file is in focus
+            path = '\\'.join(dirs[0:-1]) + self.path_delim + filename
         else:
-            path = cur_item + '/' + source.split('/')[-1]
+            # A folder in focus
+            path = cur_item + self.path_delim + filename
         self._socket.send('folder,copy,?,{}'.format(path))
         # Client send file by chunks
         self.send(filename=source)
-        pass
 
     def next_id(self):
         id = Filesystem.id + 1
@@ -124,7 +130,6 @@ class Filesystem(tk.Frame):
         f.close()
 
     def send(self, filename):
-        print(filename)
         try:
             f = open(filename, "rb")
         except:
@@ -132,7 +137,6 @@ class Filesystem(tk.Frame):
             return
         filesize = os.path.getsize(filename)
         self._socket._sock.sendall(stc.pack('>I', filesize))
-        print(filesize)
         prog = 0
         while True:
             bytes_read = f.read(4096 * 2)
