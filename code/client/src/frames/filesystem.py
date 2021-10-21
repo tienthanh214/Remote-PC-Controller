@@ -36,12 +36,12 @@ class Filesystem(tk.Frame):
         self.spacer.grid(row=0, column=0)
         # Define these scrollbar before hand
         self.scb_vertical = tk.Scrollbar(self,)
-        self.scb_vertical.grid(row=1, column=2, sticky=tk.N+tk.S, rowspan=2)
+        self.scb_vertical.grid(row=1, column=2, sticky=tk.N+tk.S, rowspan=3)
         # Display the file system tree
         self.tbl_container = ttk.Treeview(
             self, yscrollcommand=self.scb_vertical.set, show='tree headings', height=24)
         self.tbl_container.grid(
-            row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=2)
+            row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=3)
         # Scrollbars config
         self.scb_vertical.config(command=self.tbl_container.yview)
         # Table config
@@ -52,10 +52,14 @@ class Filesystem(tk.Frame):
         self.btn_retrieve = tk.Button(
             self, text='Retrieve', command=self.retrieve_file, width=10, height=2)
         self.btn_retrieve.grid(row=1, column=3, sticky=tk.E, padx=10, pady=10)
-        # Push file to server
+        # Send file to server
         self.btn_send = tk.Button(
             self, text="Send", command=self.send_file, width=10, height=2)
         self.btn_send.grid(row=2, column=3, sticky=tk.E, padx=10, pady=10)
+        # Delete file or folder
+        self.btn_send = tk.Button(
+            self, text="Delete", command=self.delete_file, width=10, height=2)
+        self.btn_send.grid(row=3, column=3, sticky=tk.E, padx=10, pady=10)
 
     def retrieve_file(self):
         # Get id of the source
@@ -84,6 +88,10 @@ class Filesystem(tk.Frame):
         self._socket.send('folder,copy,?,{}'.format(path))
         # Client send file by chunks
         self.send(filename=source)
+
+    def delete_file(self):
+        cur_item = self.tbl_container.focus()
+        self._socket.send('folder,del,{}'.format(cur_item))
 
     def next_id(self):
         id = Filesystem.id + 1
