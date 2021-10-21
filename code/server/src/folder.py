@@ -30,9 +30,8 @@ class Folder:
         self.client.sendall(pickle.dumps(list_dir))
         
 
-    def copy_file(self, path):
+    def copy_file(self, source, target):
         # https://www.thepythoncode.com/article/send-receive-files-using-sockets-python
-        source, target = path.split(',')
         if source == '?':       # copy from client to server
             self.receive_file(target)
         elif target == '?':     # copy from server to client
