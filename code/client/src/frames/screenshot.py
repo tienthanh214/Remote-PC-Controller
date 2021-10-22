@@ -25,22 +25,25 @@ class Screenshot(tk.Frame):
         self._continue_stream = False
 
     def create_widgets(self):
+        self.img = Image.open("assets/screenGUI.png")
+        img1 = self.img.resize((1024, 600), Image.ANTIALIAS)
+        self.bg = ImageTk.PhotoImage(img1)
+        self.bgImage = tk.Label(self,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
         # Display the image
         self.canvas = tk.Canvas(
-            self, bg="#000000", highlightthickness=0, width=560, height=560)
+            self, bg="#000000", highlightthickness=0, width=753, height=330)
         self.item_on_canvas = self.canvas.create_image(
-            280, 280, anchor=tk.CENTER, image=None)
-        self.canvas.grid(row=0, column=0, sticky=tk.W +
-                         tk.N, padx=10, pady=10, rowspan=2)
+            375, 165, anchor=tk.CENTER, image=None)
+        self.canvas.place(x=136, y =110)
         # Take another screenshot and update the picture
         # When pressed, Screenshot will sent a request to the server via Controller
         self.btn_snap = tk.Button(
-            self, text=Screenshot.STREAM_BTN_LABEL, command=self.stream_screen_async, width=20, height=10)
-        self.btn_snap.grid(row=0, column=1, sticky=tk.E, padx=10, pady=10)
+            self, text=Screenshot.STREAM_BTN_LABEL, command=self.stream_screen_async, width=20, height=2)
+        self.btn_snap.place(x=330, y = 520)
         # Write the picture to a file as .png, .jpg and .bmp
         self.btn_save = tk.Button(
-            self, text="Chụp", command=self.snap_image, width=20, height=10)
-        self.btn_save.grid(row=1, column=1, sticky=tk.E, padx=10, pady=10)
+            self, text="Chụp", command=self.snap_image, width=20, height=2)
+        self.btn_save.place(x=540, y= 520)
 
     def _resize_image(self, IMG):
         h = w = 0
