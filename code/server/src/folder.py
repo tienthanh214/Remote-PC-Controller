@@ -25,13 +25,15 @@ class Folder:
     
     def view_folder(self, path):
         # list of tuple (path, is this a direction)
-        list_dir = [(x, os.path.isdir(os.path.join(path, x))) 
-                for x in os.listdir(path)]
+        if not os.path.isdir(path):
+            list_dir = []
+        else:
+            list_dir = [(x, os.path.isdir(os.path.join(path, x))) 
+                    for x in os.listdir(path)]
         self.client.sendall(pickle.dumps(list_dir))
         
 
     def copy_file(self, source, target):
-        # https://www.thepythoncode.com/article/send-receive-files-using-sockets-python
         if source == '?':       # copy from client to server
             self.receive_file(target)
         elif target == '?':     # copy from server to client
