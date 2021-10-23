@@ -144,6 +144,7 @@ class RootView(tk.Tk):
             "application")
         self.menu.btn_shutdown["command"] = self.shutdown
         self.menu.btn_logout["command"] = self.logout
+        self.menu.btn_info["command"] = self.get_info
         self.menu.btn_screen["command"] = lambda: self.create_activity(
             "screenshot")
         self.menu.btn_keyboard["command"] = lambda: self.create_activity(
@@ -214,3 +215,8 @@ class RootView(tk.Tk):
     def logout(self):
         self.socket._isconnected = self.socket.send_immediate("logoff")
         self.socket.shutdown()
+
+    def get_info(self):
+        self.socket._isconnected = self.socket.send_immediate("mac")
+        data = self.socket._sock.recv(17).decode('utf8')
+        utils.messagebox('MAC address', msg=data, type='info')
