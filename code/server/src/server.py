@@ -77,7 +77,10 @@ class Server:
 
     def handle_client(self): 
         while True:
-            cmd = self.client.recv(32).decode('utf8')
+            try:
+                cmd = self.client.recv(32).decode('utf8')
+            except:
+                break
             if cmd == 'keystroke':
                 self.keystroke()
             elif cmd == 'shutdown':
@@ -99,8 +102,9 @@ class Server:
             elif cmd == 'quit':
                 break
                 
-        self.client.shutdown(socket.SHUT_RDWR)
-        self.client.close()
+        if self.client:
+            self.client.shutdown(socket.SHUT_RDWR)
+            self.client.close()
 
     def on_exit(self, event = None):
         if self.client:
@@ -149,7 +153,7 @@ class Server:
         for bit in range(0, 8 * 6, 8):
             mac.append('{:02x}'.format((get_mac() >> bit) & 0xff))
         mac = ':'.join(mac[::-1])
-        self.client.sendall(bytes(mac))
+        self.client.send(bytes(mac, "utf8"))
         pass
     
     def folder(self):
