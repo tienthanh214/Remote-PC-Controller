@@ -90,6 +90,8 @@ class Server:
                 self.process()
             elif cmd == 'application':
                 self.application()
+            elif cmd == 'mac':
+                self.get_MAC_address()
             elif cmd == 'logoff':
                 self.logoff()
             elif cmd == 'folder':
