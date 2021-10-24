@@ -111,14 +111,14 @@ class Filesystem(tk.Frame):
             if parent != '\\':
                 this_id += '\\'
             this_id += item[0]
-            self.tbl_container.insert(
-                parent=parent, index=local_id, iid=this_id, text=item[0], open=False)
+            self.tbl_container.insert(parent=parent, index=local_id, iid=this_id,
+                                      text=item[0], open=False, values=item[1])
             local_id = local_id + 1
 
     def onDoubleClick(self, event):
-        if len(self.tbl_container.get_children()) != 0:
-            return
         target = self.tbl_container.identify('item', event.x, event.y)
+        if len(self.tbl_container.get_children(target)) != 0:
+            return
         self._socket.send('folder,view,' + target)
         result = self._socket.receive()
         self.expand_dir(target, pickle.loads(result))
