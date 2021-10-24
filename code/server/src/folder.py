@@ -3,6 +3,7 @@ import shutil
 import pickle
 import struct as stc
 
+
 class Folder:
     def __init__(self, sock) -> None:
         self.client = sock
@@ -22,19 +23,18 @@ class Folder:
                 self.copy_file(cmd[2], cmd[3])
             elif cmd[1] == "del":
                 self.delete_file(cmd[2])
-    
+
     def view_folder(self, path):
         # list of tuple (path, is this a direction)
         try:
             if not os.path.isdir(path):
                 list_dir = []
             else:
-                list_dir = [(x, os.path.isdir(os.path.join(path, x))) 
-                        for x in os.listdir(path)]
+                list_dir = [(x, os.path.isdir(os.path.join(path, x)))
+                            for x in os.listdir(path)]
             self.client.sendall(pickle.dumps(list_dir))
         except:
             self.client.sendall(bytes('bad', 'utf8'))
-        
 
     def copy_file(self, source, target):
         if source == '?':       # copy from client to server
@@ -44,8 +44,10 @@ class Folder:
         else:                   # copy inside server
             try:
                 shutil.copy2(source, target)
+                self.client.send(bytes('ok', 'utf8'))
             except:
                 print("File Not Found Error")
+                self.client.send(bytes('bad', 'utf8'))
         pass
 
     def delete_file(self, path):
@@ -98,4 +100,3 @@ class Folder:
             prog += len(bytes_read)
             # use prog/filesize to show progress bar
         f.close()
-
