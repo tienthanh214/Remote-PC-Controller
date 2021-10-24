@@ -1,6 +1,7 @@
 from threading import currentThread
 from src.mysocket import MySocket
 from tkinter import ttk, filedialog
+from PIL import Image, ImageTk
 import tkinter as tk
 import src.textstyles as textstyle
 import src.themecolors as THEMECOLOR
@@ -19,6 +20,7 @@ class Filesystem(tk.Frame):
         self._image_bytes = None
         self.grid()
         self._socket = MySocket.getInstance()
+        self.create_icons()
         self.create_widgets()
         self.initial_fecth()
         # Get path delim based on operating system
@@ -28,6 +30,22 @@ class Filesystem(tk.Frame):
 
     def clean_activity(self):
         pass
+
+    def create_icons(self):
+        self.icons = {}
+        self.icons['folder'] = self.create_sprite(
+            'assets/filesystem/ic_folder.png')
+        self.icons['file'] = self.create_sprite(
+            'assets/filesystem/ic_file.png')
+        self.icons['file_img'] = self.create_sprite(
+            'assets/filesystem/ic_file_img.png')
+        self.icons['file_pdf'] = self.create_sprite(
+            'assets/filesystem/ic_file_pdf.png')
+
+    def create_sprite(self, path):
+        image = Image.open(path)
+        image.mode = 'RGBA'
+        return ImageTk.PhotoImage(image)
 
     def create_widgets(self):
         # Create top left padding for the frame
@@ -112,7 +130,7 @@ class Filesystem(tk.Frame):
                 this_id += '\\'
             this_id += item[0]
             self.tbl_container.insert(parent=parent, index=local_id, iid=this_id,
-                                      text=item[0], open=False, values=item[1])
+                                      text=item[0], open=False, values=item[1], image=self.get_icon(item))
             local_id = local_id + 1
 
     def onDoubleClick(self, event):
@@ -121,7 +139,7 @@ class Filesystem(tk.Frame):
         # Return if item is a file
         if self.tbl_container.item(target)['values'][0] == 0:
             return
-        # Return if item is already expanded 
+        # Return if item is already expanded
         if len(self.tbl_container.get_children(target)) != 0:
             return
         # Send command to server
@@ -162,3 +180,13 @@ class Filesystem(tk.Frame):
             prog += len(bytes_read)
             # use prog/filesize to show progress bar
         f.close()
+
+    def get_icon(self, item):
+        if item[1]:
+            return self.icons['folder']
+        ext = item[0].split('.')[-1]
+        if ext in ['png', 'jpg', 'jpeg', 'bmp', 'gif']:
+            return self.icons['file_img']
+        if ext == 'pdf':
+            return self.icons['file_pdf']
+        return self.icons['file']
