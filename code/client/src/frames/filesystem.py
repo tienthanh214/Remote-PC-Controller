@@ -67,7 +67,10 @@ class Filesystem(tk.Frame):
         # Table config
         self.tbl_container.heading('#0', text='Folder', anchor='w')
         self.tbl_container.column('#0', width=600, stretch=True)
-        self.tbl_container.bind("<Double-1>", lambda e: self.onDoubleClick(e))
+        self.tbl_container.bind('<Double-1>',
+                                lambda e: self.on_double_click(e))
+        self.tbl_container.bind('<ButtonRelease-1>',
+                                lambda e: self.on_single_click(e))
         # Retrieve file from server
         self.btn_retrieve = tk.Button(
             self, text='Retrieve', command=self.retrieve_file, width=10, height=2)
@@ -77,9 +80,9 @@ class Filesystem(tk.Frame):
             self, text="Send", command=self.send_file, width=10, height=2)
         self.btn_send.grid(row=2, column=3, sticky=tk.E, padx=10, pady=10)
         # Delete file or folder
-        self.btn_send = tk.Button(
+        self.btn_del = tk.Button(
             self, text="Delete", command=self.delete_file, width=10, height=2)
-        self.btn_send.grid(row=3, column=3, sticky=tk.E, padx=10, pady=10)
+        self.btn_del.grid(row=3, column=3, sticky=tk.E, padx=10, pady=10)
 
     def retrieve_file(self):
         # Get id of the source
@@ -109,8 +112,8 @@ class Filesystem(tk.Frame):
         self.send(filename=source)
         # Add that file to the treeview
         local_index = len(self.tbl_container.get_children(cur_item))
-        self.tbl_container.insert(parent=cur_item, index=local_index, iid=path,
-                                  text=filename, open=False, values=False, image=self.get_icon([filename, False]))
+        self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
+                                  open=False, values=False, image=self.get_icon([filename, False]))
 
     def delete_file(self):
         cur_item = self.tbl_container.focus()
@@ -140,7 +143,14 @@ class Filesystem(tk.Frame):
                                       text=item[0], open=False, values=item[1], image=self.get_icon(item))
             local_id = local_id + 1
 
-    def onDoubleClick(self, event):
+    def on_single_click(self, event):
+        target = self.tbl_container.identify('item', event.x, event.y)
+        if self.tbl_container.item(target)['values'][0] == 0:
+            self.enable_btn('normal')
+        else:
+            self.enable_btn('disable')
+
+    def on_double_click(self, event):
         # Get the clicked item
         target = self.tbl_container.identify('item', event.x, event.y)
         # Return if item is a file
@@ -202,3 +212,8 @@ class Filesystem(tk.Frame):
         if ext == 'pdf':
             return self.icons['file_pdf']
         return self.icons['file']
+
+    def enable_btn(self, state):
+        self.btn_retrieve.configure(state=state)
+        self.btn_send.configure(state=state)
+        self.btn_del.configure(state=state)
