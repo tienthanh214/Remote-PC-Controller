@@ -25,12 +25,15 @@ class Folder:
     
     def view_folder(self, path):
         # list of tuple (path, is this a direction)
-        if not os.path.isdir(path):
-            list_dir = []
-        else:
-            list_dir = [(x, os.path.isdir(os.path.join(path, x))) 
-                    for x in os.listdir(path)]
-        self.client.sendall(pickle.dumps(list_dir))
+        try:
+            if not os.path.isdir(path):
+                list_dir = []
+            else:
+                list_dir = [(x, os.path.isdir(os.path.join(path, x))) 
+                        for x in os.listdir(path)]
+            self.client.sendall(pickle.dumps(list_dir))
+        except:
+            self.client.sendall(bytes('bad', 'utf8'))
         
 
     def copy_file(self, source, target):
@@ -46,10 +49,14 @@ class Folder:
         pass
 
     def delete_file(self, path):
-        if os.path.isfile(path):
-            os.remove(path)
-        elif os.path.isdir(path):
-            shutil.rmtree(path)
+        try:
+            if os.path.isfile(path):
+                os.remove(path)
+            elif os.path.isdir(path):
+                shutil.rmtree(path)
+            self.client.send(bytes('ok', 'utf8'))
+        except:
+            self.client.send(bytes('bad', 'utf8'))
         pass
 
     def receive_file(self, filename):

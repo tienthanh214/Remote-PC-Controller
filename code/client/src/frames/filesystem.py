@@ -8,6 +8,7 @@ import src.themecolors as THEMECOLOR
 import pickle
 import struct as stc
 import os
+import time
 
 
 class Filesystem(tk.Frame):
@@ -99,10 +100,10 @@ class Filesystem(tk.Frame):
         filename = source.split(self.path_delim)[-1]
         if '.' in cur_item[-1]:
             # A file is in focus
-            path = '\\'.join(dirs[0:-1]) + self.path_delim + filename
+            path = '\\'.join(dirs[0:-1]) + '\\' + filename
         else:
             # A folder in focus
-            path = cur_item + self.path_delim + filename
+            path = cur_item + '\\' + filename
         self._socket.send('folder,copy,?,{}'.format(path))
         # Client send file by chunks
         self.send(filename=source)
@@ -110,6 +111,8 @@ class Filesystem(tk.Frame):
     def delete_file(self):
         cur_item = self.tbl_container.focus()
         self._socket.send('folder,del,{}'.format(cur_item))
+        if self._socket._sock.recv(3).decode('utf8') == 'ok':
+            self.tbl_container.delete(cur_item)
 
     def next_id(self):
         id = Filesystem.id + 1
@@ -145,6 +148,10 @@ class Filesystem(tk.Frame):
         # Send command to server
         self._socket.send('folder,view,' + target)
         result = self._socket.receive()
+        if len(result) == 3:
+            if result.decode('utf8') == 'bad':
+                print ('bad')
+                return
         self.expand_dir(target, pickle.loads(result))
 
     def receive(self, filename):
