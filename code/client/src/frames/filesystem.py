@@ -3,6 +3,7 @@ from src.mysocket import MySocket
 from tkinter import ttk, filedialog
 from PIL import Image, ImageTk
 import tkinter as tk
+import src.utils as utils
 import src.textstyles as textstyle
 import src.themecolors as THEMECOLOR
 import pickle
@@ -98,15 +99,18 @@ class Filesystem(tk.Frame):
         dirs = cur_item.split('\\')
         path = None
         filename = source.split(self.path_delim)[-1]
-        if '.' in cur_item[-1]:
-            # A file is in focus
-            path = '\\'.join(dirs[0:-1]) + '\\' + filename
-        else:
-            # A folder in focus
-            path = cur_item + '\\' + filename
+        print(cur_item)
+        if '.' in dirs[-1]:
+            # Handle if a file is in focus
+            cur_item = '\\'.join(dirs[0:-1])
+        path = cur_item + '\\' + filename
         self._socket.send('folder,copy,?,{}'.format(path))
         # Client send file by chunks
         self.send(filename=source)
+        # Add that file to the treeview
+        local_index = len(self.tbl_container.get_children(cur_item))
+        self.tbl_container.insert(parent=cur_item, index=local_index, iid=path,
+                                  text=filename, open=False, values=False, image=self.get_icon([filename, False]))
 
     def delete_file(self):
         cur_item = self.tbl_container.focus()
@@ -150,7 +154,8 @@ class Filesystem(tk.Frame):
         result = self._socket.receive()
         if len(result) == 3:
             if result.decode('utf8') == 'bad':
-                print ('bad')
+                utils.messagebox(
+                    'Filesystem', msg='Access denied', type='warn')
                 return
         self.expand_dir(target, pickle.loads(result))
 
