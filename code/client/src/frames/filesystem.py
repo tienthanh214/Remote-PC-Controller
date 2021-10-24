@@ -116,6 +116,8 @@ class Filesystem(tk.Frame):
             local_id = local_id + 1
 
     def onDoubleClick(self, event):
+        if len(self.tbl_container.get_children()) != 0:
+            return
         target = self.tbl_container.identify('item', event.x, event.y)
         self._socket.send('folder,view,' + target)
         result = self._socket.receive()
