@@ -116,9 +116,15 @@ class Filesystem(tk.Frame):
             local_id = local_id + 1
 
     def onDoubleClick(self, event):
+        # Get the clicked item
         target = self.tbl_container.identify('item', event.x, event.y)
+        # Return if item is a file
+        if self.tbl_container.item(target)['values'][0] == 0:
+            return
+        # Return if item is already expanded 
         if len(self.tbl_container.get_children(target)) != 0:
             return
+        # Send command to server
         self._socket.send('folder,view,' + target)
         result = self._socket.receive()
         self.expand_dir(target, pickle.loads(result))
