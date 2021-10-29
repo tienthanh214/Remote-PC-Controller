@@ -2,16 +2,23 @@ import os
 import shutil
 import pickle
 import struct as stc
-
+import win32api
 
 class Folder:
     def __init__(self, sock) -> None:
         self.client = sock
+        # send list of all available Windows's drives
+        drives_list = win32api.GetLogicalDriveStrings().split('\000')[:-1]
+        # self.client.sendall(pickle.dumps(drives_list))
         pass
 
     def run(self):
         while True:
-            cmd = self.client.receive().decode('utf8')
+            try:
+                cmd = self.client.receive().decode('utf8')
+            except:
+                return
+                
             cmd = cmd.split(',')
             if cmd[0] == "exit":
                 return
@@ -23,6 +30,8 @@ class Folder:
                 self.copy_file(cmd[2], cmd[3])
             elif cmd[1] == "del":
                 self.delete_file(cmd[2])
+            elif cmd[1] == "move":
+                self.move_file(cmd[2], cmd[3])
 
     def view_folder(self, path):
         # list of tuple (path, is this a direction)
@@ -49,7 +58,17 @@ class Folder:
                 print("File Not Found Error")
                 self.client.send(bytes('bad', 'utf8'))
         pass
-
+    
+    def move_file(self, source, target):
+        """ move a file from source to target
+            target can be a folder or a file
+        """
+        try:
+            shutil.move(source, target)
+        except:
+            print("Can't move this file")
+        pass
+    
     def delete_file(self, path):
         try:
             if os.path.isfile(path):
