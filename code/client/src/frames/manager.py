@@ -48,13 +48,13 @@ class Manager(tk.Frame):
 
         # Refresh and show running process or application from the server
         self.btn_view = tk.Button(
-            self.button_frame, text="Xem", command=self.view_async, width=10, height=2)
+            self.button_frame, text="Refresh", command=self.view_async, width=10, height=2)
         self.btn_view.grid(row=2, column=0, sticky=tk.N,
                            padx=10, pady=5, rowspan=2)
 
         # Clear the running process or application table
         self.btn_clear = tk.Button(
-            self.button_frame, text="Xóa", command=self.clear, width=10, height=2)
+            self.button_frame, text="Delete", command=self.clear, width=10, height=2)
         self.btn_clear.grid(row=4, column=0, sticky=tk.N,
                            padx=10, pady=5, rowspan=2)
 

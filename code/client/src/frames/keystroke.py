@@ -8,8 +8,8 @@ import src.themecolors as THEMECOLOR
 class Keystroke(tk.Frame):
     HOOK_BTN_LABEL = 'Hook'
     UNHOOK_BTN_LABEL = 'Unhook'
-    LOCK_BTN_LABEL = 'Khóa'
-    UNLOCK_BTN_LABEL = 'Mở khóa'
+    LOCK_BTN_LABEL = 'Lock'
+    UNLOCK_BTN_LABEL = 'Unlock'
 
 
 
@@ -48,14 +48,14 @@ class Keystroke(tk.Frame):
 
         # Print the collected keystrokes
         self.btn_print = tk.Button(
-            self.button_frame, text="In phím", command=self.keystroke_print, width=10, height=2)
+            self.button_frame, text="Print log", command=self.keystroke_print, width=10, height=2)
         self.btn_print.grid(row=2, column=0, sticky=tk.N,
                             padx=10, pady=5, rowspan=2)
 
         # Clear the screen
 
         self.btn_clear = tk.Button(
-            self.button_frame, text="Xóa", command=self.keystroke_clear, width=10, height=2)
+            self.button_frame, text="Delete", command=self.keystroke_clear, width=10, height=2)
         self.btn_clear.grid(row=4, column=0, sticky=tk.N,
                             padx=10, pady=5, rowspan=2)
 

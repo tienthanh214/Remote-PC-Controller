@@ -9,8 +9,8 @@ import src.themecolors as THEMECOLOR
 
 
 class Screenshot(tk.Frame):
-    STREAM_BTN_LABEL = 'Theo dõi'
-    STOP_BTN_LABEL = 'Dừng xem'
+    STREAM_BTN_LABEL = 'Watch'
+    STOP_BTN_LABEL = 'Pause'
 
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg)
@@ -42,7 +42,7 @@ class Screenshot(tk.Frame):
         self.btn_snap.place(x=330, y = 520)
         # Write the picture to a file as .png, .jpg and .bmp
         self.btn_save = tk.Button(
-            self, text="Chụp", command=self.snap_image, width=20, height=2)
+            self, text="Screenshot", command=self.snap_image, width=20, height=2)
         self.btn_save.place(x=540, y= 520)
 
     def _resize_image(self, IMG):
