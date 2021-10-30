@@ -1,6 +1,6 @@
 from threading import currentThread
 from src.mysocket import MySocket
-from tkinter import ttk, filedialog
+from tkinter import Text, ttk, filedialog
 from PIL import Image, ImageTk
 import tkinter as tk
 import src.utils as utils
@@ -58,14 +58,19 @@ class Filesystem(tk.Frame):
         self.spacer = tk.Label(self, bg=THEMECOLOR.body_bg,
                                highlightthickness=0, height=2, width=12, anchor=tk.E)
         self.spacer.grid(row=0, column=0)
+        # Display source path
+        self.lbl_srcdir=tk.Label(self, text='Source')
+        self.lbl_srcdir.grid(row=0, column=1, sticky=tk.W+tk.E)
+        self.txt_srcdir = tk.Text(self, bg="#FFFFFF", height=1, width=60)
+        self.txt_srcdir.grid(row=0, column=2, sticky=tk.W+tk.E, columnspan=4)
         # Define these scrollbar before hand
         self.scb_vertical = tk.Scrollbar(self,)
-        self.scb_vertical.grid(row=1, column=2, sticky=tk.N+tk.S, rowspan=5)
+        self.scb_vertical.grid(row=1, column=6, sticky=tk.N+tk.S, rowspan=5)
         # Display the file system tree
         self.tbl_container = ttk.Treeview(
             self, yscrollcommand=self.scb_vertical.set, show='tree headings', height=24)
         self.tbl_container.grid(
-            row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=5)
+            row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=5, columnspan=5)
         # Scrollbars config
         self.scb_vertical.config(command=self.tbl_container.yview)
         # Table config
@@ -78,27 +83,27 @@ class Filesystem(tk.Frame):
         # Retrieve file from server
         self.btn_retrieve = tk.Button(
             self, text='Retrieve', command=self.retrieve_file, width=10, height=2)
-        self.btn_retrieve.grid(row=1, column=3, sticky=tk.E, padx=10, pady=10)
+        self.btn_retrieve.grid(row=1, column=7, sticky=tk.E, padx=10, pady=10)
         # Send file to server
         self.btn_send = tk.Button(
             self, text="Send", command=self.send_file, width=10, height=2)
-        self.btn_send.grid(row=2, column=3, sticky=tk.E, padx=10, pady=10)
+        self.btn_send.grid(row=2, column=7, sticky=tk.E, padx=10, pady=10)
         # Delete file or folder
         self.btn_del = tk.Button(
             self, text="Delete", command=self.delete_file, width=10, height=2)
-        self.btn_del.grid(row=3, column=3, sticky=tk.E, padx=10, pady=10)
+        self.btn_del.grid(row=3, column=7, sticky=tk.E, padx=10, pady=10)
         # Copy file in server
         self.btn_copy = tk.Button(
             self, text="Copy", command=self.copy_file, width=10, height=2)
-        self.btn_copy.grid(row=4, column=3, sticky=tk.E, padx=10, pady=10)
+        self.btn_copy.grid(row=4, column=7, sticky=tk.E, padx=10, pady=10)
         # Move file in server
         self.btn_move = tk.Button(
             self, text="Move", command=self.move_file, width=10, height=2)
-        self.btn_move.grid(row=5, column=3, sticky=tk.E, padx=10, pady=10)
+        self.btn_move.grid(row=5, column=7, sticky=tk.E, padx=10, pady=10)
         # Cancel process
         self.btn_cancel = tk.Button(
             self, text="Cancel", command=self.cancel_action, width=10, height=2, fg='#d22b2b')
-        self.btn_cancel.grid(row=5, column=4, sticky=tk.E, pady=10)
+        self.btn_cancel.grid(row=5, column=8, sticky=tk.E, pady=10)
         self.btn_cancel.grid_remove()
 
     def retrieve_file(self):
@@ -145,6 +150,7 @@ class Filesystem(tk.Frame):
         if self.btn_copy.cget('text') == 'Copy':
             # Get src item
             self.src_item = self.tbl_container.focus()
+            self.txt_srcdir.insert("end", self.src_item)
             # Lock other btn, change copy to paste
             self.btn_retrieve.configure(state='disable')
             self.btn_send.configure(state='disable')
@@ -153,7 +159,7 @@ class Filesystem(tk.Frame):
             self.btn_move.configure(state='disable')
             self.clear_selection()
             # Show cancel btn
-            self.btn_cancel.grid(row=4, column=4, sticky=tk.E, pady=10)
+            self.btn_cancel.grid(row=4, column=8, sticky=tk.E, pady=10)
         else:
             # Get dst item
             self.dst_item = self.tbl_container.selection()
@@ -190,11 +196,13 @@ class Filesystem(tk.Frame):
             # Hide cancel btn
             self.btn_cancel.grid_remove()
             self.src_item = None
+            self.txt_srcdir.delete("1.0", tk.END)
 
     def move_file(self):
         if self.btn_move.cget('text') == 'Move':
             # Get src item
             self.src_item = self.tbl_container.focus()
+            self.txt_srcdir.insert("end", self.src_item)
             # Lock other btn, change copy to paste
             self.btn_retrieve.configure(state='disable')
             self.btn_send.configure(state='disable')
@@ -203,7 +211,7 @@ class Filesystem(tk.Frame):
             self.btn_move.configure(text='Paste')
             self.clear_selection()
             # Show cancel btn
-            self.btn_cancel.grid(row=5, column=4, sticky=tk.E, pady=10)
+            self.btn_cancel.grid(row=5, column=8, sticky=tk.E, pady=10)
         else:
             # Get dst item
             self.dst_item = self.tbl_container.selection()
@@ -241,10 +249,12 @@ class Filesystem(tk.Frame):
             # Hide cancel btn
             self.btn_cancel.grid_remove()
             self.src_item = None
+            self.txt_srcdir.delete("1.0", tk.END)
 
     def cancel_action(self):
-        self.src_item = None
         self.dst_item = None
+        self.src_item = None
+        self.txt_srcdir.delete("1.0", tk.END)
         self.clear_selection()
         # Reset button
         self.enable_btn('normal')
@@ -264,7 +274,6 @@ class Filesystem(tk.Frame):
             print(this_id)
             self.tbl_container.insert(parent='', index=id, iid=this_id+'\\', text=disk.replace(
                 '\\', ''), open=False, values=True, image=self.icons['disk'])
-        #self.expand_dir('\\', pickle.loads(result))
 
     def expand_dir(self, parent, subtree):
         local_id = 0
