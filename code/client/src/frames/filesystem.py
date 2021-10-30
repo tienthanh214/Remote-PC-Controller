@@ -95,15 +95,22 @@ class Filesystem(tk.Frame):
         self.btn_move = tk.Button(
             self, text="Move", command=self.move_file, width=10, height=2)
         self.btn_move.grid(row=5, column=3, sticky=tk.E, padx=10, pady=10)
+        # Cancel process
+        self.btn_cancel = tk.Button(
+            self, text="Cancel", command=self.cancel_action, width=10, height=2, fg='#d22b2b')
+        self.btn_cancel.grid(row=5, column=4, sticky=tk.E, pady=10)
+        self.btn_cancel.grid_remove()
 
     def retrieve_file(self):
         # Get id of the source
         cur_item = self.tbl_container.focus()
+        # Get the file from client
+        destination = filedialog.askdirectory()
         # Send command to server
         self._socket.send('folder,copy,{},?'.format(cur_item))
         # Retrieve the file from server
         filename = cur_item.split('\\')[-1]
-        self.receive(filename=filename)
+        self.receive(filename=destination + self.path_delim + filename)
 
     def send_file(self):
         # Get the file from client
@@ -144,13 +151,16 @@ class Filesystem(tk.Frame):
             self.btn_del.configure(state='disable')
             self.btn_copy.configure(text='Paste')
             self.btn_move.configure(state='disable')
+            self.clear_selection()
+            # Show cancel btn
+            self.btn_cancel.grid(row=4, column=4, sticky=tk.E, pady=10)
         else:
             # Get dst item
             self.dst_item = self.tbl_container.selection()
-            for item in self.dst_item:
+            for cur_item in self.dst_item:
                 # Send cmd to server
                 self._socket.send('folder,copy,{},{}'.format(
-                    self.src_item, item))
+                    self.src_item, cur_item))
                 # Response from server
                 if self._socket._sock.recv(3).decode('utf8') == 'bad':
                     # Copy not successful
@@ -158,7 +168,6 @@ class Filesystem(tk.Frame):
                         'Filesystem', msg='Cannot copy', type='warn')
                 else:
                     # Get parent folder
-                    cur_item = item
                     dirs = cur_item.split('\\')
                     path = None
                     filename = self.src_item.split('\\')[-1]
@@ -167,16 +176,19 @@ class Filesystem(tk.Frame):
                         cur_item = '\\'.join(dirs[0:-1])
                     path = cur_item + '\\' + filename
                     # Add that file to the treeview
-                    local_index = len(self.tbl_container.get_children(cur_item))
+                    local_index = len(
+                        self.tbl_container.get_children(cur_item))
                     print(filename)
                     self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
-                                            open=False, values=False, image=self.get_icon([filename, False]))
+                                              open=False, values=False, image=self.get_icon([filename, False]))
             # Enable other btn, change paste to copy
             self.btn_retrieve.configure(state='normal')
             self.btn_send.configure(state='normal')
             self.btn_del.configure(state='normal')
             self.btn_copy.configure(text='Copy')
             self.btn_move.configure(state='normal')
+            # Hide cancel btn
+            self.btn_cancel.grid_remove()
             self.src_item = None
 
     def move_file(self):
@@ -189,40 +201,56 @@ class Filesystem(tk.Frame):
             self.btn_del.configure(state='disable')
             self.btn_copy.configure(state='disable')
             self.btn_move.configure(text='Paste')
+            self.clear_selection()
+            # Show cancel btn
+            self.btn_cancel.grid(row=5, column=4, sticky=tk.E, pady=10)
         else:
             # Get dst item
-            self.dst_item = self.tbl_container.focus()
-            # Send cmd to server
-            self._socket.send('folder,move,{},{}'.format(
-                self.src_item, self.dst_item))
-            # Response from server
-            if self._socket._sock.recv(3).decode('utf8') == 'bad':
-                # Copy not successful
-                utils.messagebox(
-                    'Filesystem', msg='Cannot move', type='warn')
-            else:
-                # Get parent folder
-                cur_item = self.dst_item
-                dirs = cur_item.split('\\')
-                path = None
-                filename = self.src_item.split('\\')[-1]
-                if '.' in dirs[-1]:
-                    # Handle if a file is in focus
-                    cur_item = '\\'.join(dirs[0:-1])
-                path = cur_item + '\\' + filename
-                # Add that file to the treeview
-                local_index = len(self.tbl_container.get_children(cur_item))
-                print(filename)
-                self.tbl_container.delete(self.src_item)
-                self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
-                                          open=False, values=False, image=self.get_icon([filename, False]))
+            self.dst_item = self.tbl_container.selection()
+            for cur_item in self.dst_item:
+                # Send cmd to server
+                self._socket.send('folder,move,{},{}'.format(
+                    self.src_item, cur_item))
+                # Response from server
+                if self._socket._sock.recv(3).decode('utf8') == 'bad':
+                    # Copy not successful
+                    utils.messagebox(
+                        'Filesystem', msg='Cannot move', type='warn')
+                else:
+                    # Get parent folder
+                    dirs = cur_item.split('\\')
+                    path = None
+                    filename = self.src_item.split('\\')[-1]
+                    if '.' in dirs[-1]:
+                        # Handle if a file is in focus
+                        cur_item = '\\'.join(dirs[0:-1])
+                    path = cur_item + '\\' + filename
+                    # Add that file to the treeview
+                    local_index = len(
+                        self.tbl_container.get_children(cur_item))
+                    print(filename)
+                    self.tbl_container.delete(self.src_item)
+                    self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
+                                              open=False, values=False, image=self.get_icon([filename, False]))
             # Enable other btn, change paste to copy
             self.btn_retrieve.configure(state='normal')
             self.btn_send.configure(state='normal')
             self.btn_del.configure(state='normal')
             self.btn_copy.configure(state='normal')
             self.btn_move.configure(text='Move')
+            # Hide cancel btn
+            self.btn_cancel.grid_remove()
             self.src_item = None
+
+    def cancel_action(self):
+        self.src_item = None
+        self.dst_item = None
+        self.clear_selection()
+        # Reset button
+        self.enable_btn('normal')
+        self.btn_copy.configure(text='Copy')
+        self.btn_move.configure(text='Move')
+        self.btn_cancel.grid_remove()
 
     def next_id(self):
         id = Filesystem.id + 1
@@ -327,3 +355,7 @@ class Filesystem(tk.Frame):
             # if btn is in copy mode
             self.btn_copy.configure(state=state)
             self.btn_move.configure(state=state)
+
+    def clear_selection(self):
+        for item in self.tbl_container.selection():
+            self.tbl_container.selection_remove(item)
