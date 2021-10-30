@@ -9,7 +9,7 @@ class Folder:
         self.client = sock
         # send list of all available Windows's drives
         drives_list = win32api.GetLogicalDriveStrings().split('\000')[:-1]
-        # self.client.sendall(pickle.dumps(drives_list))
+        self.client.sendall(pickle.dumps(drives_list))
         pass
 
     def run(self):
@@ -65,8 +65,10 @@ class Folder:
         """
         try:
             shutil.move(source, target)
+            self.client.send(bytes('ok', 'utf8'))
         except:
             print("Can't move this file")
+            self.client.send(bytes('bad', 'utf8'))
         pass
     
     def delete_file(self, path):
