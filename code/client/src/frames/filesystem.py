@@ -60,12 +60,12 @@ class Filesystem(tk.Frame):
         self.spacer.grid(row=0, column=0)
         # Define these scrollbar before hand
         self.scb_vertical = tk.Scrollbar(self,)
-        self.scb_vertical.grid(row=1, column=2, sticky=tk.N+tk.S, rowspan=4)
+        self.scb_vertical.grid(row=1, column=2, sticky=tk.N+tk.S, rowspan=5)
         # Display the file system tree
         self.tbl_container = ttk.Treeview(
             self, yscrollcommand=self.scb_vertical.set, show='tree headings', height=24)
         self.tbl_container.grid(
-            row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=4)
+            row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=5)
         # Scrollbars config
         self.scb_vertical.config(command=self.tbl_container.yview)
         # Table config
@@ -91,6 +91,10 @@ class Filesystem(tk.Frame):
         self.btn_copy = tk.Button(
             self, text="Copy", command=self.copy_file, width=10, height=2)
         self.btn_copy.grid(row=4, column=3, sticky=tk.E, padx=10, pady=10)
+        # Move file in server
+        self.btn_move = tk.Button(
+            self, text="Move", command=self.move_file, width=10, height=2)
+        self.btn_move.grid(row=5, column=3, sticky=tk.E, padx=10, pady=10)
 
     def retrieve_file(self):
         # Get id of the source
@@ -169,6 +173,49 @@ class Filesystem(tk.Frame):
             self.btn_send.configure(state='normal')
             self.btn_del.configure(state='normal')
             self.btn_copy.configure(text='Copy')
+            self.src_item = None
+
+    def move_file(self):
+        if self.btn_move.cget('text') == 'Move':
+            # Get src item
+            self.src_item = self.tbl_container.focus()
+            # Lock other btn, change copy to paste
+            self.btn_retrieve.configure(state='disable')
+            self.btn_send.configure(state='disable')
+            self.btn_del.configure(state='disable')
+            self.btn_move.configure(text='Paste')
+        else:
+            # Get dst item
+            self.dst_item = self.tbl_container.focus()
+            # Send cmd to server
+            self._socket.send('folder,move,{},{}'.format(
+                self.src_item, self.dst_item))
+            # Response from server
+            if self._socket._sock.recv(3).decode('utf8') == 'bad':
+                # Copy not successful
+                utils.messagebox(
+                    'Filesystem', msg='Cannot move', type='warn')
+            else:
+                # Get parent folder
+                cur_item = self.dst_item
+                dirs = cur_item.split('\\')
+                path = None
+                filename = self.src_item.split('\\')[-1]
+                if '.' in dirs[-1]:
+                    # Handle if a file is in focus
+                    cur_item = '\\'.join(dirs[0:-1])
+                path = cur_item + '\\' + filename
+                # Add that file to the treeview
+                local_index = len(self.tbl_container.get_children(cur_item))
+                print(filename)
+                self.tbl_container.delete(self.src_item)
+                self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
+                                          open=False, values=False, image=self.get_icon([filename, False]))
+            # Enable other btn, change paste to copy
+            self.btn_retrieve.configure(state='normal')
+            self.btn_send.configure(state='normal')
+            self.btn_del.configure(state='normal')
+            self.btn_move.configure(text='Move')
             self.src_item = None
 
     def next_id(self):
