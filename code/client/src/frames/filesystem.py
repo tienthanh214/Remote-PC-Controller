@@ -142,6 +142,7 @@ class Filesystem(tk.Frame):
             self.btn_send.configure(state='disable')
             self.btn_del.configure(state='disable')
             self.btn_copy.configure(text='Paste')
+            self.btn_move.configure(state='disable')
         else:
             # Get dst item
             self.dst_item = self.tbl_container.focus()
@@ -173,6 +174,7 @@ class Filesystem(tk.Frame):
             self.btn_send.configure(state='normal')
             self.btn_del.configure(state='normal')
             self.btn_copy.configure(text='Copy')
+            self.btn_move.configure(state='normal')
             self.src_item = None
 
     def move_file(self):
@@ -183,6 +185,7 @@ class Filesystem(tk.Frame):
             self.btn_retrieve.configure(state='disable')
             self.btn_send.configure(state='disable')
             self.btn_del.configure(state='disable')
+            self.btn_copy.configure(state='disable')
             self.btn_move.configure(text='Paste')
         else:
             # Get dst item
@@ -215,6 +218,7 @@ class Filesystem(tk.Frame):
             self.btn_retrieve.configure(state='normal')
             self.btn_send.configure(state='normal')
             self.btn_del.configure(state='normal')
+            self.btn_copy.configure(state='normal')
             self.btn_move.configure(text='Move')
             self.src_item = None
 
@@ -320,3 +324,4 @@ class Filesystem(tk.Frame):
         if self.src_item == None:
             # if btn is in copy mode
             self.btn_copy.configure(state=state)
+            self.btn_move.configure(state=state)

@@ -74,8 +74,8 @@ class Manager(tk.Frame):
         for col in cols:
             self.table.heading(col, text=col)
 
-        for i in range(10):
-            self.table.insert("", "end", values=("_", "_", "_"))
+        for i in range(20):
+            self.table.insert("", "end", values=("?", "?", "?"))
 
 
 
