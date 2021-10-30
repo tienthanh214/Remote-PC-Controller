@@ -24,7 +24,7 @@ class Filesystem(tk.Frame):
         self._socket = MySocket.getInstance()
         self.create_icons()
         self.create_widgets()
-        self.initial_fecth()
+        self.initial_fetch()
         # Store path
         self.src_item = None
         # Get path delim based on operating system
@@ -37,6 +37,8 @@ class Filesystem(tk.Frame):
 
     def create_icons(self):
         self.icons = {}
+        self.icons['disk'] = self.create_sprite(
+            'assets/filesystem/ic_disk.png')
         self.icons['folder'] = self.create_sprite(
             'assets/filesystem/ic_folder.png')
         self.icons['file'] = self.create_sprite(
@@ -173,12 +175,15 @@ class Filesystem(tk.Frame):
         id = Filesystem.id + 1
         return id
 
-    def initial_fecth(self):
-        self._socket.send('folder,view,\\')
+    def initial_fetch(self):
         result = self._socket.receive()
-        self.tbl_container.insert(
-            parent='', index=0, iid='\\', text='\\', values=True, open=False)
-        self.expand_dir('\\', pickle.loads(result))
+        disks = pickle.loads(result)
+        for id, disk in enumerate(disks):
+            this_id = disk[:-1]
+            print(this_id)
+            self.tbl_container.insert(parent='', index=id, iid=this_id+'\\', text=disk.replace(
+                '\\', ''), open=False, values=True, image=self.icons['disk'])
+        #self.expand_dir('\\', pickle.loads(result))
 
     def expand_dir(self, parent, subtree):
         local_id = 0
