@@ -128,10 +128,11 @@ class Filesystem(tk.Frame):
                                   open=False, values=False, image=self.get_icon([filename, False]))
 
     def delete_file(self):
-        cur_item = self.tbl_container.focus()
-        self._socket.send('folder,del,{}'.format(cur_item))
-        if self._socket._sock.recv(3).decode('utf8') == 'ok':
-            self.tbl_container.delete(cur_item)
+        selected_items = self.tbl_container.selection()
+        for cur_item in selected_items:
+            self._socket.send('folder,del,{}'.format(cur_item))
+            if self._socket._sock.recv(3).decode('utf8') == 'ok':
+                self.tbl_container.delete(cur_item)
 
     def copy_file(self):
         if self.btn_copy.cget('text') == 'Copy':
@@ -145,30 +146,31 @@ class Filesystem(tk.Frame):
             self.btn_move.configure(state='disable')
         else:
             # Get dst item
-            self.dst_item = self.tbl_container.focus()
-            # Send cmd to server
-            self._socket.send('folder,copy,{},{}'.format(
-                self.src_item, self.dst_item))
-            # Response from server
-            if self._socket._sock.recv(3).decode('utf8') == 'bad':
-                # Copy not successful
-                utils.messagebox(
-                    'Filesystem', msg='Cannot copy', type='warn')
-            else:
-                # Get parent folder
-                cur_item = self.dst_item
-                dirs = cur_item.split('\\')
-                path = None
-                filename = self.src_item.split('\\')[-1]
-                if '.' in dirs[-1]:
-                    # Handle if a file is in focus
-                    cur_item = '\\'.join(dirs[0:-1])
-                path = cur_item + '\\' + filename
-                # Add that file to the treeview
-                local_index = len(self.tbl_container.get_children(cur_item))
-                print(filename)
-                self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
-                                          open=False, values=False, image=self.get_icon([filename, False]))
+            self.dst_item = self.tbl_container.selection()
+            for item in self.dst_item:
+                # Send cmd to server
+                self._socket.send('folder,copy,{},{}'.format(
+                    self.src_item, item))
+                # Response from server
+                if self._socket._sock.recv(3).decode('utf8') == 'bad':
+                    # Copy not successful
+                    utils.messagebox(
+                        'Filesystem', msg='Cannot copy', type='warn')
+                else:
+                    # Get parent folder
+                    cur_item = item
+                    dirs = cur_item.split('\\')
+                    path = None
+                    filename = self.src_item.split('\\')[-1]
+                    if '.' in dirs[-1]:
+                        # Handle if a file is in focus
+                        cur_item = '\\'.join(dirs[0:-1])
+                    path = cur_item + '\\' + filename
+                    # Add that file to the treeview
+                    local_index = len(self.tbl_container.get_children(cur_item))
+                    print(filename)
+                    self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
+                                            open=False, values=False, image=self.get_icon([filename, False]))
             # Enable other btn, change paste to copy
             self.btn_retrieve.configure(state='normal')
             self.btn_send.configure(state='normal')
