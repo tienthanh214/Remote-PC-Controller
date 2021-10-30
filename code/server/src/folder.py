@@ -83,6 +83,7 @@ class Folder:
         pass
 
     def receive_file(self, filename):
+        print(filename)
         raw_msglen = self.client.recv(4)
         if not raw_msglen:
             return None

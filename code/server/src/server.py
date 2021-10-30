@@ -78,7 +78,7 @@ class Server:
     def handle_client(self): 
         while True:
             try:
-                cmd = self.client.recv(32).decode('utf8')
+                cmd = self.client.recv(16).decode('utf8')
             except:
                 break
             if cmd == 'keystroke':

@@ -20,7 +20,7 @@ class Screenshot:
                 if self.is_live:
                     self.client.sendall(bytes('done', 'utf8'))
                 self.is_live = False
-            elif cmd == "exit":
+            elif cmd[:4] == "exit":
                 if self.is_live:
                     self.client.sendall(bytes('done', 'utf8'))
                 self.is_live = False
