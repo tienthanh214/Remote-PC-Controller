@@ -173,6 +173,7 @@ class Manager(tk.Frame):
         response = self._socket._sock.recv(32).decode("utf8")
         util.messagebox(title=cmd, msg=response,
                         type="info" if response == "SUCCESS" else "error")
+        self.reset_inputbox()
 
 
 
