@@ -1,4 +1,5 @@
 from threading import currentThread
+from tkinter.constants import HORIZONTAL, VERTICAL
 from src.mysocket import MySocket
 from tkinter import Text, ttk, filedialog
 from PIL import Image, ImageTk
@@ -47,6 +48,20 @@ class Filesystem(tk.Frame):
             'assets/filesystem/ic_file_img.png')
         self.icons['file_pdf'] = self.create_sprite(
             'assets/filesystem/ic_file_pdf.png')
+        self.icons['retrieve'] = self.create_sprite(
+            'assets/filesystem/ic_retrieve.png')
+        self.icons['send'] = self.create_sprite(
+            'assets/filesystem/ic_send.png')
+        self.icons['delete'] = self.create_sprite(
+            'assets/filesystem/ic_delete.png')
+        self.icons['copy'] = self.create_sprite(
+            'assets/filesystem/ic_copy.png')
+        self.icons['move'] = self.create_sprite(
+            'assets/filesystem/ic_move.png')
+        self.icons['paste'] = self.create_sprite(
+            'assets/filesystem/ic_paste.png')
+        self.icons['cancel'] = self.create_sprite(
+            'assets/filesystem/ic_cancel.png')
 
     def create_sprite(self, path):
         image = Image.open(path)
@@ -54,23 +69,27 @@ class Filesystem(tk.Frame):
         return ImageTk.PhotoImage(image)
 
     def create_widgets(self):
-        # Create top left padding for the frame
-        self.spacer = tk.Label(self, bg=THEMECOLOR.body_bg,
-                               highlightthickness=0, height=2, width=12, anchor=tk.E)
-        self.spacer.grid(row=0, column=0)
-        # Display source path
-        self.lbl_srcdir=tk.Label(self, text='Source')
-        self.lbl_srcdir.grid(row=0, column=1, sticky=tk.W+tk.E)
-        self.txt_srcdir = tk.Text(self, bg="#FFFFFF", height=1, width=60)
-        self.txt_srcdir.grid(row=0, column=2, sticky=tk.W+tk.E, columnspan=4)
+
+        self.vertical_pane = ttk.PanedWindow(self, orient=VERTICAL, height = 720)
+        self.vertical_pane.grid(row=0, column=0, sticky="nsew")
+        self.horizontal_pane = ttk.PanedWindow(self.vertical_pane, orient=HORIZONTAL, width = 1024)
+        self.vertical_pane.add(self.horizontal_pane)
+        self.button_frame = ttk.Labelframe(self.horizontal_pane, text="My Button")
+        self.button_frame.columnconfigure(0, weight=1)
+        self.horizontal_pane.add(self.button_frame, weight=1)
+        self.console_frame = ttk.Labelframe(self.horizontal_pane, text="Console")
+        self.console_frame.columnconfigure(1, weight=6)
+        self.console_frame.rowconfigure(0, weight=1)
+        self.horizontal_pane.add(self.console_frame, weight=1)
+
         # Define these scrollbar before hand
-        self.scb_vertical = tk.Scrollbar(self,)
-        self.scb_vertical.grid(row=1, column=6, sticky=tk.N+tk.S, rowspan=5)
+        self.scb_vertical = tk.Scrollbar(self.console_frame,)
+        self.scb_vertical.grid(row=0, column=2, sticky=tk.N+tk.S, rowspan=5)
         # Display the file system tree
         self.tbl_container = ttk.Treeview(
-            self, yscrollcommand=self.scb_vertical.set, show='tree headings', height=24)
+            self.console_frame, yscrollcommand=self.scb_vertical.set, show='tree headings', height=24)
         self.tbl_container.grid(
-            row=1, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=5, columnspan=5)
+            row=0, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=5)
         # Scrollbars config
         self.scb_vertical.config(command=self.tbl_container.yview)
         # Table config
@@ -80,30 +99,55 @@ class Filesystem(tk.Frame):
                                 lambda e: self.on_double_click(e))
         self.tbl_container.bind('<ButtonRelease-1>',
                                 lambda e: self.on_single_click(e))
+
+
         # Retrieve file from server
         self.btn_retrieve = tk.Button(
-            self, text='Retrieve', command=self.retrieve_file, width=10, height=2)
-        self.btn_retrieve.grid(row=1, column=7, sticky=tk.E, padx=10, pady=10)
+            self.button_frame, text='Retrieve', image=self.icons['retrieve'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.retrieve_file)
+        self.btn_retrieve.grid(row=0, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)
+        self.btn_retrieve.config(width=20, height = 40)
+
         # Send file to server
         self.btn_send = tk.Button(
-            self, text="Send", command=self.send_file, width=10, height=2)
-        self.btn_send.grid(row=2, column=7, sticky=tk.E, padx=10, pady=10)
+            self.button_frame, text='Send', image=self.icons['send'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.send_file)
+        self.btn_send.grid(row=2, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)
+        self.btn_send.config(width=20, height = 40)
+
         # Delete file or folder
         self.btn_del = tk.Button(
-            self, text="Delete", command=self.delete_file, width=10, height=2)
-        self.btn_del.grid(row=3, column=7, sticky=tk.E, padx=10, pady=10)
+            self.button_frame, text='Delete', image=self.icons['delete'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.delete_file)
+        self.btn_del.grid(row=4, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)
+        self.btn_del.config(width=20, height = 40)
+
         # Copy file in server
         self.btn_copy = tk.Button(
-            self, text="Copy", command=self.copy_file, width=10, height=2)
-        self.btn_copy.grid(row=4, column=7, sticky=tk.E, padx=10, pady=10)
+            self.button_frame, text='Copy', image=self.icons['copy'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.copy_file)
+        self.btn_copy.grid(row=6, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)
+        self.btn_copy.config(width=20, height = 40)
+
         # Move file in server
         self.btn_move = tk.Button(
-            self, text="Move", command=self.move_file, width=10, height=2)
-        self.btn_move.grid(row=5, column=7, sticky=tk.E, padx=10, pady=10)
+            self.button_frame, text='Move', image=self.icons['move'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.move_file)
+        self.btn_move.grid(row=8, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)
+        self.btn_move.config(width=20, height = 40)
+
         # Cancel process
         self.btn_cancel = tk.Button(
-            self, text="Cancel", command=self.cancel_action, width=10, height=2, fg='#d22b2b')
-        self.btn_cancel.grid(row=5, column=8, sticky=tk.E, pady=10)
+            self.button_frame, text='Cancel', image=self.icons['cancel'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="#d22b2b", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.cancel_action)
+        self.btn_cancel.grid(row=10, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)
+        self.btn_cancel.config(width=20, height = 40)
         self.btn_cancel.grid_remove()
 
     def retrieve_file(self):
@@ -155,11 +199,14 @@ class Filesystem(tk.Frame):
             self.btn_retrieve.configure(state='disable')
             self.btn_send.configure(state='disable')
             self.btn_del.configure(state='disable')
-            self.btn_copy.configure(text='Paste')
+            self.btn_copy.configure(text='Paste', image=self.icons['paste'])
             self.btn_move.configure(state='disable')
             self.clear_selection()
             # Show cancel btn
-            self.btn_cancel.grid(row=4, column=8, sticky=tk.E, pady=10)
+            self.btn_cancel.grid(row=8, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)
+            self.btn_move.grid(row=10, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)               
         else:
             # Get dst item
             self.dst_item = self.tbl_container.selection()
@@ -191,9 +238,11 @@ class Filesystem(tk.Frame):
             self.btn_retrieve.configure(state='normal')
             self.btn_send.configure(state='normal')
             self.btn_del.configure(state='normal')
-            self.btn_copy.configure(text='Copy')
+            self.btn_copy.configure(text='Copy', image=self.icons['copy'])
             self.btn_move.configure(state='normal')
             # Hide cancel btn
+            self.btn_move.grid(row=8, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)  
             self.btn_cancel.grid_remove()
             self.src_item = None
             self.txt_srcdir.delete("1.0", tk.END)
@@ -208,10 +257,13 @@ class Filesystem(tk.Frame):
             self.btn_send.configure(state='disable')
             self.btn_del.configure(state='disable')
             self.btn_copy.configure(state='disable')
-            self.btn_move.configure(text='Paste')
+            self.btn_move.configure(text='Paste', image=self.icons['paste'])
             self.clear_selection()
             # Show cancel btn
-            self.btn_cancel.grid(row=5, column=8, sticky=tk.E, pady=10)
+            self.btn_move.grid(row=8, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2) 
+            self.btn_cancel.grid(row=10, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=15, rowspan=2)
         else:
             # Get dst item
             self.dst_item = self.tbl_container.selection()
@@ -245,7 +297,7 @@ class Filesystem(tk.Frame):
             self.btn_send.configure(state='normal')
             self.btn_del.configure(state='normal')
             self.btn_copy.configure(state='normal')
-            self.btn_move.configure(text='Move')
+            self.btn_move.configure(text='Move', image=self.icons['move'])
             # Hide cancel btn
             self.btn_cancel.grid_remove()
             self.src_item = None
@@ -258,8 +310,8 @@ class Filesystem(tk.Frame):
         self.clear_selection()
         # Reset button
         self.enable_btn('normal')
-        self.btn_copy.configure(text='Copy')
-        self.btn_move.configure(text='Move')
+        self.btn_copy.configure(text='Copy', image=self.icons['copy'])
+        self.btn_move.configure(text='Move', image=self.icons['move'])
         self.btn_cancel.grid_remove()
 
     def next_id(self):

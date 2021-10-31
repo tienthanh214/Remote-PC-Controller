@@ -26,12 +26,12 @@ class Screenshot(tk.Frame):
 
     def create_widgets(self):
         self.img = Image.open("assets/screenGUI.png")
-        img1 = self.img.resize((1024, 600), Image.ANTIALIAS)
-        self.bg = ImageTk.PhotoImage(img1)
+        self.img1 = self.img.resize((1024, 620), Image.ANTIALIAS)
+        self.bg = ImageTk.PhotoImage(self.img1)
         self.bgImage = tk.Label(self,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
         # Display the image
         self.canvas = tk.Canvas(
-            self, bg="#000000", highlightthickness=0, width=753, height=330)
+            self, bg="#000000", highlightthickness=0, width=800, height=600)
         self.item_on_canvas = self.canvas.create_image(
             375, 165, anchor=tk.CENTER, image=None)
         self.canvas.place(x=136, y =110)

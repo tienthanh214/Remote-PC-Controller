@@ -6,6 +6,7 @@ import tkinter as tk
 import src.utils as util
 import src.themecolors as THEMECOLOR
 import multiprocessing as mp
+from PIL import Image, ImageTk
 
 
 
@@ -24,45 +25,68 @@ class Manager(tk.Frame):
     def clean_activity(self):
         pass
 
+    def create_sprite(self, path):
+        image = Image.open(path)
+        image.mode = 'RGBA'
+        return ImageTk.PhotoImage(image)
 
+    def create_icons(self):
+        self.icons = {}
+        self.icons['kill'] = self.create_sprite('assets/manager/ic_kill.png')
+        self.icons['refresh'] = self.create_sprite(
+            'assets/manager/ic_refresh.png')
+        self.icons['delete'] = self.create_sprite(
+            'assets/manager/ic_delete.png')
+        self.icons['start'] = self.create_sprite('assets/manager/ic_start.png')
 
     def create_widgets(self):
-        self.vertical_pane = ttk.PanedWindow(self, orient=VERTICAL, height=720)
+
+        self.create_icons()
+
+        self.vertical_pane = ttk.PanedWindow(self, orient=VERTICAL, height = 720)
         self.vertical_pane.grid(row=0, column=0, sticky="nsew")
-        self.horizontal_pane = ttk.PanedWindow(self.vertical_pane, orient=HORIZONTAL, width=1024)
+        self.horizontal_pane = ttk.PanedWindow(self.vertical_pane, orient=HORIZONTAL, width = 1024)
         self.vertical_pane.add(self.horizontal_pane)
         self.button_frame = ttk.Labelframe(self.horizontal_pane, text="My Button")
-        self.button_frame.columnconfigure(1, weight=2)
+        self.button_frame.columnconfigure(0, weight=1)
         self.horizontal_pane.add(self.button_frame, weight=1)
         self.console_frame = ttk.Labelframe(self.horizontal_pane, text="Console")
-        self.console_frame.columnconfigure(0, weight=10)
+        self.console_frame.columnconfigure(1, weight=6)
         self.console_frame.rowconfigure(0, weight=1)
         self.horizontal_pane.add(self.console_frame, weight=1)
 
         # Prompt the inputbox
         # User will input the application or process id they want to kill
         self.btn_kill = tk.Button(
-            self.button_frame, text="Kill", command=self.kill, width=10, height=2)
-        self.btn_kill.grid(row=0, column=0, sticky=tk.N,
-                           padx=10, pady=5, rowspan=2)
+            self.button_frame, text="Kill", image=self.icons['kill'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.kill)
+        self.btn_kill.grid(row=0, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=25, rowspan=2)
+        self.btn_kill.config(width=20, height = 40)
 
         # Refresh and show running process or application from the server
-        self.btn_view = tk.Button(
-            self.button_frame, text="Refresh", command=self.view_async, width=10, height=2)
-        self.btn_view.grid(row=2, column=0, sticky=tk.N,
-                           padx=10, pady=5, rowspan=2)
+        self.btn__view = tk.Button(
+            self.button_frame, text="Refresh", image=self.icons['refresh'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.view_async)
+        self.btn__view.grid(row=2, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=25, rowspan=2)
+        self.btn__view.config(width=20, height = 40)
 
         # Clear the running process or application table
-        self.btn_clear = tk.Button(
-            self.button_frame, text="Delete", command=self.clear, width=10, height=2)
-        self.btn_clear.grid(row=4, column=0, sticky=tk.N,
-                           padx=10, pady=5, rowspan=2)
+        self.btn__clear = tk.Button(
+            self.button_frame, text="Delete", image=self.icons['delete'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.clear)
+        self.btn__clear.grid(row=4, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=25, rowspan=2)
+        self.btn__clear.config(width=20, height = 40)
 
         # Similar to btn_kill, but this will take the name of the application and start it instead
-        self.btn_start = tk.Button(
-            self.button_frame, text="Start", command=self.start, width=10, height=2)
-        self.btn_start.grid(row=6, column=0, sticky=tk.N,
-                           padx=10, pady=5, rowspan=2)
+        self.btn__start = tk.Button(
+            self.button_frame, text="Start", image=self.icons['start'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+                activeforeground="darkgreen",borderwidth=2, cursor="hand2", command=self.start)
+        self.btn__start.grid(row=6, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+                           padx=30, pady=25, rowspan=2)
+        self.btn__start.config(width=20, height = 40)
 
         # Display info of running process or application from the server
         cols = ("Name", "ID", "Count thread")
