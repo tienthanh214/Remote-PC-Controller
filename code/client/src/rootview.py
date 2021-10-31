@@ -29,7 +29,7 @@ class RootView(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         self.socket = MySocket.getInstance()
         # Config window shape
-        self.geometry("1024x720")
+        self.geometry("1024x860")
         self.resizable(0, 0)
         self.title('Computer Network Project')
         self.config(bg=themecolor.root_bg_red)

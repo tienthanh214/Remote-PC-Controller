@@ -49,7 +49,7 @@ class Menu(tk.Frame):
             self, text="File system", image=self.icons['filesys'], compound=tk.LEFT)
         self.btn_filesys.grid(
             row=1, column=0, sticky=tk.W+tk.S+tk.E+tk.N, padx=20, pady=10, columnspan=3)
-        self.btn_filesys.config(height=100, width=100)
+        self.btn_filesys.config(height=100, width=300)
         # Change registry
         self.btn_registry = tk.Button(
             self, text="Registry", image=self.icons['registry'], compound=tk.LEFT)
@@ -61,39 +61,38 @@ class Menu(tk.Frame):
         self.btn_app = tk.Button(
             self, text="Appications", image=self.icons['app'], compound=tk.LEFT)
         self.btn_app.grid(row=0, column=3, sticky=tk.N +
-                          tk.W, padx=20, pady=10, columnspan=3)
+                          tk.W, padx=10, pady=10, columnspan=3)
         self.btn_app.config(height=100, width=300)
         # Show running processes
         self.btn_process = tk.Button(
             self, text="Processes", image=self.icons['process'], compound=tk.LEFT)
         self.btn_process.grid(row=1, column=3, sticky=tk.N +
-                              tk.W, padx=20, pady=10, columnspan=3)
+                              tk.W, padx=10, pady=10, columnspan=3)
         self.btn_process.config(height=100, width=300)
         # Get keystroke
         self.btn_keyboard = tk.Button(
             self, text="Keyboard", image=self.icons['keyboard'], compound=tk.LEFT)
         self.btn_keyboard.grid(
-            row=2, column=3, sticky=tk.N + tk.W, padx=20, pady=10, columnspan=3)
+            row=2, column=3, sticky=tk.N+tk.E, padx=10, pady=10, columnspan=3)
         self.btn_keyboard.config(height=100, width=300)
         # --------------------- Group 3 ---------------------
         # Shutdown computer
         self.btn_shutdown = tk.Button(
-            self, text="Shut down", image=self.icons['shutdown'], compound=tk.LEFT)
+            self, text="Shut down", image=self.icons['shutdown'], compound=tk.LEFT, height=100, width=90)
         self.btn_shutdown.grid(
-            row=3, column=0, sticky=tk.W+tk.E+tk.N, padx=20, pady=10, columnspan=2)
-        self.btn_shutdown.config(height=100, width=150)
+            row=3, column=0, sticky=tk.W+tk.E+tk.N, padx=10, pady=10, columnspan=2)
         # Logout computer
         self.btn_logout = tk.Button(
-            self, text="Log out", image=self.icons['logout'], compound=tk.LEFT)
-        self.btn_logout.grid(row=3, column=2, sticky=tk.W+tk.E+tk.N, padx=20, pady=10, columnspan=2)
-        self.btn_logout.config(height=100, width=150)
+            self, text="Log out", image=self.icons['logout'], compound=tk.LEFT, height=100, width=90)
+        self.btn_logout.grid(row=3, column=2, sticky=tk.W +
+                             tk.E+tk.N, padx=10, pady=10, columnspan=2)
         # Exit program
         self.btn_info = tk.Button(
-            self, text="MAC address", image=self.icons['info'], compound=tk.LEFT)
-        self.btn_info.grid(row=3, column=4, sticky=tk.W+tk.E+tk.N, padx=20, pady=10, columnspan=2)
-        self.btn_info.config(height=100, width=150)
+            self, text="MAC address", image=self.icons['info'], compound=tk.LEFT, height=100, width=90)
+        self.btn_info.grid(row=3, column=4, sticky=tk.W +
+                           tk.E+tk.N, padx=10, pady=10, columnspan=2)
         # Exit program
         self.btn_quit = tk.Button(
-            self, text="Quit program", fg="red", compound=tk.LEFT)
-        self.btn_quit.grid(row=3, column=6, sticky=tk.N +
-                           tk.W + tk.E + tk.S, padx=10, pady=10, columnspan=2)
+            self, text="Quit program", fg="red", compound=tk.LEFT, height=2)
+        self.btn_quit.grid(row=4, column=1, sticky=tk.N +
+                           tk.W+tk.E+tk.S, padx=10, pady=10, columnspan=4)

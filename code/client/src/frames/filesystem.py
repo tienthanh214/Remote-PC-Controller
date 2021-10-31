@@ -86,18 +86,18 @@ class Filesystem(tk.Frame):
         self.scb_vertical = tk.Scrollbar(self.console_frame,)
         self.scb_vertical.grid(row=0, column=2, sticky=tk.N+tk.S, rowspan=5)
         # Display the file system tree
-        self.tbl_container = ttk.Treeview(
+        self.trv_dirlist = ttk.Treeview(
             self.console_frame, yscrollcommand=self.scb_vertical.set, show='tree headings', height=24)
-        self.tbl_container.grid(
+        self.trv_dirlist.grid(
             row=0, column=1, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=5)
         # Scrollbars config
-        self.scb_vertical.config(command=self.tbl_container.yview)
+        self.scb_vertical.config(command=self.trv_dirlist.yview)
         # Table config
-        self.tbl_container.heading('#0', text='Folder', anchor='w')
-        self.tbl_container.column('#0', width=600, stretch=True)
-        self.tbl_container.bind('<Double-1>',
+        self.trv_dirlist.heading('#0', text='Folder', anchor='w')
+        self.trv_dirlist.column('#0', width=600, stretch=True)
+        self.trv_dirlist.bind('<Double-1>',
                                 lambda e: self.on_double_click(e))
-        self.tbl_container.bind('<ButtonRelease-1>',
+        self.trv_dirlist.bind('<ButtonRelease-1>',
                                 lambda e: self.on_single_click(e))
 
 
@@ -152,7 +152,7 @@ class Filesystem(tk.Frame):
 
     def retrieve_file(self):
         # Get id of the source
-        cur_item = self.tbl_container.focus()
+        cur_item = self.trv_dirlist.focus()
         # Get the file from client
         destination = filedialog.askdirectory()
         # Send command to server
@@ -166,7 +166,7 @@ class Filesystem(tk.Frame):
         source = filedialog.askopenfilename(
             title="Select file", filetypes=[("all files", "*.*")])
         # Send command to server
-        cur_item = self.tbl_container.focus()
+        cur_item = self.trv_dirlist.focus()
         dirs = cur_item.split('\\')
         path = None
         filename = source.split(self.path_delim)[-1]
@@ -179,21 +179,21 @@ class Filesystem(tk.Frame):
         # Client send file by chunks
         self.send(filename=source)
         # Add that file to the treeview
-        local_index = len(self.tbl_container.get_children(cur_item))
-        self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
+        local_index = len(self.trv_dirlist.get_children(cur_item))
+        self.trv_dirlist.insert(parent=cur_item, index=local_index, iid=path, text=filename,
                                   open=False, values=False, image=self.get_icon([filename, False]))
 
     def delete_file(self):
-        selected_items = self.tbl_container.selection()
+        selected_items = self.trv_dirlist.selection()
         for cur_item in selected_items:
             self._socket.send('folder,del,{}'.format(cur_item))
             if self._socket._sock.recv(3).decode('utf8') == 'ok':
-                self.tbl_container.delete(cur_item)
+                self.trv_dirlist.delete(cur_item)
 
     def copy_file(self):
         if self.btn_copy.cget('text') == 'Copy':
             # Get src item
-            self.src_item = self.tbl_container.focus()
+            self.src_item = self.trv_dirlist.focus()
             self.txt_srcdir.insert("end", self.src_item)
             # Lock other btn, change copy to paste
             self.btn_retrieve.configure(state='disable')
@@ -209,7 +209,7 @@ class Filesystem(tk.Frame):
                            padx=30, pady=15, rowspan=2)               
         else:
             # Get dst item
-            self.dst_item = self.tbl_container.selection()
+            self.dst_item = self.trv_dirlist.selection()
             for cur_item in self.dst_item:
                 # Send cmd to server
                 self._socket.send('folder,copy,{},{}'.format(
@@ -230,9 +230,9 @@ class Filesystem(tk.Frame):
                     path = cur_item + '\\' + filename
                     # Add that file to the treeview
                     local_index = len(
-                        self.tbl_container.get_children(cur_item))
+                        self.trv_dirlist.get_children(cur_item))
                     print(filename)
-                    self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
+                    self.trv_dirlist.insert(parent=cur_item, index=local_index, iid=path, text=filename,
                                               open=False, values=False, image=self.get_icon([filename, False]))
             # Enable other btn, change paste to copy
             self.btn_retrieve.configure(state='normal')
@@ -250,7 +250,7 @@ class Filesystem(tk.Frame):
     def move_file(self):
         if self.btn_move.cget('text') == 'Move':
             # Get src item
-            self.src_item = self.tbl_container.focus()
+            self.src_item = self.trv_dirlist.focus()
             self.txt_srcdir.insert("end", self.src_item)
             # Lock other btn, change copy to paste
             self.btn_retrieve.configure(state='disable')
@@ -266,7 +266,7 @@ class Filesystem(tk.Frame):
                            padx=30, pady=15, rowspan=2)
         else:
             # Get dst item
-            self.dst_item = self.tbl_container.selection()
+            self.dst_item = self.trv_dirlist.selection()
             for cur_item in self.dst_item:
                 # Send cmd to server
                 self._socket.send('folder,move,{},{}'.format(
@@ -287,10 +287,10 @@ class Filesystem(tk.Frame):
                     path = cur_item + '\\' + filename
                     # Add that file to the treeview
                     local_index = len(
-                        self.tbl_container.get_children(cur_item))
+                        self.trv_dirlist.get_children(cur_item))
                     print(filename)
-                    self.tbl_container.delete(self.src_item)
-                    self.tbl_container.insert(parent=cur_item, index=local_index, iid=path, text=filename,
+                    self.trv_dirlist.delete(self.src_item)
+                    self.trv_dirlist.insert(parent=cur_item, index=local_index, iid=path, text=filename,
                                               open=False, values=False, image=self.get_icon([filename, False]))
             # Enable other btn, change paste to copy
             self.btn_retrieve.configure(state='normal')
@@ -324,7 +324,7 @@ class Filesystem(tk.Frame):
         for id, disk in enumerate(disks):
             this_id = disk[:-1]
             print(this_id)
-            self.tbl_container.insert(parent='', index=id, iid=this_id+'\\', text=disk.replace(
+            self.trv_dirlist.insert(parent='', index=id, iid=this_id+'\\', text=disk.replace(
                 '\\', ''), open=False, values=True, image=self.icons['disk'])
 
     def expand_dir(self, parent, subtree):
@@ -334,25 +334,27 @@ class Filesystem(tk.Frame):
             if parent != '\\':
                 this_id += '\\'
             this_id += item[0]
-            self.tbl_container.insert(parent=parent, index=local_id, iid=this_id,
+            self.trv_dirlist.insert(parent=parent, index=local_id, iid=this_id,
                                       text=item[0], open=False, values=item[1], image=self.get_icon(item))
             local_id = local_id + 1
 
     def on_single_click(self, event):
-        target = self.tbl_container.identify('item', event.x, event.y)
-        if self.tbl_container.item(target)['values'][0] == 0:
+        target = self.trv_dirlist.identify('item', event.x, event.y)
+        if self.trv_dirlist.item(target)['values'][0] == 0:
             self.enable_btn('normal')
+            self.btn_send.configure(state='disable')
         else:
             self.enable_btn('disable')
+            self.btn_send.configure(state='normal')
 
     def on_double_click(self, event):
         # Get the clicked item
-        target = self.tbl_container.identify('item', event.x, event.y)
+        target = self.trv_dirlist.identify('item', event.x, event.y)
         # Return if item is a file
-        if self.tbl_container.item(target)['values'][0] == 0:
+        if self.trv_dirlist.item(target)['values'][0] == 0:
             return
         # Return if item is already expanded
-        if len(self.tbl_container.get_children(target)) != 0:
+        if len(self.trv_dirlist.get_children(target)) != 0:
             return
         # Send command to server
         self._socket.send('folder,view,' + target)
@@ -410,7 +412,7 @@ class Filesystem(tk.Frame):
 
     def enable_btn(self, state):
         self.btn_retrieve.configure(state=state)
-        self.btn_send.configure(state=state)
+        #self.btn_send.configure(state=state)
         self.btn_del.configure(state=state)
         if self.src_item == None:
             # if btn is in copy mode
@@ -418,5 +420,5 @@ class Filesystem(tk.Frame):
             self.btn_move.configure(state=state)
 
     def clear_selection(self):
-        for item in self.tbl_container.selection():
-            self.tbl_container.selection_remove(item)
+        for item in self.trv_dirlist.selection():
+            self.trv_dirlist.selection_remove(item)
