@@ -87,16 +87,23 @@ class Filesystem(tk.Frame):
         self.horizontal_pane.add(self.console_frame, weight=1)
 
         # Define these scrollbar before hand
-        self.scb_vertical = tk.Scrollbar(self.console_frame,)
+        self.scb_vertical = tk.Scrollbar(self.console_frame, orient=tk.VERTICAL)
         self.scb_vertical.grid(
             row=0, column=1, sticky=tk.W+tk.N+tk.S, rowspan=5)
+        self.scb_horizontal = tk.Scrollbar(self.console_frame, orient=tk.HORIZONTAL)
+        self.scb_horizontal.grid(
+            row=5, column=0, sticky=tk.E+tk.W, columnspan=1)
+        
         # Display the file system tree
         self.trv_dirlist = ttk.Treeview(
-            self.console_frame, yscrollcommand=self.scb_vertical.set, show='tree headings', height=24)
+            self.console_frame, yscrollcommand=self.scb_vertical.set, xscrollcommand=self.scb_horizontal.set, show='tree headings', height=24)
         self.trv_dirlist.grid(
             row=0, column=0, sticky=tk.N+tk.S+tk.W+tk.E, padx=0, pady=0, rowspan=5)
+
         # Scrollbars config
         self.scb_vertical.config(command=self.trv_dirlist.yview)
+        self.scb_horizontal.config(command=self.trv_dirlist.xview)
+
         # Table config
         self.trv_dirlist.heading('#0', text='Folder', anchor='w')
         self.trv_dirlist.column('#0', width=700, stretch=True)
@@ -107,7 +114,7 @@ class Filesystem(tk.Frame):
         # Show source file
         self.lbl_srcdir = tk.Label(
             self.console_frame, text='', bg=THEMECOLOR.body_bg, fg='white', width=60)
-        self.lbl_srcdir.grid(row=5, column=0, sticky=tk.W +
+        self.lbl_srcdir.grid(row=6, column=0, sticky=tk.W +
                              tk.S+tk.E+tk.N, padx=1, pady=1, columnspan=1)
 
         # Retrieve file from server
