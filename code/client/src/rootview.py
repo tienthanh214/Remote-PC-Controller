@@ -121,7 +121,7 @@ class RootView(tk.Tk):
         self.etr_ip = tk.Entry(self.head, width=30)
         self.etr_ip.focus()
         self.etr_ip.grid(row=1, column=3, padx=0, pady=10,
-                         ipady=4, sticky=tk.N, columnspan=1)
+                         ipady=4, ipadx=4, sticky=tk.N, columnspan=1)
         # Connect button
         self.btn_connect = tk.Button(
             self.head, text="Connect", width=12, height=1, bg=themecolor.connect_btn, fg='#000000')
