@@ -41,6 +41,7 @@ class Folder:
             else:
                 list_dir = [(x, os.path.isdir(os.path.join(path, x)))
                             for x in os.listdir(path)]
+            list_dir.sort(key = lambda x : not x[1])
             self.client.sendall(pickle.dumps(list_dir))
         except:
             self.client.sendall(bytes('bad', 'utf8'))
@@ -90,7 +91,11 @@ class Folder:
         # get file sie first
         msglen = stc.unpack('>I', raw_msglen)[0]
         print(msglen)
-        f = open(filename, "wb")
+        try:
+            f = open(filename, "wb")
+        except:
+            print("Invalid path")
+            return
         curlen = 0
         # read binary data to file
         while curlen < msglen:
