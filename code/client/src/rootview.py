@@ -133,9 +133,7 @@ class RootView(tk.Tk):
         self.spacer.grid(row=0, column=5)
 
     def bind_actions(self):
-        # self.bind("<Destroy>", lambda e: self.exit_prog(isKilled=True))
-        # self.bind("<Tab>", self.focus_next_widget)
-        # self.bind("<Return>", lambda e: self.enterkey(e))
+        self.bind("<Destroy>", lambda e: self.exit_prog(e))
         self.btn_connect["command"] = self.connect
         self.btn_back["command"] = self.back_to_menu
         self.menu.btn_process["command"] = lambda: self.create_activity(
@@ -153,7 +151,7 @@ class RootView(tk.Tk):
             "registry")
         self.menu.btn_filesys["command"] = lambda: self.create_activity(
             "folder")
-        self.menu.btn_quit["command"] = lambda: self.exit_prog(isKilled=False)
+        self.menu.btn_quit["command"] = lambda: self.exit_prog(None, isKilled=False)
 
     def connect(self):
         ip = self.etr_ip.get().strip("\n")
@@ -193,7 +191,10 @@ class RootView(tk.Tk):
         self.btn_back.grid_remove()
         exit
 
-    def exit_prog(self, isKilled=True):
+    def exit_prog(self,e,  isKilled=True):
+        if e != None:
+            if str(e.widget) != '.':
+                return
         try:
             self.socket.send_immediate("quit")
         except OSError:
@@ -204,9 +205,13 @@ class RootView(tk.Tk):
                 self.destroy()
 
     def exit_func(self):
-        self.activity.clean_activity()
-        self.activity.destroy()
-        self.socket.send_immediate("exit")
+        try:
+            self.activity.clean_activity()
+            self.activity.destroy()
+        except:
+            pass
+        finally:
+            self.socket.send_immediate("exit")
 
     def shutdown(self):
         self.socket._isconnected = self.socket.send_immediate("shutdown")
