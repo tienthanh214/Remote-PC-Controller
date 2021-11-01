@@ -1,3 +1,4 @@
 pynput
 Pillow
 pypiwin32
+keyboard
