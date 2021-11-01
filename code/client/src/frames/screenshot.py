@@ -13,7 +13,7 @@ class Screenshot(tk.Frame):
     STOP_BTN_LABEL = 'Pause'
 
     def __init__(self, parent):
-        tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg)
+        tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg, padx=70,pady=50)
         self._image_bytes = None
         self.grid()
         self._socket = MySocket.getInstance()
@@ -24,36 +24,56 @@ class Screenshot(tk.Frame):
     def clean_activity(self):
         self._continue_stream = False
 
+    def create_icons(self):
+        self.icons = {}
+        self.icons['stream'] = self.create_sprite('assets/screenshot/ic_stream.png')
+        self.icons['pause'] = self.create_sprite(
+            'assets/screenshot/ic_pause.png')
+        self.icons['take'] = self.create_sprite(
+            'assets/screenshot/ic_take.png')
+
+    def create_sprite(self, path):
+        image = Image.open(path)
+        image.mode = 'RGBA'
+        return ImageTk.PhotoImage(image)
+
     def create_widgets(self):
-        self.img = Image.open("assets/screenGUI.png")
-        self.img1 = self.img.resize((1024, 620), Image.ANTIALIAS)
+
+        self.create_icons()
+
+        self.img = Image.open("assets/screenshot/screenGUI.png")
+        self.img1 = self.img.resize((1024, 650), Image.ANTIALIAS)
         self.bg = ImageTk.PhotoImage(self.img1)
-        self.bgImage = tk.Label(self,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
+        self.bgImage = tk.Label(self,image=self.bg, highlightthickness=0).place(x=0,y=0,relwidth=1,relheight=1)
         # Display the image
         self.canvas = tk.Canvas(
-            self, bg="#000000", highlightthickness=0, width=800, height=600)
+            self.bgImage, bg="#000000", highlightthickness=0, width=835, height=395)
         self.item_on_canvas = self.canvas.create_image(
-            375, 165, anchor=tk.CENTER, image=None)
-        self.canvas.place(x=136, y =110)
+            417,198, anchor=tk.CENTER, image=None)
+        self.canvas.place(x=70, y =216)
         # Take another screenshot and update the picture
         # When pressed, Screenshot will sent a request to the server via Controller
         self.btn_snap = tk.Button(
-            self, text=Screenshot.STREAM_BTN_LABEL, command=self.stream_screen_async, width=20, height=2)
-        self.btn_snap.place(x=330, y = 520)
+            self, text=Screenshot.STREAM_BTN_LABEL, image=self.icons['stream'], command=self.stream_screen_async, fg="black", activebackground="#800000",
+                activeforeground="black",borderwidth=2, cursor="hand2", compound=tk.LEFT)
+        self.btn_snap.place(anchor='center',x=300, y = 550)
+        self.btn_snap.config(height = 50, width = 100)
         # Write the picture to a file as .png, .jpg and .bmp
         self.btn_save = tk.Button(
-            self, text="Screenshot", command=self.snap_image, width=20, height=2)
-        self.btn_save.place(x=540, y= 520)
+            self, text="Screenshot", image=self.icons['take'], command=self.snap_image, fg="black", activebackground="#800000",
+                activeforeground="black",borderwidth=2, cursor="hand2", compound=tk.LEFT)
+        self.btn_save.place(anchor='center',x=540, y= 550)
+        self.btn_save.config(height = 50, width = 100)
 
     def _resize_image(self, IMG):
         h = w = 0
-        basewidth = 560
+        basewidth = 860
         wpercent = basewidth / float(IMG.size[0])
         hsize = int((float(IMG.size[1]) * float(wpercent)))
-        if (hsize > 560):
-            h = 560
+        if (hsize > 400):
+            h = 400
             hpercent = h / float(hsize)
-            w = int((float(basewidth) * float(hpercent)))
+            w = int((float(basewidth) * float(hpercent))) + 80
         else:
             h = hsize
             w = basewidth
@@ -84,10 +104,10 @@ class Screenshot(tk.Frame):
             if not self._continue_stream:
                 self._continue_stream = True
                 Thread(target=self.stream_screen, args=(), daemon=True).start()
-            self.btn_snap.configure(text=Screenshot.STOP_BTN_LABEL)
+            self.btn_snap.configure(text=Screenshot.STOP_BTN_LABEL, image=self.icons['pause'])
         else:
             self._continue_stream = False
-            self.btn_snap.configure(text=Screenshot.STREAM_BTN_LABEL)
+            self.btn_snap.configure(text=Screenshot.STREAM_BTN_LABEL, image=self.icons['stream'])
 
     def stream_screen(self):
         self._socket.send_immediate("screenshot,live")
@@ -152,13 +172,13 @@ class ImageOpener(tk.Frame):
 
     def _resize_image(self, IMG):
         h = w = 0
-        basewidth = 560
+        basewidth = 860
         wpercent = basewidth / float(IMG.size[0])
         hsize = int((float(IMG.size[1]) * float(wpercent)))
-        if (hsize > 560):
-            h = 560
+        if (hsize > 400):
+            h = 400
             hpercent = h / float(hsize)
-            w = int((float(basewidth) * float(hpercent)))
+            w = int((float(basewidth) * float(hpercent))) + 80
         else:
             h = hsize
             w = basewidth
