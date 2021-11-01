@@ -170,7 +170,7 @@ class Filesystem(tk.Frame):
         # Get id of the source
         cur_item = self.trv_dirlist.focus()
         # Get the file from client
-        destination = filedialog.askdirectory()
+        destination = filedialog.askdirectory(title='Save to this location')
         if len(destination) == 0:
             return
         # Send command to server
@@ -182,7 +182,7 @@ class Filesystem(tk.Frame):
     def send_file(self):
         # Get the file from client
         source = filedialog.askopenfilename(
-            title="Select file", filetypes=[("all files", "*.*")])
+            title="Send this file to server", filetypes=[("all files", "*.*")])
         if len(source) == 0:
             return
         # Send command to server
@@ -433,7 +433,7 @@ class Filesystem(tk.Frame):
     def enable_btn(self, state):
         self.btn_retrieve.configure(state=state)
         # self.btn_send.configure(state=state)
-        self.btn_del.configure(state=state)
+        # self.btn_del.configure(state=state)
         if self.src_item == None:
             # if btn is in copy mode
             self.btn_copy.configure(state=state)
