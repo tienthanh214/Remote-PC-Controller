@@ -29,7 +29,10 @@ class Screenshot:
                 self.capture()
 
     def capture(self):
-        image = ImageGrab.grab()
+        try:
+            image = ImageGrab.grab()
+        except:
+            return
         byteIO = io.BytesIO()
         image.save(byteIO, format='BMP')
         byteArr = byteIO.getvalue()

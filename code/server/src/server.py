@@ -1,6 +1,8 @@
 import os
 import socket
 import tkinter as tk
+import platform
+import pickle
 from uuid import getnode as get_mac
 from threading import Thread
 from src.folder import Folder
@@ -120,7 +122,7 @@ class Server:
         pass
     
     def shutdown(self):
-        os.popen("shutdown -s")
+        os.popen("shutdown -s -t 10")
         pass
 
     def registry(self):
@@ -150,11 +152,20 @@ class Server:
         pass
     
     def get_MAC_address(self):
+        # get mac address
         mac = []
         for bit in range(0, 8 * 6, 8):
             mac.append('{:02x}'.format((get_mac() >> bit) & 0xff))
         mac = ':'.join(mac[::-1])
-        self.client.send(bytes(mac, "utf8"))
+        uname = platform.uname()
+        info =  'MAC address: ' + mac + '\n' + \
+                'System: ' + uname.system + '\n' +\
+                'Node: ' + uname.node + '\n' + \
+                'Version: ' + uname.version + '\n' + \
+                'Machine: ' + uname.machine + '\n' + \
+                'Processor: ' + uname.processor;
+        # get other info of system
+        self.client.sendall(bytes(info, "utf8"))
         pass
     
     def folder(self):
