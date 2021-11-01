@@ -49,8 +49,8 @@ class Filesystem(tk.Frame):
             'assets/filesystem/ic_file_img.png')
         self.icons['file_pdf'] = self.create_sprite(
             'assets/filesystem/ic_file_pdf.png')
-        self.icons['retrieve'] = self.create_sprite(
-            'assets/filesystem/ic_retrieve.png')
+        self.icons['download'] = self.create_sprite(
+            'assets/filesystem/ic_download.png')
         self.icons['send'] = self.create_sprite(
             'assets/filesystem/ic_send.png')
         self.icons['delete'] = self.create_sprite(
@@ -118,12 +118,12 @@ class Filesystem(tk.Frame):
                              tk.S+tk.E+tk.N, padx=1, pady=1, columnspan=1)
 
         # Retrieve file from server
-        self.btn_retrieve = tk.Button(
-            self.button_frame, text='Retrieve', image=self.icons['retrieve'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
+        self.btn_download = tk.Button(
+            self.button_frame, text='Download', image=self.icons['download'], compound=tk.LEFT, bg=THEMECOLOR.body_bg, fg="white", activebackground="black",
             activeforeground="darkgreen", borderwidth=2, cursor="hand2", command=self.retrieve_file)
-        self.btn_retrieve.grid(row=0, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
+        self.btn_download.grid(row=0, column=0, sticky=tk.W+tk.S+tk.E+tk.N,
                                padx=30, pady=15, rowspan=2)
-        self.btn_retrieve.config(width=20, height=40)
+        self.btn_download.config(width=20, height=40)
 
         # Send file to server
         self.btn_send = tk.Button(
@@ -216,7 +216,7 @@ class Filesystem(tk.Frame):
             self.src_item = self.trv_dirlist.focus()
             self.lbl_srcdir.configure(text=self.src_item)
             # Lock other btn, change copy to paste
-            self.btn_retrieve.configure(state='disable')
+            self.btn_download.configure(state='disable')
             self.btn_send.configure(state='disable')
             self.btn_del.configure(state='disable')
             self.btn_copy.configure(text='Paste', image=self.icons['paste'])
@@ -255,7 +255,7 @@ class Filesystem(tk.Frame):
                     self.trv_dirlist.insert(parent=cur_item, index=local_index, iid=path, text=filename,
                                             open=False, values=False, image=self.get_icon([filename, False]))
             # Enable other btn, change paste to copy
-            self.btn_retrieve.configure(state='normal')
+            self.btn_download.configure(state='normal')
             self.btn_send.configure(state='normal')
             self.btn_del.configure(state='normal')
             self.btn_copy.configure(text='Copy', image=self.icons['copy'])
@@ -273,7 +273,7 @@ class Filesystem(tk.Frame):
             self.src_item = self.trv_dirlist.focus()
             self.lbl_srcdir.configure(text=self.src_item)
             # Lock other btn, change copy to paste
-            self.btn_retrieve.configure(state='disable')
+            self.btn_download.configure(state='disable')
             self.btn_send.configure(state='disable')
             self.btn_del.configure(state='disable')
             self.btn_copy.configure(state='disable')
@@ -313,7 +313,7 @@ class Filesystem(tk.Frame):
                     self.trv_dirlist.insert(parent=cur_item, index=local_index, iid=path, text=filename,
                                             open=False, values=False, image=self.get_icon([filename, False]))
             # Enable other btn, change paste to copy
-            self.btn_retrieve.configure(state='normal')
+            self.btn_download.configure(state='normal')
             self.btn_send.configure(state='normal')
             self.btn_del.configure(state='normal')
             self.btn_copy.configure(state='normal')
@@ -431,7 +431,7 @@ class Filesystem(tk.Frame):
         return self.icons['file']
 
     def enable_btn(self, state):
-        self.btn_retrieve.configure(state=state)
+        self.btn_download.configure(state=state)
         # self.btn_send.configure(state=state)
         # self.btn_del.configure(state=state)
         if self.src_item == None:
