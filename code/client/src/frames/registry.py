@@ -9,7 +9,7 @@ import time
 
 class Registry(tk.Frame):
     def __init__(self, parent):
-        tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg)
+        tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg, padx=150, pady=30)
         self._regpath = ""
         self._regcont = tk.StringVar(self)
         self._regcont.set("")
