@@ -189,7 +189,7 @@ class Filesystem(tk.Frame):
         cur_item = self.trv_dirlist.focus()
         dirs = cur_item.split('\\')
         path = None
-        filename = source.split(self.path_delim)[-1]
+        filename = os.path.basename(source)
         print(cur_item)
         if '.' in dirs[-1]:
             # Handle if a file is in focus
@@ -243,7 +243,7 @@ class Filesystem(tk.Frame):
                     # Get parent folder
                     dirs = cur_item.split('\\')
                     path = None
-                    filename = self.src_item.split('\\')[-1]
+                    filename = os.path.basename(self.src_item)
                     if '.' in dirs[-1]:
                         # Handle if a file is in focus
                         cur_item = '\\'.join(dirs[0:-1])
@@ -300,7 +300,7 @@ class Filesystem(tk.Frame):
                     # Get parent folder
                     dirs = cur_item.split('\\')
                     path = None
-                    filename = self.src_item.split('\\')[-1]
+                    filename = os.path.basename(self.src_item)
                     if '.' in dirs[-1]:
                         # Handle if a file is in focus
                         cur_item = '\\'.join(dirs[0:-1])
