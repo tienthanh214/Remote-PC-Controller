@@ -28,22 +28,23 @@ class Screenshot(tk.Frame):
         self.img = Image.open("assets/screenGUI.png")
         self.img1 = self.img.resize((1024, 620), Image.ANTIALIAS)
         self.bg = ImageTk.PhotoImage(self.img1)
-        self.bgImage = tk.Label(self,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
+        self.bgImage = tk.Label(self, image=self.bg).place(
+            x=0, y=0, relwidth=1, relheight=1)
         # Display the image
         self.canvas = tk.Canvas(
             self, bg="#000000", highlightthickness=0, width=800, height=600)
         self.item_on_canvas = self.canvas.create_image(
             375, 165, anchor=tk.CENTER, image=None)
-        self.canvas.place(x=136, y =110)
+        self.canvas.place(x=136, y=110)
         # Take another screenshot and update the picture
         # When pressed, Screenshot will sent a request to the server via Controller
         self.btn_snap = tk.Button(
             self, text=Screenshot.STREAM_BTN_LABEL, command=self.stream_screen_async, width=20, height=2)
-        self.btn_snap.place(x=330, y = 520)
+        self.btn_snap.place(x=330, y=520)
         # Write the picture to a file as .png, .jpg and .bmp
         self.btn_save = tk.Button(
             self, text="Screenshot", command=self.snap_image, width=20, height=2)
-        self.btn_save.place(x=540, y= 520)
+        self.btn_save.place(x=540, y=520)
 
     def _resize_image(self, IMG):
         h = w = 0
@@ -76,8 +77,19 @@ class Screenshot(tk.Frame):
         self._doSave = True
 
     def snap_image(self):
-        copy = self._image_bytes
-        ImageOpener(tk.Toplevel(self), 'Preview', copy)
+        self._data = self._image_bytes
+        if self._data == None:
+            messagebox("Screenshot", "Image data corrupted", "error")
+            exit
+        files = [('PNG', '*.png'),
+                 ('JPEG', '*.jpg;*.jpeg'),
+                 ('Bitmap', '*.bmp'), ]
+        # Open the file system dialog
+        file = filedialog.asksaveasfile(
+            mode="wb", filetypes=files, defaultextension=files, title="Save image to this location")
+        if file != None:
+            file.write(self._data)
+            file.close()
 
     def stream_screen_async(self):
         if self.btn_snap.cget('text') == Screenshot.STREAM_BTN_LABEL:
@@ -104,62 +116,3 @@ class Screenshot(tk.Frame):
             if self._doSave:
                 Thread(target=self.snap_image, args=(), daemon=True).start()
                 self._doSave = False
-
-
-class ImageOpener(tk.Frame):
-    def __init__(self, parent, title, data):
-        super().__init__(parent)
-        self.parent = parent
-        self.parent.title("View Book")
-        self.parent.resizable(False, False)
-        self._title = title
-        self._data = data
-        self._img = None
-        self.create_widgets()
-        self.mainloop()
-
-    def create_widgets(self):
-        # Show the image on canvas
-        self.canvas = tk.Canvas(
-            self, bg="#000000", highlightthickness=0, width=560, height=560)
-        self.item_on_canvas = self.canvas.create_image(
-            280, 280, anchor=tk.CENTER, image=None)
-        self.canvas.grid(row=0, column=0, sticky=tk.W +
-                         tk.N, padx=10, pady=10, rowspan=2)
-        stream = io.BytesIO(self._data)
-        image = Image.open(stream)
-        self._img = ImageTk.PhotoImage(self._resize_image(image))
-        self.canvas.itemconfig(self.item_on_canvas, image=self._img)
-        # Save the image to the file system
-        self.btn_clear = tk.Button(
-            self.parent, text="Download", width=10, height=1, command=self.save_image)
-        self.btn_clear.grid(row=2, column=3, sticky=tk.S +
-                            tk.E, padx=10, pady=10, columnspan=1)
-
-    def save_image(self):
-        if self._data == None:
-            messagebox("Screenshot", "Image data corrupted", "error")
-            exit
-        files = [('PNG', '*.png'),
-                 ('JPEG', '*.jpg;*.jpeg'),
-                 ('Bitmap', '*.bmp'), ]
-        # Open the file system dialog
-        file = filedialog.asksaveasfile(
-            mode="wb", filetypes=files, defaultextension=files, title="Save image")
-        if file != None:
-            file.write(self._data)
-            file.close()
-
-    def _resize_image(self, IMG):
-        h = w = 0
-        basewidth = 560
-        wpercent = basewidth / float(IMG.size[0])
-        hsize = int((float(IMG.size[1]) * float(wpercent)))
-        if (hsize > 560):
-            h = 560
-            hpercent = h / float(hsize)
-            w = int((float(basewidth) * float(hpercent)))
-        else:
-            h = hsize
-            w = basewidth
-        return IMG.resize((int(w), int(h)), Image.ANTIALIAS)
