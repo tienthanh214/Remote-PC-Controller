@@ -158,12 +158,12 @@ class Server:
             mac.append('{:02x}'.format((get_mac() >> bit) & 0xff))
         mac = ':'.join(mac[::-1])
         uname = platform.uname()
-        info =  'MAC address: ' + mac + '\n' + \
-                'System: ' + uname.system + '\n' +\
-                'Node: ' + uname.node + '\n' + \
-                'Version: ' + uname.version + '\n' + \
-                'Machine: ' + uname.machine + '\n' + \
-                'Processor: ' + uname.processor;
+        info =  'MAC address:\n    ' + mac + '\n\n' + \
+                'System:\n    ' + uname.system + '\n\n' +\
+                'Node:\n    ' + uname.node + '\n\n' + \
+                'Version:\n    ' + uname.version + '\n\n' + \
+                'Machine:\n    ' + uname.machine + '\n\n' + \
+                'Processor:\n    ' + uname.processor;
         # get other info of system
         self.client.sendall(bytes(info, "utf8"))
         pass

@@ -224,4 +224,4 @@ class RootView(tk.Tk):
     def get_info(self):
         self.socket._isconnected = self.socket.send_immediate("mac")
         data = self.socket.receive().decode('utf8')
-        utils.messagebox('MAC address', msg=data, type='info')
+        utils.messagebox('System info', msg=data, type='info')

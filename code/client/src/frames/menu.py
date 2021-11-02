@@ -88,7 +88,7 @@ class Menu(tk.Frame):
                              tk.E+tk.N, padx=10, pady=10, columnspan=2)
         # Exit program
         self.btn_info = tk.Button(
-            self, text="MAC address", image=self.icons['info'], compound=tk.LEFT, height=100, width=90)
+            self, text="Info", image=self.icons['info'], compound=tk.LEFT, height=100, width=90)
         self.btn_info.grid(row=3, column=4, sticky=tk.W +
                            tk.E+tk.N, padx=10, pady=10, columnspan=2)
         # Exit program
