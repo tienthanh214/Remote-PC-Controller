@@ -2,7 +2,6 @@ import os
 import socket
 import tkinter as tk
 import platform
-import pickle
 from uuid import getnode as get_mac
 from threading import Thread
 from src.folder import Folder

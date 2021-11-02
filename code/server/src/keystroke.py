@@ -1,6 +1,5 @@
 from pynput.keyboard import KeyCode, Listener, Key
 import keyboard
-import time
 
 class KeyLogger:
     keys = ''
