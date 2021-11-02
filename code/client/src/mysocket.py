@@ -58,7 +58,7 @@ class MySocket:
         except:
             return False
 
-    def receive(self):
+    def receive(self, callback=None):
         """Read message length and unpack it into an integer"""
         try:
             raw_msglen = self._sock.recv(4)
@@ -72,6 +72,8 @@ class MySocket:
                     break
                 if not packet == None:
                     data.extend(packet)
+                if callback != None:
+                    callback(len(data) * 100 / msglen)
             return data
         except OSError:
             utl.messagebox("Socket", "Failed to receive data", "error")

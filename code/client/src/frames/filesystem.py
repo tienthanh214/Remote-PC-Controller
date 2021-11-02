@@ -8,6 +8,7 @@ import tkinter as tk
 import src.utils as utils
 import src.textstyles as textstyle
 import src.themecolors as THEMECOLOR
+import src.utils as util
 import pickle
 import struct as stc
 import os
@@ -387,6 +388,8 @@ class Filesystem(tk.Frame):
         self.expand_dir(target, pickle.loads(result))
 
     def receive(self, filename):
+        self._progressbar = util.ProgressBar(tk.Toplevel(
+            self), title='Loading...', mode='determinate', max_length=500)
         raw_msglen = self._socket._sock.recv(4)
         if not raw_msglen:
             return None
@@ -399,8 +402,14 @@ class Filesystem(tk.Frame):
                 break
             f.write(packet)
             curlen += len(packet)
+            # Update progressbar
+            self._progressbar.update(curlen * 100 / msglen)
+            self.update_idletasks()
             # use curlen/msglen to show progress bar
         f.close()
+        time.sleep(0.5)
+        self._progressbar.killbox()
+        self._progressbar = None
 
     def send(self, filename):
         try:
@@ -408,6 +417,8 @@ class Filesystem(tk.Frame):
         except:
             print("file not found")
             return
+        self._progressbar = util.ProgressBar(tk.Toplevel(
+            self), title='Loading...', mode='determinate', max_length=500)
         filesize = os.path.getsize(filename)
         self._socket._sock.sendall(stc.pack('>I', filesize))
         prog = 0
@@ -417,8 +428,14 @@ class Filesystem(tk.Frame):
                 break
             self._socket._sock.sendall(bytes_read)
             prog += len(bytes_read)
+            # Update progressbar
+            self._progressbar.update(prog * 100 / filesize)
+            self.update_idletasks()
             # use prog/filesize to show progress bar
         f.close()
+        time.sleep(0.5)
+        self._progressbar.killbox()
+        self._progressbar = None
 
     def get_icon(self, item):
         if item[1]:
