@@ -12,7 +12,6 @@ import src.utils as util
 import pickle
 import struct as stc
 import os
-import time
 
 
 class Filesystem(tk.Frame):
@@ -407,7 +406,6 @@ class Filesystem(tk.Frame):
             self.update_idletasks()
             # use curlen/msglen to show progress bar
         f.close()
-        time.sleep(0.5)
         self._progressbar.killbox()
         self._progressbar = None
 
@@ -433,7 +431,6 @@ class Filesystem(tk.Frame):
             self.update_idletasks()
             # use prog/filesize to show progress bar
         f.close()
-        time.sleep(0.5)
         self._progressbar.killbox()
         self._progressbar = None
 

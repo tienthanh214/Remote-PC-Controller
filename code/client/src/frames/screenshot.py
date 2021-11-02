@@ -20,6 +20,7 @@ class Screenshot(tk.Frame):
         self._socket = MySocket.getInstance()
         self._doSave = False
         self._continue_stream = False
+        self._img_size = None
         self.create_widgets()
 
     def clean_activity(self):
@@ -70,33 +71,34 @@ class Screenshot(tk.Frame):
         self.btn_save.config(height=50, width=100)
 
     def _resize_image(self, IMG):
-        h = w = 0
-        basewidth = 860
-        wpercent = basewidth / float(IMG.size[0])
-        hsize = int((float(IMG.size[1]) * float(wpercent)))
-        if (hsize > 400):
-            h = 400
-            hpercent = h / float(hsize)
-            w = int((float(basewidth) * float(hpercent))) + 80
-        else:
-            h = hsize
-            w = basewidth
-        return IMG.resize((int(w), int(h)), Image.ANTIALIAS)
+        if self._img_size == None:
+            h = w = 0
+            basewidth = 860
+            wpercent = basewidth / float(IMG.size[0])
+            hsize = int((float(IMG.size[1]) * float(wpercent)))
+            if (hsize > 400):
+                h = 400
+                hpercent = h / float(hsize)
+                w = int((float(basewidth) * float(hpercent))) + 80
+            else:
+                h = hsize
+                w = basewidth
+            self._img_size= (int(w), int(h))
+        return IMG.resize(self._img_size, Image.ANTIALIAS)
 
     def update_image(self, img_data):
         # img_data: bytes
         # Take image data in bytes from and update the image in the canvas
         self._image_bytes = img_data
-        stream = io.BytesIO(img_data)
-        image = Image.open(stream)
+        image = Image.open(io.BytesIO(img_data))
         # Save image data to object
-        self._img = ImageTk.PhotoImage(self._resize_image(image))
         try:
-            self.canvas.itemconfig(self.item_on_canvas, image=self._img)
-            self.canvas.image = self._img
+            _img = ImageTk.PhotoImage(self._resize_image(image))
+            self.canvas.itemconfig(self.item_on_canvas, image=_img)
+            self.canvas.image = _img
         except:
             pass
-
+        
     def set_doSave(self):
         self._doSave = True
 

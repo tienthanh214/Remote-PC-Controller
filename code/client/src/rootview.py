@@ -173,7 +173,6 @@ class RootView(tk.Tk):
                     self.socket.send_immediate("quit")
                 finally:
                     self.socket.close()
-                    time.sleep(0.5)
                     self.config(bg=themecolor.root_bg_red)
                     self.btn_connect.config(bg=themecolor.connect_btn)
                     self.btn_connect.config(text='Connect')
