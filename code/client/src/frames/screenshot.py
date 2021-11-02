@@ -93,6 +93,7 @@ class Screenshot(tk.Frame):
         self._img = ImageTk.PhotoImage(self._resize_image(image))
         try:
             self.canvas.itemconfig(self.item_on_canvas, image=self._img)
+            self.canvas.image = self._img
         except:
             pass
 
