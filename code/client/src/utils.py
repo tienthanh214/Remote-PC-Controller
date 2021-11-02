@@ -48,8 +48,8 @@ class ProgressBar(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title(title)
+        self.master.geometry('+262+430')
         self.master.resizable(False, False)
-
         self.pgb_load = Progressbar(
             self.master, orient=HORIZONTAL, length=max_length, mode=mode)
         self.pgb_load.pack(side=tk.TOP, padx=20, pady=20)
