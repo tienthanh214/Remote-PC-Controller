@@ -59,13 +59,13 @@ class Screenshot(tk.Frame):
         # When pressed, Screenshot will sent a request to the server via Controller
         self.btn_snap = tk.Button(
             self, text=Screenshot.STREAM_BTN_LABEL, image=self.icons['stream'], command=self.stream_screen_async, fg="black", activebackground="#800000",
-            activeforeground="black", borderwidth=2, cursor="hand2", compound=tk.LEFT)
+            activeforeground="black", borderwidth=3, cursor="hand2", compound=tk.LEFT)
         self.btn_snap.place(anchor='center', x=390, y=620)
         self.btn_snap.config(height=50, width=100)
         # Write the picture to a file as .png, .jpg and .bmp
         self.btn_save = tk.Button(
             self, text="Screenshot", image=self.icons['take'], command=self.snap_image, fg="black", activebackground="#800000",
-            activeforeground="black", borderwidth=2, cursor="hand2", compound=tk.LEFT)
+            activeforeground="black", borderwidth=3, cursor="hand2", compound=tk.LEFT)
         self.btn_save.place(anchor='center', x=620, y=620)
         self.btn_save.config(height=50, width=100)
 
