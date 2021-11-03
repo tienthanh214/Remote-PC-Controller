@@ -9,7 +9,8 @@ import time
 
 class Registry(tk.Frame):
     def __init__(self, parent):
-        tk.Frame.__init__(self, parent, bg=THEMECOLOR.body_bg, padx=150, pady=30)
+        tk.Frame.__init__(
+            self, parent, bg=THEMECOLOR.body_bg, padx=150, pady=30)
         self._regpath = ""
         self._regcont = tk.StringVar(self)
         self._regcont.set("")
@@ -24,30 +25,32 @@ class Registry(tk.Frame):
         # ============================ Change from file ============================
         # Display the registry file path
         self.txt_browse = tk.Text(self, width=64, height=2, bg="#FFFFFF")
-        self.txt_browse.grid(row=0, column=0, sticky=tk.N,
+        self.txt_browse.grid(row=0, column=0, sticky=tk.N+tk.S,
                              padx=10, pady=10, columnspan=3)
         # Open the browse window to get the registry file
         self.btn_browse = tk.Button(
-            self, text="Browse...", command=self.browse_path, width=22, height=2)
-        self.btn_browse.grid(row=0, column=3, sticky=tk.N, padx=10, pady=10)
+            self, text="Browse", command=self.browse_path, width=22)
+        self.btn_browse.grid(
+            row=0, column=3, sticky=tk.N+tk.S, padx=10, pady=10)
         # Display the registry file's content
-        self.txt_regcont = tk.Text(self, width=64, height=10, bg="#FFFFFF")
-        self.txt_regcont.grid(row=1, column=0, sticky=tk.N,
+        self.txt_regcont = tk.Text(self, width=64, height=8, bg="#FFFFFF")
+        self.txt_regcont.grid(row=1, column=0, sticky=tk.N+tk.S,
                               padx=10, pady=10, columnspan=3)
         # Send the regis content to the server
         self.btn_sendcont = tk.Button(
-            self, text="Gửi\nnội dung", command=self.registry_sendcont, width=22, height=10)
-        self.btn_sendcont.grid(row=1, column=3, sticky=tk.N, padx=10, pady=10)
+            self, text="Send content", command=self.registry_sendcont, width=22)
+        self.btn_sendcont.grid(
+            row=1, column=3, sticky=tk.N+tk.S, padx=10, pady=10)
         # ============================ Break line ============================
         # A line to seperate 2 sending method
         self.lbl_brk = tk.Label(
-            self, height=1, text=("-" * 40 + " Sửa giá trị trực tiếp " + "-" * 40), justify="center")
+            self, height=1, text=("-" * 40 + " Update value " + "-" * 40), justify="center")
         self.lbl_brk.grid(row=2, column=0, sticky=tk.N,
                           padx=10, pady=0, columnspan=4)
         # ============================ Change from setting ============================
         # File path
         self.lbl_path = tk.Label(
-            self, height=1, text="Đường dẫn:", width=20, justify="left")
+            self, height=1, text="Path:", width=20, justify="left")
         self.lbl_path.grid(row=4, column=0, sticky=tk.E,
                            padx=10, pady=0, columnspan=1)
         self.txt_path = tk.Text(self, width=48, height=1, bg="#FFFFFF")
@@ -89,17 +92,17 @@ class Registry(tk.Frame):
                              padx=10, pady=10, columnspan=4)
         # Send these command to the server
         self.btn_send = tk.Button(
-            self, text="Gửi", command=self.registry_send, width=10, height=2)
-        self.btn_send.grid(row=8, column=0, sticky=tk.N,
-                           padx=10, pady=10, columnspan=2)
+            self, text="Enter", command=self.registry_send, width=10, height=2)
+        self.btn_send.grid(row=8, column=1, sticky=tk.N+tk.W,
+                           padx=10, pady=10, columnspan=1)
         # Clear the result text field
         self.btn_clear = tk.Button(
-            self, text="Xóa", command=self.clear_result, width=10, height=2)
-        self.btn_clear.grid(row=8, column=2, sticky=tk.N,
-                            padx=10, pady=10, columnspan=2)
+            self, text="Clear", command=self.clear_result, width=10, height=2)
+        self.btn_clear.grid(row=8, column=2, sticky=tk.N+tk.E,
+                            padx=10, pady=10, columnspan=1)
         # Choose functionality
         self.lbl_func = tk.Label(
-            self, height=1, text="Chức năng:", width=20, justify="left")
+            self, height=1, text="Functions:", width=20, justify="left")
         self.lbl_func.grid(row=3, column=0, sticky=tk.E,
                            padx=10, pady=10, columnspan=1)
         self._func = {'Get value', 'Set value',
@@ -130,7 +133,7 @@ class Registry(tk.Frame):
         except IOError:
             utl.messagebox("Registry", "Cannot load file", "error")
 
-    def insert_result(self, result="Lỗi"):
+    def insert_result(self, result="<Error>"):
         self._response = result.strip("\n")
         self._response += "\n"
         self.txt_result.configure(state="normal")
@@ -171,7 +174,7 @@ class Registry(tk.Frame):
             return
         self._socket.send(filecont)
 
-        response = self._socket.recv(1024).decode("utf8")
+        response = self._socket._sock.recv(7).decode("utf8")
         utl.messagebox("Send regsitry file", response,
                        "info" if response == "SUCCESS" else "error")
 
@@ -190,5 +193,6 @@ class Registry(tk.Frame):
             ','.join(["registry", func, path, name, value, dttp]))
         if not self._socket._isconnected:
             return
-        response = self._socket.recv(1024).decode("utf8")
+        response = self._socket._sock.recv(1024).decode("utf8")
+        print(response)
         self.insert_result(response)

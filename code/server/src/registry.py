@@ -51,9 +51,9 @@ class Registry:
 
     
     def update_file_reg(self): 
-        data = self.client.receive().decode("utf8")
+        data = self.client.receive()
         print(data)
-        fi = open("fileReg.reg", "w")
+        fi = open("fileReg.reg", "wb")
         fi.write(data)
         fi.close()
         try:
