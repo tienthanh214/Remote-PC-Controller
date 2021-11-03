@@ -87,7 +87,7 @@ class Registry(tk.Frame):
                               padx=10, pady=5, columnspan=1)
         # Text field to display the result of commands
         self.txt_result = tk.Text(
-            self, width=88, height=10, bg="#FFFFFF", state="disable")
+            self, width=88, height=10, bg="#FFFFFF", fg='#000000', state="disable")
         self.txt_result.grid(row=7, column=0, sticky=tk.N,
                              padx=10, pady=10, columnspan=4)
         # Send these command to the server
@@ -137,7 +137,7 @@ class Registry(tk.Frame):
         self._response = result.strip("\n")
         self._response += "\n"
         self.txt_result.configure(state="normal")
-        self.txt_result.insert("end", self._response)
+        self.txt_result.insert(tk.END, self._response)
         self.txt_result.configure(state="disable")
 
     def clear_result(self):
@@ -193,6 +193,5 @@ class Registry(tk.Frame):
             ','.join(["registry", func, path, name, value, dttp]))
         if not self._socket._isconnected:
             return
-        response = self._socket._sock.recv(1024).decode("utf8")
-        print(response)
+        response = self._socket.receive().decode('utf8')
         self.insert_result(response)
