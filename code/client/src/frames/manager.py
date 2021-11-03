@@ -114,10 +114,17 @@ class Manager(tk.Frame):
             data = data.split('\n')[3:-3]  # bo dong title, bo 2 dong \n\n cuoi
             data.sort(key=lambda x: x[0].upper())  # sort de tim theo ten thoi
 
+        num_line = 0
+        log_interval = len(data) // 5 + 1 
         for current_process in data:
             (name_process, id_process, count_thread) = current_process.rsplit(maxsplit=2)
             self.table.insert("", "end", values=(
                 name_process, id_process, count_thread))
+            # update progress bar
+            num_line += 1
+            if num_line == log_interval:
+                self._progressbar.concat(num_line * 20 / len(data))
+                num_line = 0
 
     def clear(self):
         # clear data in the tabel before updating
@@ -148,7 +155,7 @@ class Manager(tk.Frame):
         if not self._socket._isconnected:
             return
 
-        data = self._socket.receive(self._progressbar.concat).decode("utf8")
+        data = self._socket.receive(self._progressbar.update).decode("utf8")
         self.populate_data(data=data)
 
         self._progressbar.killbox()

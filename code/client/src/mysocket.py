@@ -73,7 +73,7 @@ class MySocket:
                 if not packet == None:
                     data.extend(packet)
                 if callback != None:
-                    callback(len(data) * 100 / msglen)
+                    callback(len(data) * 80 / msglen)
             return data
         except OSError:
             utl.messagebox("Socket", "Failed to receive data", "error")

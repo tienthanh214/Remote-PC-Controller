@@ -1,4 +1,4 @@
-from threading import currentThread
+from threading import Thread
 from tkinter.constants import HORIZONTAL, VERTICAL
 from typing import Counter
 from src.mysocket import MySocket
@@ -177,7 +177,8 @@ class Filesystem(tk.Frame):
         self._socket.send('folder,copy,{},?'.format(cur_item))
         # Retrieve the file from server
         filename = cur_item.split('\\')[-1]
-        self.receive(filename=destination + self.path_delim + filename)
+        # self.receive(filename=destination + self.path_delim + filename)
+        Thread(target = self.receive, args = (destination + self.path_delim + filename,), daemon = True).start()
 
     def send_file(self):
         # Get the file from client
@@ -197,7 +198,8 @@ class Filesystem(tk.Frame):
         path = cur_item + '\\' + filename
         self._socket.send('folder,copy,?,{}'.format(path))
         # Client send file by chunks
-        self.send(filename=source)
+        # self.send(filename=source)
+        Thread(target = self.send, args = (source, ), daemon = True).start()
         # Add that file to the treeview
         local_index = len(self.trv_dirlist.get_children(cur_item))
         self.trv_dirlist.insert(parent=cur_item, index=local_index, iid=path, text=filename,
@@ -393,6 +395,10 @@ class Filesystem(tk.Frame):
         if not raw_msglen:
             return None
         msglen = stc.unpack('>I', raw_msglen)[0]
+        # only update progressBar for 60 times
+        log_interval = ((4096 * 2 + msglen - 1) // (4096 * 2)) // 60
+        if log_interval == 0: log_interval = 1
+        num_step = 0
         f = open(filename, "wb")
         curlen = 0
         while curlen < msglen:
@@ -402,8 +408,11 @@ class Filesystem(tk.Frame):
             f.write(packet)
             curlen += len(packet)
             # Update progressbar
-            self._progressbar.update(curlen * 100 / msglen)
-            self.update_idletasks()
+            if num_step % log_interval == 0:
+                pass
+                self._progressbar.update(curlen * 100 / msglen)
+                self.update_idletasks()
+            num_step += 1
             # use curlen/msglen to show progress bar
         f.close()
         self._progressbar.killbox()
@@ -420,6 +429,12 @@ class Filesystem(tk.Frame):
         filesize = os.path.getsize(filename)
         self._socket._sock.sendall(stc.pack('>I', filesize))
         prog = 0
+        num_step = 0
+        # only update progressBar for 60 times
+        log_interval = ((4096 * 2 + filesize - 1) // (4096 * 2)) // 60
+        if log_interval == 0: log_interval = 1
+        print(log_interval)
+        
         while True:
             bytes_read = f.read(4096 * 2)
             if not bytes_read:
@@ -427,8 +442,12 @@ class Filesystem(tk.Frame):
             self._socket._sock.sendall(bytes_read)
             prog += len(bytes_read)
             # Update progressbar
-            self._progressbar.update(prog * 100 / filesize)
-            self.update_idletasks()
+            
+            if num_step % log_interval == 0:
+                self._progressbar.update(prog * 100 / filesize)
+                self.update_idletasks()
+            num_step += 1
+
             # use prog/filesize to show progress bar
         f.close()
         self._progressbar.killbox()
