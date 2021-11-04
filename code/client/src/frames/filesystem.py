@@ -191,7 +191,6 @@ class Filesystem(tk.Frame):
         dirs = cur_item.split('\\')
         path = None
         filename = os.path.basename(source)
-        print(cur_item)
         if '.' in dirs[-1]:
             # Handle if a file is in focus
             cur_item = '\\'.join(dirs[0:-1])
@@ -253,7 +252,6 @@ class Filesystem(tk.Frame):
                     # Add that file to the treeview
                     local_index = len(
                         self.trv_dirlist.get_children(cur_item))
-                    print(filename)
                     self.trv_dirlist.insert(parent=cur_item, index=local_index, iid=path, text=filename,
                                             open=False, values=False, image=self.get_icon([filename, False]))
             # Enable other btn, change paste to copy
@@ -310,7 +308,6 @@ class Filesystem(tk.Frame):
                     # Add that file to the treeview
                     local_index = len(
                         self.trv_dirlist.get_children(cur_item))
-                    print(filename)
                     self.trv_dirlist.delete(self.src_item)
                     self.trv_dirlist.insert(parent=cur_item, index=local_index, iid=path, text=filename,
                                             open=False, values=False, image=self.get_icon([filename, False]))
@@ -345,7 +342,6 @@ class Filesystem(tk.Frame):
         disks = pickle.loads(result)
         for id, disk in enumerate(disks):
             this_id = disk[:-1]
-            print(this_id)
             self.trv_dirlist.insert(parent='', index=id, iid=this_id+'\\', text=disk.replace(
                 '\\', ''), open=False, values=True, image=self.icons['disk'])
 
@@ -422,7 +418,6 @@ class Filesystem(tk.Frame):
         try:
             f = open(filename, "rb")
         except:
-            print("file not found")
             return
         self._progressbar = util.ProgressBar(tk.Toplevel(
             self), title='Loading...', mode='determinate', max_length=500)
@@ -433,7 +428,6 @@ class Filesystem(tk.Frame):
         # only update progressBar for 60 times
         log_interval = ((4096 * 2 + filesize - 1) // (4096 * 2)) // 60
         if log_interval == 0: log_interval = 1
-        print(log_interval)
         
         while True:
             bytes_read = f.read(4096 * 2)

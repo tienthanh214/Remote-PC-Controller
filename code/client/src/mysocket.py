@@ -43,7 +43,6 @@ class MySocket:
             byte_msg = bytes(msg, "utf8")
             byte_msg = stc.pack('>I', len(byte_msg)) + byte_msg
             self._sock.sendall(byte_msg)
-            print('client:', msg)
             return True
         except:
             if showerror:
