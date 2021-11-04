@@ -18,7 +18,6 @@ class Folder:
                 cmd = self.client.receive().decode('utf8')
             except:
                 return
-                
             cmd = cmd.split(',')
             if cmd[0] == "exit":
                 return
@@ -56,7 +55,7 @@ class Folder:
                 shutil.copy2(source, target)
                 self.client.send(bytes('ok', 'utf8'))
             except:
-                print("File Not Found Error")
+                # print("File Not Found Error")
                 self.client.send(bytes('bad', 'utf8'))
         pass
     
@@ -68,7 +67,7 @@ class Folder:
             shutil.move(source, target)
             self.client.send(bytes('ok', 'utf8'))
         except:
-            print("Can't move this file")
+            # print("Can't move this file")
             self.client.send(bytes('bad', 'utf8'))
         pass
     
@@ -94,7 +93,7 @@ class Folder:
         try:
             f = open(filename, "wb")
         except:
-            print("Invalid path")
+            # print("Invalid path")
             return
         curlen = 0
         # read binary data to file
@@ -112,7 +111,7 @@ class Folder:
         try:
             f = open(filename, "rb")
         except:
-            print("file not found")
+            # print("file not found")
             return
         filesize = os.path.getsize(filename)
         # send file size first

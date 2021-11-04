@@ -12,7 +12,6 @@ from src.application import Application
 from src.keystroke import KeyLogger
 from src.registry import Registry
 from PIL import Image, ImageTk
-from tkinter import PhotoImage
 
 class Server:
     def __init__(self):

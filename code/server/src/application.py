@@ -25,9 +25,6 @@ class Application:
 
     def application_view(self):
         output = os.popen('powershell "gps | where {$_.MainWindowTitle } | select name, id, {$_.Threads.Count}').read()
-        
-        # self.client.sendall(bytes(str(len(output)), "utf8"))
-        # self.client.sendall(bytes(output, "utf8"))
         self.client.sendall(bytes(output, "utf8"))
         pass
 

@@ -9,7 +9,6 @@ class Registry:
     def run(self):
         while True:
             cmd = self.client.recv(512).decode('utf8')
-            # print(cmd)
             if cmd == "registry,file":
                 self.update_file_reg()
             elif cmd == "exit":
@@ -28,7 +27,6 @@ class Registry:
                 else:
                     HKEY, link = path, ''
                 # end of get link
-                # print(HKEY, link)
                 HKEY = self.baseRegistryKey(HKEY)
                 datatype = self.baseDataType(datatype)
 
@@ -52,7 +50,6 @@ class Registry:
     
     def update_file_reg(self): 
         data = self.client.receive()
-        print(data)
         fi = open("fileReg.reg", "wb")
         fi.write(data)
         fi.close()

