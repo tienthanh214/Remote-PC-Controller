@@ -190,7 +190,7 @@ class RootView(tk.Tk):
         self.btn_back.grid_remove()
         exit
 
-    def exit_prog(self,e,  isKilled=True):
+    def exit_prog(self, e, isKilled=True):
         if e != None:
             if str(e.widget) != '.':
                 return
