@@ -181,8 +181,11 @@ class Registry(tk.Frame):
     def registry_send(self):
         func = self._df_func.get().strip("\n")
         path = self.txt_path.get("1.0", tk.END).strip("\n")
+        if len(path) == 0: return
         name = self.txt_name.get("1.0", tk.END).strip("\n")
+        if len(name) == 0: return
         value = self.txt_value.get("1.0", tk.END).strip("\n")
+        if len(value) == 0: return
         dttp = self._df_dttype.get().strip("\n")
 
         if func in ['Get value', 'Set value', 'Create key']:

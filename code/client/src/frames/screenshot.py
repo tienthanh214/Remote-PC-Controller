@@ -103,6 +103,8 @@ class Screenshot(tk.Frame):
         self._doSave = True
 
     def snap_image(self):
+        if self._image_bytes == None:
+            return
         self._data = self._image_bytes
         if self._data == None:
             messagebox("Screenshot", "Image data corrupted", "error")
