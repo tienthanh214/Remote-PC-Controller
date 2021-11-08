@@ -32,3 +32,18 @@ For client, run ``` py code\client\main.py ```
 Or just run ```server.exe``` and ```client.exe```
 
 Available on Windows 7, Windows 10
+
+
+## Demo
+
+### Server
+
+<p align="center">
+  <img src="/image/server.png"/>
+</p>
+
+### Client
+
+<p align="center">
+  <img src="/image/client.png" width="1200"/>
+</p>
